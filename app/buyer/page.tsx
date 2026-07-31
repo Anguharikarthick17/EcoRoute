@@ -7,7 +7,6 @@ import {
   MdLocationOn,
   MdPhone,
   MdWhatsapp,
-  MdEmail,
   MdShoppingCart,
   MdClose,
   MdCheckCircle,
@@ -31,6 +30,7 @@ import {
   MdOutlineMessage,
 } from "react-icons/md";
 import { EWasteListing } from "@/lib/ewaste-store";
+import { useTranslation } from "@/lib/i18n";
 
 const CATEGORIES = [
   "All",
@@ -64,6 +64,7 @@ type ExtendedListing = EWasteListing & {
 };
 
 export default function BuyerPortalPage() {
+  const { t } = useTranslation();
   const [listings, setListings] = useState<ExtendedListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -189,11 +190,11 @@ export default function BuyerPortalPage() {
       <div className="bg-[var(--color-primary)] text-white py-4 px-6 shadow">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold text-lg text-white">
               {buyerUser?.fullName?.[0] || "R"}
             </div>
             <div>
-              <div className="font-bold text-sm flex items-center gap-1.5">
+              <div className="font-bold text-sm flex items-center gap-1.5 text-white">
                 <MdVerified className="w-4 h-4 text-cyan-300" />
                 {buyerUser?.fullName || "Verified Recycler"}
               </div>
@@ -204,7 +205,7 @@ export default function BuyerPortalPage() {
           </div>
 
           <div className="hidden md:flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5">
-            <span className="text-xs font-semibold text-white/80">Verified Recycler (Buyer) Portal</span>
+            <span className="text-xs font-semibold text-white/90">{t("buyer.portal")}</span>
             <MdVerified className="w-4 h-4 text-cyan-300" />
           </div>
 
@@ -213,10 +214,10 @@ export default function BuyerPortalPage() {
               localStorage.removeItem("ecoroute_user");
               window.location.replace("/login");
             }}
-            className="flex items-center gap-1.5 text-xs font-semibold text-white/80 hover:text-white transition cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-bold text-white/80 hover:text-white transition cursor-pointer"
           >
             <MdLogout className="w-4 h-4" />
-            Logout
+            {t("nav.logout") || "Logout"}
           </button>
         </div>
       </div>
@@ -226,14 +227,14 @@ export default function BuyerPortalPage() {
         {/* ── Stats Row ───────────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: "Available Items", value: listings.filter(l => l.status === "AVAILABLE").length, color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
-            { label: "Total Listings", value: listings.length, color: "text-blue-700", bg: "bg-blue-50 border-blue-200" },
-            { label: "Categories", value: new Set(listings.map(l => l.category)).size, color: "text-purple-700", bg: "bg-purple-50 border-purple-200" },
-            { label: "Cities", value: new Set(listings.map(l => l.sellerCity)).size, color: "text-amber-700", bg: "bg-amber-50 border-amber-200" },
+            { label: t("buyer.availableItems"), value: listings.filter(l => l.status === "AVAILABLE").length, color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
+            { label: t("buyer.totalListings"), value: listings.length, color: "text-blue-700", bg: "bg-blue-50 border-blue-200" },
+            { label: t("buyer.categories"), value: new Set(listings.map(l => l.category)).size, color: "text-purple-700", bg: "bg-purple-50 border-purple-200" },
+            { label: t("buyer.cities"), value: new Set(listings.map(l => l.sellerCity)).size, color: "text-amber-700", bg: "bg-amber-50 border-amber-200" },
           ].map((s) => (
             <div key={s.label} className={`${s.bg} border rounded-xl p-4 flex flex-col gap-1`}>
               <span className={`text-2xl font-bold ${s.color}`}>{s.value}</span>
-              <span className="text-xs font-semibold text-slate-600">{s.label}</span>
+              <span className="text-xs font-extrabold text-slate-700">{s.label}</span>
             </div>
           ))}
         </div>
@@ -241,21 +242,21 @@ export default function BuyerPortalPage() {
         {/* ── Search + Filters ─────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <MdSearch className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <MdSearch className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
             <input
               type="text"
-              placeholder="Search by device, brand, or city..."
+              placeholder={t("buyer.searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-10 pl-9 pr-3 text-sm rounded-xl border border-slate-300 bg-white focus:border-[var(--color-primary)] outline-none shadow-sm"
+              className="w-full h-11 pl-10 pr-3.5 text-sm font-semibold text-slate-900 rounded-xl border border-slate-300 bg-white focus:border-[var(--color-primary)] outline-none shadow-xs placeholder:text-slate-400 placeholder:font-normal"
             />
           </div>
           <button
             onClick={fetchListings}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer shadow-sm"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-extrabold text-slate-700 hover:bg-slate-50 cursor-pointer shadow-xs"
           >
             <MdRefresh className="w-4 h-4" />
-            Refresh
+            {t("buyer.refresh")}
           </button>
         </div>
 
@@ -265,20 +266,20 @@ export default function BuyerPortalPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-1.5 text-xs font-bold rounded-full whitespace-nowrap transition cursor-pointer ${
+              className={`px-4 py-2 text-xs font-bold rounded-full whitespace-nowrap transition cursor-pointer ${
                 selectedCategory === cat
-                  ? "bg-[var(--color-primary)] text-white shadow"
-                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                  ? "bg-[var(--color-primary)] text-white shadow-md"
+                  : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
               }`}
             >
-              {cat}
+              {cat === "All" ? t("buyer.all") : cat}
             </button>
           ))}
         </div>
 
         {/* ── Listings Grid ─────────────────────────────────────────── */}
         {loading ? (
-          <div className="text-center py-16 text-sm font-semibold text-slate-500">
+          <div className="text-center py-16 text-sm font-bold text-slate-500">
             Loading available scrap listings...
           </div>
         ) : filtered.length === 0 ? (
@@ -329,22 +330,22 @@ export default function BuyerPortalPage() {
                 {/* Body */}
                 <div className="p-4 flex flex-col gap-3 flex-1">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-[var(--color-primary)] transition line-clamp-1">
+                    <h3 className="text-sm font-extrabold text-slate-900 group-hover:text-[var(--color-primary)] transition line-clamp-1">
                       {item.deviceName}
                     </h3>
                     {item.brand && item.brand !== "Generic" && (
-                      <span className="text-xs text-slate-500 font-medium">Brand: {item.brand}</span>
+                      <span className="text-xs text-slate-500 font-semibold">{t("buyer.brand")}: {item.brand}</span>
                     )}
                   </div>
 
                   {/* Condition */}
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${CONDITIONS_COLOR[item.condition] || "bg-slate-100 text-slate-700"}`}>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${CONDITIONS_COLOR[item.condition] || "bg-slate-100 text-slate-700"}`}>
                       {item.condition}
                     </span>
                     {item.weightKg > 0 && (
-                      <span className="flex items-center gap-0.5 text-[11px] text-slate-500 font-medium">
-                        <MdScale className="w-3 h-3" />
+                      <span className="flex items-center gap-0.5 text-[11px] text-slate-500 font-bold">
+                        <MdScale className="w-3.5 h-3.5" />
                         {item.weightKg} kg
                       </span>
                     )}
@@ -352,18 +353,18 @@ export default function BuyerPortalPage() {
 
                   {/* Description */}
                   {item.description && (
-                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{item.description}</p>
+                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-medium">{item.description}</p>
                   )}
 
                   {/* Seller & Location */}
-                  <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5 text-xs text-slate-500">
-                    <div className="flex items-center gap-1.5 font-semibold text-slate-700">
+                  <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5 text-xs text-slate-600">
+                    <div className="flex items-center gap-1.5 font-bold text-slate-800">
                       <MdPerson className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      Seller: {item.sellerName}
+                      {t("buyer.seller")}: {item.sellerName}
                     </div>
                     <div className="flex items-center gap-1.5">
                       <MdLocationOn className="w-3.5 h-3.5 text-[var(--color-primary)] shrink-0" />
-                      <span className="font-medium">{item.sellerCity}</span>
+                      <span className="font-semibold">{item.sellerCity}</span>
                     </div>
                   </div>
                 </div>
@@ -378,10 +379,10 @@ export default function BuyerPortalPage() {
                       setOrderCompleted(false);
                       setCompletedOrderData(null);
                     }}
-                    className="w-full py-2.5 text-xs font-bold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] flex items-center justify-center gap-1.5 cursor-pointer shadow"
+                    className="w-full py-3 text-xs font-extrabold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
                   >
                     <MdShoppingCart className="w-4 h-4" />
-                    Buy / Intimate Pickup & Cash
+                    {t("buyer.buyBtn")}
                   </button>
                 </div>
               </motion.div>
@@ -405,7 +406,7 @@ export default function BuyerPortalPage() {
                 <div className="flex items-center gap-2 text-white">
                   <MdShoppingCart className="w-5 h-5 text-white shrink-0" />
                   <h3 className="text-base font-extrabold text-white tracking-wide">
-                    {orderCompleted ? "Official Purchase & Pickup Receipt" : "Scrap Order & Pickup Intimation"}
+                    {orderCompleted ? t("buyer.receiptTitle") : t("buyer.modalTitle")}
                   </h3>
                 </div>
                 <button onClick={() => setActiveItem(null)} className="text-white/80 hover:text-white cursor-pointer transition p-1 rounded-full hover:bg-white/10">
@@ -421,7 +422,7 @@ export default function BuyerPortalPage() {
                     <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
                       <MdNotificationsActive className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
                       <div className="flex flex-col text-xs text-emerald-900 gap-1">
-                        <span className="font-bold text-sm">🚚 Pickup Intimation & Order Sent to Seller!</span>
+                        <span className="font-bold text-sm">🚚 {t("buyer.intimationAlert")}</span>
                         <span>
                           Seller <strong>{completedOrderData.item.sellerName}</strong> has been intimated that you will arrive on <strong>{completedOrderData.pickupDate} ({completedOrderData.pickupTimeSlot})</strong> to collect <strong>{completedOrderData.item.deviceName}</strong> and pay ₹{completedOrderData.amount} via {completedOrderData.paymentMethod}.
                         </span>
@@ -433,8 +434,8 @@ export default function BuyerPortalPage() {
                       {/* Receipt Header */}
                       <div className="flex items-center justify-between border-b pb-3 border-slate-200">
                         <div className="flex flex-col">
-                          <span className="text-lg font-bold text-[var(--color-primary)]">EcoRoute E-Waste Order Invoice</span>
-                          <span className="text-[10px] font-semibold uppercase text-slate-500">Official Purchase & Doorstep Collection Token</span>
+                          <span className="text-lg font-bold text-[var(--color-primary)]">{t("buyer.invoiceTitle")}</span>
+                          <span className="text-[10px] font-semibold uppercase text-slate-500">{t("buyer.collectionToken")}</span>
                         </div>
                         <div className="text-right">
                           <span className="text-xs font-mono font-bold text-slate-900">{completedOrderData.txnId}</span>
@@ -445,23 +446,23 @@ export default function BuyerPortalPage() {
                       {/* Items & Intimation Summary */}
                       <div className="flex flex-col gap-2 text-xs">
                         <div className="flex justify-between py-1 border-b border-slate-100">
-                          <span className="font-semibold text-slate-600">Item Name:</span>
+                          <span className="font-semibold text-slate-600">{t("buyer.itemName")}:</span>
                           <span className="font-bold text-slate-900">{completedOrderData.item.deviceName}</span>
                         </div>
                         <div className="flex justify-between py-1 border-b border-slate-100">
-                          <span className="font-semibold text-slate-600">Payment Mode:</span>
+                          <span className="font-semibold text-slate-600">{t("buyer.paymentMode")}:</span>
                           <span className="font-bold text-emerald-700">{completedOrderData.paymentMethod}</span>
                         </div>
                         <div className="flex justify-between py-1 border-b border-slate-100">
-                          <span className="font-semibold text-slate-600">Scheduled Pickup Date:</span>
+                          <span className="font-semibold text-slate-600">{t("buyer.scheduledDate")}:</span>
                           <span className="font-bold text-blue-700">{completedOrderData.pickupDate} ({completedOrderData.pickupTimeSlot})</span>
                         </div>
                         <div className="flex justify-between py-1 border-b border-slate-100">
-                          <span className="font-semibold text-slate-600">Note for Seller:</span>
-                          <span className="font-medium text-slate-800 italic">"{completedOrderData.pickupNotes || 'Will arrive to collect item.'}"</span>
+                          <span className="font-semibold text-slate-600">{t("buyer.noteForSeller")}:</span>
+                          <span className="font-medium text-slate-800 italic">&quot;{completedOrderData.pickupNotes || 'Will arrive to collect item.'}&quot;</span>
                         </div>
                         <div className="flex justify-between py-1.5 text-sm font-bold bg-slate-50 px-2 rounded-lg mt-1">
-                          <span className="text-slate-700">Total Agreed Scrap Value:</span>
+                          <span className="text-slate-700">{t("buyer.agreedValue")}:</span>
                           <span className="text-emerald-700">₹{completedOrderData.amount}</span>
                         </div>
                       </div>
@@ -470,7 +471,7 @@ export default function BuyerPortalPage() {
                       <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col gap-2.5">
                         <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                           <MdLocationOn className="w-4 h-4 text-red-600" />
-                          Unlocked Seller Pickup Address
+                          {t("buyer.unlockedAddress")}
                         </span>
                         
                         <div className="text-xs text-slate-700 flex flex-col gap-1 pl-5">
@@ -494,25 +495,25 @@ export default function BuyerPortalPage() {
                             )}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1.5 no-underline"
+                            className="px-3.5 py-2 text-xs font-bold rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1.5 no-underline shadow-xs"
                           >
-                            <MdDirections className="w-4 h-4" /> Open Maps Navigation
+                            <MdDirections className="w-4 h-4" /> {t("buyer.mapsNav")}
                           </a>
                           {completedOrderData.item.sellerPhone && (
                             <a
                               href={`tel:${completedOrderData.item.sellerPhone}`}
-                              className="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-800 text-white hover:bg-slate-900 flex items-center gap-1.5 no-underline"
+                              className="px-3.5 py-2 text-xs font-bold rounded-lg bg-slate-800 text-white hover:bg-slate-900 flex items-center gap-1.5 no-underline shadow-xs"
                             >
-                              <MdPhone className="w-4 h-4" /> Call Seller
+                              <MdPhone className="w-4 h-4" /> {t("buyer.callSeller")}
                             </a>
                           )}
                           {(completedOrderData.item.sellerPhone || completedOrderData.item.sellerWhatsapp) && (
                             <button
                               type="button"
                               onClick={() => openWhatsApp(completedOrderData.item.sellerPhone || completedOrderData.item.sellerWhatsapp, completedOrderData.item.deviceName)}
-                              className="px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 flex items-center gap-1.5 cursor-pointer"
+                              className="px-3.5 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 flex items-center gap-1.5 cursor-pointer shadow-xs"
                             >
-                              <MdWhatsapp className="w-4 h-4" /> WhatsApp Intimation
+                              <MdWhatsapp className="w-4 h-4" /> {t("buyer.whatsappIntimation")}
                             </button>
                           )}
                         </div>
@@ -530,17 +531,17 @@ export default function BuyerPortalPage() {
                       <button
                         type="button"
                         onClick={handlePrintReceipt}
-                        className="px-4 py-2.5 text-xs font-bold rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center gap-1.5 cursor-pointer"
+                        className="px-4 py-2.5 text-xs font-extrabold rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center gap-1.5 cursor-pointer"
                       >
                         <MdPrint className="w-4 h-4" />
-                        Print / Download Token
+                        {t("buyer.printToken")}
                       </button>
                       <button
                         type="button"
                         onClick={() => setActiveItem(null)}
-                        className="px-6 py-2.5 text-xs font-bold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] cursor-pointer"
+                        className="px-6 py-2.5 text-xs font-extrabold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] cursor-pointer"
                       >
-                        Done
+                        {t("buyer.done")}
                       </button>
                     </div>
                   </div>
@@ -595,13 +596,13 @@ export default function BuyerPortalPage() {
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                         <MdPayment className="w-4 h-4 text-[var(--color-primary)]" />
-                        Payment Method *
+                        {t("buyer.paymentMode")} *
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         {[
-                          { id: "CASH", label: "Cash on Pickup", icon: MdLocalAtm },
-                          { id: "UPI", label: "UPI / GPay / QR", icon: MdQrCodeScanner },
-                          { id: "CARD", label: "Card / NetBank", icon: MdCreditCard },
+                          { id: "CASH", label: t("buyer.cashOnPickup"), icon: MdLocalAtm },
+                          { id: "UPI", label: t("buyer.upiGpay"), icon: MdQrCodeScanner },
+                          { id: "CARD", label: t("buyer.cardNetbank"), icon: MdCreditCard },
                         ].map((pm) => {
                           const Icon = pm.icon;
                           const selected = paymentMethod === pm.id;
@@ -738,7 +739,7 @@ export default function BuyerPortalPage() {
                       <div className="flex flex-col gap-1">
                         <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                           <MdCalendarMonth className="w-4 h-4 text-blue-600" />
-                          Collection Date *
+                          {t("buyer.scheduledDate")} *
                         </label>
                         <input
                           type="date"
@@ -753,7 +754,7 @@ export default function BuyerPortalPage() {
                       <div className="flex flex-col gap-1">
                         <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                           <MdAccessTime className="w-4 h-4 text-amber-600" />
-                          Preferred Time Slot *
+                          {t("buyer.preferredTime")} *
                         </label>
                         <select
                           value={pickupTimeSlot}
@@ -772,7 +773,7 @@ export default function BuyerPortalPage() {
                     <div className="flex flex-col gap-1">
                       <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                         <MdOutlineMessage className="w-4 h-4 text-emerald-600" />
-                        Message / Intimation Note for Seller
+                        {t("buyer.messageSeller")}
                       </label>
                       <textarea
                         rows={2}
@@ -790,14 +791,14 @@ export default function BuyerPortalPage() {
                         onClick={() => setActiveItem(null)}
                         className="flex-1 py-2.5 text-xs font-semibold rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer"
                       >
-                        Cancel
+                        {t("dashboard.cancel")}
                       </button>
                       <button
                         type="submit"
-                        className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] flex items-center justify-center gap-1.5 cursor-pointer shadow"
+                        className="flex-1 py-2.5 text-xs font-extrabold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
                       >
                         <MdCheckCircle className="w-4 h-4" />
-                        Confirm & Send Intimation to Seller
+                        {t("buyer.confirmIntimation")}
                       </button>
                     </div>
                   </form>
