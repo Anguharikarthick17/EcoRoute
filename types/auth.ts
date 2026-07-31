@@ -53,6 +53,7 @@ export interface FormSelectProps {
   errorMessage?: string;
   placeholder?: string;
   className?: string;
+  selectClassName?: string;
 }
 
 // ── FormCheckbox ──────────────────────────────────────────────

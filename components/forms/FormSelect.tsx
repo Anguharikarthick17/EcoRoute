@@ -22,6 +22,7 @@ export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
       state = "default",
       errorMessage,
       placeholder = "Select an option",
+      selectClassName,
       className,
     },
     ref,
@@ -72,6 +73,7 @@ export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
               stateStyle,
               disabled && "opacity-55 cursor-not-allowed bg-[var(--color-background)]",
               !value && "text-[var(--color-text-light)]",
+              selectClassName,
             )}
           >
             <option value="" disabled hidden>
