@@ -26,6 +26,9 @@ import {
   MdDirections,
   MdNotificationsActive,
   MdLocalAtm,
+  MdCalendarMonth,
+  MdAccessTime,
+  MdOutlineMessage,
 } from "react-icons/md";
 import { EWasteListing } from "@/lib/ewaste-store";
 
@@ -68,7 +71,13 @@ export default function BuyerPortalPage() {
   const [activeItem, setActiveItem] = useState<ExtendedListing | null>(null);
   
   // Checkout & Payment State
-  const [paymentMethod, setPaymentMethod] = useState<"CASH" | "UPI" | "CARD">("UPI");
+  const [paymentMethod, setPaymentMethod] = useState<"CASH" | "UPI" | "CARD">("CASH");
+  const [pickupDate, setPickupDate] = useState(() => {
+    const tomorrow = new Date(Date.now() + 86400000);
+    return tomorrow.toISOString().split("T")[0];
+  });
+  const [pickupTimeSlot, setPickupTimeSlot] = useState("10:00 AM - 01:00 PM");
+  const [pickupNotes, setPickupNotes] = useState("I will arrive with exact cash to collect the item.");
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [completedOrderData, setCompletedOrderData] = useState<any>(null);
@@ -111,7 +120,7 @@ export default function BuyerPortalPage() {
     return matchCat && matchSearch;
   });
 
-  // Handle Payment & Purchase
+  // Handle Payment & Order Intimation
   const handleProcessPayment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeItem) return;
@@ -126,15 +135,18 @@ export default function BuyerPortalPage() {
         item: activeItem,
         amount: bidAmount || activeItem.price.replace(/[^0-9]/g, ""),
         paymentMethod,
-        buyerName: buyerUser?.fullName || "Verified Recycler",
+        pickupDate,
+        pickupTimeSlot,
+        pickupNotes,
+        buyerName: buyerUser?.fullName || "Verified Recycler (Doms)",
         buyerPhone: buyerUser?.mobile || "+91 98765 43210",
       };
 
-      // Push notification to seller store/localStorage
+      // Push intimation notification to seller store/localStorage
       const newNotif = {
         id: `notif-${Date.now()}`,
-        title: "🎉 Scrap Item Purchased!",
-        message: `Buyer '${orderData.buyerName}' purchased your item '${activeItem.deviceName}' for ₹${orderData.amount} via ${paymentMethod}. Pickup address shared.`,
+        title: "🚚 Scrap Order & Pickup Scheduled!",
+        message: `Buyer '${orderData.buyerName}' (${orderData.buyerPhone}) has ordered your '${activeItem.deviceName}' for ₹${orderData.amount} via ${paymentMethod}.\n\n📅 Scheduled Pickup Date: ${pickupDate} (${pickupTimeSlot})\n💬 Buyer Message: "${pickupNotes || 'Will arrive to collect item and pay.'}"`,
         timestamp: "Just now",
         type: "reward",
         read: false,
@@ -158,7 +170,7 @@ export default function BuyerPortalPage() {
 
   const openWhatsApp = (phone: string, deviceName: string) => {
     const msg = encodeURIComponent(
-      `Hi! I saw your ${deviceName} listing on EcoRoute E-Waste Marketplace. I have completed the purchase on EcoRoute. When can I pick up the scrap item?`
+      `Hi ${activeItem?.sellerName || "Seller"}! I have ordered your ${deviceName} on EcoRoute for ₹${bidAmount || activeItem?.price}.\nI will be coming on ${pickupDate} (${pickupTimeSlot}) to collect the item and pay ${paymentMethod === "CASH" ? "Cash" : "via " + paymentMethod}. Please confirm your pickup address.`
     );
     window.open(`https://wa.me/91${phone}?text=${msg}`, "_blank");
   };
@@ -365,7 +377,7 @@ export default function BuyerPortalPage() {
                     className="w-full py-2.5 text-xs font-bold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] flex items-center justify-center gap-1.5 cursor-pointer shadow"
                   >
                     <MdShoppingCart className="w-4 h-4" />
-                    Buy / Bid & Pay
+                    Buy / Intimate Pickup & Cash
                   </button>
                 </div>
               </motion.div>
@@ -374,7 +386,7 @@ export default function BuyerPortalPage() {
         )}
       </div>
 
-      {/* ── BUYER CHECKOUT, PAYMENT & BILL RECEIPT MODAL ────────────────────── */}
+      {/* ── BUYER CHECKOUT, PICKUP INTIMATION & RECEIPT MODAL ────────────────────── */}
       <AnimatePresence>
         {activeItem && (
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
@@ -389,7 +401,7 @@ export default function BuyerPortalPage() {
                 <div className="flex items-center gap-2 text-white">
                   <MdShoppingCart className="w-5 h-5 text-white shrink-0" />
                   <h3 className="text-base font-extrabold text-white tracking-wide">
-                    {orderCompleted ? "Official Purchase Bill Receipt" : "Scrap Checkout & Payment"}
+                    {orderCompleted ? "Official Purchase & Pickup Receipt" : "Scrap Order & Pickup Intimation"}
                   </h3>
                 </div>
                 <button onClick={() => setActiveItem(null)} className="text-white/80 hover:text-white cursor-pointer transition p-1 rounded-full hover:bg-white/10">
@@ -402,11 +414,13 @@ export default function BuyerPortalPage() {
                   /* ── BILL RECEIPT & UNLOCKED LOCATION VIEW ────────────────── */
                   <div className="flex flex-col gap-5">
                     {/* Notification Alert */}
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 flex items-center gap-3">
-                      <MdNotificationsActive className="w-6 h-6 text-emerald-600 shrink-0" />
-                      <div className="flex flex-col text-xs text-emerald-900">
-                        <span className="font-bold">Notification & SMS Alert Sent to Seller!</span>
-                        <span>Seller <strong>{completedOrderData.item.sellerName}</strong> has been notified of your purchase via {completedOrderData.paymentMethod}.</span>
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
+                      <MdNotificationsActive className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
+                      <div className="flex flex-col text-xs text-emerald-900 gap-1">
+                        <span className="font-bold text-sm">🚚 Pickup Intimation & Order Sent to Seller!</span>
+                        <span>
+                          Seller <strong>{completedOrderData.item.sellerName}</strong> has been intimated that you will arrive on <strong>{completedOrderData.pickupDate} ({completedOrderData.pickupTimeSlot})</strong> to collect <strong>{completedOrderData.item.deviceName}</strong> and pay ₹{completedOrderData.amount} via {completedOrderData.paymentMethod}.
+                        </span>
                       </div>
                     </div>
 
@@ -415,8 +429,8 @@ export default function BuyerPortalPage() {
                       {/* Receipt Header */}
                       <div className="flex items-center justify-between border-b pb-3 border-slate-200">
                         <div className="flex flex-col">
-                          <span className="text-lg font-bold text-[var(--color-primary)]">EcoRoute E-Waste Invoice</span>
-                          <span className="text-[10px] font-semibold uppercase text-slate-500">Official Purchase & Compliance Receipt</span>
+                          <span className="text-lg font-bold text-[var(--color-primary)]">EcoRoute E-Waste Order Invoice</span>
+                          <span className="text-[10px] font-semibold uppercase text-slate-500">Official Purchase & Doorstep Collection Token</span>
                         </div>
                         <div className="text-right">
                           <span className="text-xs font-mono font-bold text-slate-900">{completedOrderData.txnId}</span>
@@ -424,22 +438,26 @@ export default function BuyerPortalPage() {
                         </div>
                       </div>
 
-                      {/* Items & Payment Summary */}
+                      {/* Items & Intimation Summary */}
                       <div className="flex flex-col gap-2 text-xs">
                         <div className="flex justify-between py-1 border-b border-slate-100">
                           <span className="font-semibold text-slate-600">Item Name:</span>
                           <span className="font-bold text-slate-900">{completedOrderData.item.deviceName}</span>
                         </div>
                         <div className="flex justify-between py-1 border-b border-slate-100">
-                          <span className="font-semibold text-slate-600">Category & Weight:</span>
-                          <span className="font-medium text-slate-800">{completedOrderData.item.category} ({completedOrderData.item.weightKg} kg)</span>
-                        </div>
-                        <div className="flex justify-between py-1 border-b border-slate-100">
-                          <span className="font-semibold text-slate-600">Payment Method:</span>
+                          <span className="font-semibold text-slate-600">Payment Mode:</span>
                           <span className="font-bold text-emerald-700">{completedOrderData.paymentMethod}</span>
                         </div>
-                        <div className="flex justify-between py-1.5 text-sm font-bold bg-slate-50 px-2 rounded-lg">
-                          <span className="text-slate-700">Total Paid Amount:</span>
+                        <div className="flex justify-between py-1 border-b border-slate-100">
+                          <span className="font-semibold text-slate-600">Scheduled Pickup Date:</span>
+                          <span className="font-bold text-blue-700">{completedOrderData.pickupDate} ({completedOrderData.pickupTimeSlot})</span>
+                        </div>
+                        <div className="flex justify-between py-1 border-b border-slate-100">
+                          <span className="font-semibold text-slate-600">Note for Seller:</span>
+                          <span className="font-medium text-slate-800 italic">"{completedOrderData.pickupNotes || 'Will arrive to collect item.'}"</span>
+                        </div>
+                        <div className="flex justify-between py-1.5 text-sm font-bold bg-slate-50 px-2 rounded-lg mt-1">
+                          <span className="text-slate-700">Total Agreed Scrap Value:</span>
                           <span className="text-emerald-700">₹{completedOrderData.amount}</span>
                         </div>
                       </div>
@@ -448,11 +466,11 @@ export default function BuyerPortalPage() {
                       <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col gap-2.5">
                         <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                           <MdLocationOn className="w-4 h-4 text-red-600" />
-                          Unlocked Seller Pickup Location & Contact
+                          Unlocked Seller Pickup Address
                         </span>
                         
                         <div className="text-xs text-slate-700 flex flex-col gap-1 pl-5">
-                          <div><strong>Name:</strong> {completedOrderData.item.sellerName}</div>
+                          <div><strong>Seller Name:</strong> {completedOrderData.item.sellerName}</div>
                           <div>
                             <strong>Full Address:</strong>{" "}
                             {completedOrderData.item.sellerAddress || completedOrderData.item.sellerCity || "Main Street"}
@@ -474,7 +492,7 @@ export default function BuyerPortalPage() {
                             rel="noopener noreferrer"
                             className="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1.5 no-underline"
                           >
-                            <MdDirections className="w-4 h-4" /> Open Directions on Maps
+                            <MdDirections className="w-4 h-4" /> Open Maps Navigation
                           </a>
                           {completedOrderData.item.sellerPhone && (
                             <a
@@ -490,7 +508,7 @@ export default function BuyerPortalPage() {
                               onClick={() => openWhatsApp(completedOrderData.item.sellerPhone || completedOrderData.item.sellerWhatsapp, completedOrderData.item.deviceName)}
                               className="px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 flex items-center gap-1.5 cursor-pointer"
                             >
-                              <MdWhatsapp className="w-4 h-4" /> WhatsApp
+                              <MdWhatsapp className="w-4 h-4" /> WhatsApp Intimation
                             </button>
                           )}
                         </div>
@@ -498,8 +516,8 @@ export default function BuyerPortalPage() {
 
                       {/* Compliance Footer */}
                       <div className="flex items-center justify-between text-[10px] text-slate-400 pt-2 border-t border-slate-100">
-                        <span>Certified CPCB E-Waste Recycling Protocol</span>
-                        <span className="text-emerald-700 font-bold">✓ 100 Green Credits Earned</span>
+                        <span>Certified CPCB E-Waste Recycling Token</span>
+                        <span className="text-emerald-700 font-bold">✓ Intimation SMS Sent</span>
                       </div>
                     </div>
 
@@ -511,7 +529,7 @@ export default function BuyerPortalPage() {
                         className="px-4 py-2.5 text-xs font-bold rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center gap-1.5 cursor-pointer"
                       >
                         <MdPrint className="w-4 h-4" />
-                        Print / Download Receipt
+                        Print / Download Token
                       </button>
                       <button
                         type="button"
@@ -523,20 +541,20 @@ export default function BuyerPortalPage() {
                     </div>
                   </div>
                 ) : isProcessingPayment ? (
-                  /* ── PAYMENT LOADER ────────────────────────────────────────── */
+                  /* ── LOADER ────────────────────────────────────────── */
                   <div className="py-12 flex flex-col items-center justify-center text-center gap-4">
                     <div className="w-16 h-16 rounded-full border-4 border-[var(--color-primary)] border-t-transparent animate-spin flex items-center justify-center">
                       <MdPayment className="w-8 h-8 text-[var(--color-primary)]" />
                     </div>
                     <div>
-                      <h4 className="text-base font-bold text-slate-900">Processing Payment...</h4>
+                      <h4 className="text-base font-bold text-slate-900">Sending Pickup Intimation to Seller...</h4>
                       <p className="text-xs text-slate-500 mt-1">
-                        Securely completing ₹{bidAmount || activeItem.price.replace(/[^0-9]/g, "")} transaction via {paymentMethod}...
+                        Notifying {activeItem.sellerName} of collection date {pickupDate} ({paymentMethod})...
                       </p>
                     </div>
                   </div>
                 ) : (
-                  /* ── CHECKOUT & PAYMENT FORM ──────────────────────────────── */
+                  /* ── CHECKOUT & PICKUP INTIMATION FORM ──────────────────────────────── */
                   <form onSubmit={handleProcessPayment} className="flex flex-col gap-4">
                     {/* Item Preview Card */}
                     <div className="flex gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
@@ -548,14 +566,14 @@ export default function BuyerPortalPage() {
                       />
                       <div className="flex flex-col justify-center gap-1 text-xs min-w-0">
                         <span className="font-bold text-slate-900 truncate">{activeItem.deviceName}</span>
-                        <span className="text-slate-500">{activeItem.category} · {activeItem.weightKg} kg</span>
+                        <span className="text-slate-500">Seller: {activeItem.sellerName} ({activeItem.sellerCity})</span>
                         <span className="font-bold text-emerald-700">Asking Price: {activeItem.price}</span>
                       </div>
                     </div>
 
-                    {/* Bid/Amount Input */}
+                    {/* Price Amount Input */}
                     <div className="flex flex-col gap-1">
-                      <label className="text-xs font-bold text-slate-700">Purchase Amount (₹) *</label>
+                      <label className="text-xs font-bold text-slate-700">Agreed Purchase Price (₹) *</label>
                       <div className="relative">
                         <MdCurrencyRupee className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                         <input
@@ -570,16 +588,16 @@ export default function BuyerPortalPage() {
                     </div>
 
                     {/* Payment Method Selector */}
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
                         <MdPayment className="w-4 h-4 text-[var(--color-primary)]" />
-                        Select Payment Method *
+                        Payment Method *
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         {[
-                          { id: "UPI", label: "UPI / QR / GPay", icon: MdQrCodeScanner },
-                          { id: "CARD", label: "Card / NetBank", icon: MdCreditCard },
                           { id: "CASH", label: "Cash on Pickup", icon: MdLocalAtm },
+                          { id: "UPI", label: "UPI / GPay / QR", icon: MdQrCodeScanner },
+                          { id: "CARD", label: "Card / NetBank", icon: MdCreditCard },
                         ].map((pm) => {
                           const Icon = pm.icon;
                           const selected = paymentMethod === pm.id;
@@ -602,6 +620,56 @@ export default function BuyerPortalPage() {
                       </div>
                     </div>
 
+                    {/* Pickup Collection Date & Time Slot */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                          <MdCalendarMonth className="w-4 h-4 text-blue-600" />
+                          Collection Date *
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          min={new Date().toISOString().split("T")[0]}
+                          value={pickupDate}
+                          onChange={(e) => setPickupDate(e.target.value)}
+                          className="w-full h-10 px-3 text-xs font-bold rounded-xl border border-slate-300 focus:border-[var(--color-primary)] outline-none"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                          <MdAccessTime className="w-4 h-4 text-amber-600" />
+                          Preferred Time Slot *
+                        </label>
+                        <select
+                          value={pickupTimeSlot}
+                          onChange={(e) => setPickupTimeSlot(e.target.value)}
+                          className="w-full h-10 px-3 text-xs font-semibold rounded-xl border border-slate-300 focus:border-[var(--color-primary)] outline-none bg-white"
+                        >
+                          <option value="09:00 AM - 12:00 PM">09:00 AM - 12:00 PM (Morning)</option>
+                          <option value="10:00 AM - 01:00 PM">10:00 AM - 01:00 PM (Midday)</option>
+                          <option value="02:00 PM - 05:00 PM">02:00 PM - 05:00 PM (Afternoon)</option>
+                          <option value="05:00 PM - 08:00 PM">05:00 PM - 08:00 PM (Evening)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Note / Message for Seller */}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1">
+                        <MdOutlineMessage className="w-4 h-4 text-emerald-600" />
+                        Message / Intimation Note for Seller
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={pickupNotes}
+                        onChange={(e) => setPickupNotes(e.target.value)}
+                        placeholder="e.g. I will arrive with cash at 10 AM. Please keep scrap item ready."
+                        className="w-full p-2.5 text-xs rounded-xl border border-slate-300 focus:border-[var(--color-primary)] outline-none"
+                      />
+                    </div>
+
                     {/* Submit Button */}
                     <div className="flex items-center gap-2 pt-2">
                       <button
@@ -616,7 +684,7 @@ export default function BuyerPortalPage() {
                         className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] flex items-center justify-center gap-1.5 cursor-pointer shadow"
                       >
                         <MdCheckCircle className="w-4 h-4" />
-                        Pay ₹{bidAmount || activeItem.price.replace(/[^0-9]/g, "")} & Confirm Order
+                        Confirm & Send Intimation to Seller
                       </button>
                     </div>
                   </form>
