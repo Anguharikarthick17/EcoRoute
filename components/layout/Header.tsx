@@ -50,7 +50,7 @@ export function Header() {
 
       {/* ── Top Government Bar ────────────────────────────────── */}
       <div className="bg-[var(--color-primary)] text-white relative z-[999]">
-        <div className="w-full px-6 sm:px-10 md:px-12 lg:px-14">
+        <div className="w-full px-7 sm:px-8 md:px-8 lg:px-8">
           <div className="flex items-center justify-between py-2 gap-4 flex-wrap">
 
             {/* Left: Emblem + Portal name */}
@@ -206,7 +206,7 @@ export function Header() {
 
       {/* ── Digital India bar ─────────────────────────────────── */}
       <div className="bg-[var(--color-primary-light)] border-b border-[var(--color-primary-dark)]/40 text-white/90">
-        <div className="w-full px-6 sm:px-10 md:px-12 lg:px-14">
+        <div className="w-full px-7 sm:px-8 md:px-8 lg:px-8">
           <div className="flex items-center justify-between py-1 text-[11px] font-medium flex-wrap gap-2">
             <div className="flex items-center gap-3">
               <Link

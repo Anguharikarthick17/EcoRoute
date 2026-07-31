@@ -49,7 +49,7 @@ export function Navbar() {
     return () => window.removeEventListener("storage", checkUser);
   }, [pathname]);
 
-  // Shadow on scroll & active section detection on homepage
+  // Active section detection on homepage
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 8);
@@ -97,7 +97,7 @@ export function Navbar() {
       const targetElement = document.getElementById(item.sectionId);
       if (targetElement) {
         e.preventDefault();
-        const yOffset = -20;
+        const yOffset = -15;
         const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
         setActiveSection(item.sectionId);
@@ -125,13 +125,13 @@ export function Navbar() {
       className={cn(
         "relative w-full bg-white",
         "border-b border-slate-200/80 transition-all duration-250 ease-in-out",
-        "shadow-[0_4px_18px_rgba(0,0,0,0.08)]",
+        "shadow-[0_4px_12px_rgba(0,0,0,0.08)]",
       )}
     >
-      {/* 100% Full-Width Bar Container with 40-60px padding */}
-      <div className="w-full px-6 sm:px-10 md:px-12 lg:px-14 h-[90px] flex items-center justify-between relative">
+      {/* Compact 74px Height Full-Width Container with 28-32px side padding */}
+      <div className="w-full px-7 sm:px-8 h-[74px] flex items-center justify-between relative">
 
-        {/* ── 1. FAR LEFT: Official Emblem & Logo ─────────────────────────────────────── */}
+        {/* ── 1. FAR LEFT: Compact Logo (44px Icon) ─────────────────────────────────── */}
         <Link
           href="/"
           onClick={(e) => {
@@ -140,27 +140,27 @@ export function Navbar() {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }
           }}
-          className="flex items-center gap-3 shrink-0 no-underline group transition-transform duration-200 hover:scale-[1.01]"
+          className="flex items-center gap-2.5 shrink-0 no-underline group transition-transform duration-200 hover:scale-[1.01]"
           aria-label="EcoRoute — Government E-Waste Portal Homepage"
         >
           <div
-            className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white shrink-0 shadow-md group-hover:shadow-lg transition-shadow duration-250"
+            className="flex items-center justify-center w-[44px] h-[44px] rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white shrink-0 shadow-sm group-hover:shadow-md transition-shadow duration-250"
             aria-hidden="true"
           >
-            <MdRecycling className="w-7 h-7 animate-spin-slow" />
+            <MdRecycling className="w-6 h-6 animate-spin-slow" />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="text-xl font-black text-[var(--color-primary)] tracking-tight font-sans">
+            <span className="text-lg font-black text-[var(--color-primary)] tracking-tight font-sans">
               EcoRoute
             </span>
-            <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider hidden sm:block">
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider hidden sm:block leading-none mt-0.5">
               National E-Waste Portal
             </span>
           </div>
         </Link>
 
-        {/* ── 2. PERFECTLY CENTERED: Desktop Navigation Links (Gap 32–40px) ───────────────── */}
-        <ul role="list" className="hidden lg:flex items-center justify-center gap-8 md:gap-10 absolute left-1/2 -translate-x-1/2">
+        {/* ── 2. PERFECTLY CENTERED: Desktop Navigation Links (Gap 24–32px) ───────────────── */}
+        <ul role="list" className="hidden lg:flex items-center justify-center gap-6 md:gap-7 lg:gap-8 absolute left-1/2 -translate-x-1/2">
           {NAV_ROUTES.map((item) => {
             const isPageActive =
               item.href === "/"
@@ -168,16 +168,16 @@ export function Navbar() {
                 : pathname.startsWith(item.href) || (pathname === "/" && activeSection === item.sectionId);
 
             return (
-              <li key={item.href} role="none" className="relative py-2">
+              <li key={item.href} role="none" className="relative py-1">
                 <Link
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item)}
                   aria-current={isPageActive ? "page" : undefined}
                   className={cn(
-                    "relative text-base font-semibold transition-all duration-250 ease-in-out no-underline py-1",
+                    "relative text-sm font-semibold transition-all duration-250 ease-in-out no-underline py-1",
                     "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-primary)] rounded",
                     isPageActive
-                      ? "text-[var(--color-primary)] font-extrabold after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-[3.5px] after:bg-[var(--color-primary)] after:rounded-full"
+                      ? "text-[var(--color-primary)] font-extrabold after:content-[''] after:absolute after:-bottom-2.5 after:left-0 after:w-full after:h-[3px] after:bg-[var(--color-primary)] after:rounded-full"
                       : "text-slate-700 hover:text-[var(--color-primary)] hover:font-bold",
                   )}
                 >
@@ -188,15 +188,15 @@ export function Navbar() {
           })}
         </ul>
 
-        {/* ── 3. FAR RIGHT: Auth / Profile Action Buttons ─────────────────────────────── */}
-        <div className="hidden lg:flex items-center gap-4 shrink-0">
+        {/* ── 3. FAR RIGHT: Proportional Auth Buttons (40px Height) ───────────────────────── */}
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
           {isDashboardRoute ? (
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3">
               <Link
                 href={user?.role === "buyer" ? "/buyer" : user?.role === "admin" ? "/admin" : "/dashboard"}
-                className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-slate-100/90 hover:bg-slate-200/90 border border-slate-200 transition-all duration-250 no-underline shadow-xs"
+                className="flex items-center gap-2 px-3.5 h-[40px] rounded-lg bg-slate-100/90 hover:bg-slate-200/90 border border-slate-200 transition-all duration-250 no-underline shadow-xs"
               >
-                <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white text-xs font-black flex items-center justify-center shrink-0 shadow-xs">
+                <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-[11px] font-black flex items-center justify-center shrink-0 shadow-xs">
                   {initials}
                 </div>
                 <span className="text-xs font-extrabold text-slate-800">
@@ -206,21 +206,21 @@ export function Navbar() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-extrabold rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all duration-250 cursor-pointer shadow-sm hover:shadow-md"
+                className="inline-flex items-center gap-1.5 px-4 h-[40px] text-xs font-extrabold rounded-lg bg-red-600 text-white hover:bg-red-700 transition-all duration-250 cursor-pointer shadow-xs hover:shadow-sm"
               >
-                <MdLogout className="w-4 h-4" />
+                <MdLogout className="w-3.5 h-3.5" />
                 Sign Out
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <Link
                 href="/login"
                 className={cn(
-                  "px-6 py-2.5 text-sm font-bold rounded-xl",
+                  "flex items-center justify-center px-4.5 h-[40px] text-xs font-bold rounded-lg",
                   "text-[var(--color-primary)] border-2 border-[var(--color-primary)] bg-white",
                   "hover:bg-[var(--color-primary)] hover:text-white",
-                  "transition-all duration-250 ease-in-out no-underline shadow-xs hover:shadow-md",
+                  "transition-all duration-250 ease-in-out no-underline shadow-xs hover:shadow-sm",
                 )}
               >
                 {t("nav.login")}
@@ -228,10 +228,10 @@ export function Navbar() {
               <Link
                 href="/register"
                 className={cn(
-                  "px-6 py-2.5 text-sm font-extrabold rounded-xl",
+                  "flex items-center justify-center px-5 h-[40px] text-xs font-extrabold rounded-lg",
                   "bg-[var(--color-primary)] text-white border-2 border-[var(--color-primary)]",
                   "hover:bg-[var(--color-primary-dark)] hover:border-[var(--color-primary-dark)]",
-                  "transition-all duration-250 ease-in-out no-underline shadow-md hover:shadow-lg",
+                  "transition-all duration-250 ease-in-out no-underline shadow-sm hover:shadow-md",
                 )}
               >
                 {t("nav.register")}
@@ -249,12 +249,12 @@ export function Navbar() {
           aria-expanded={menuOpen}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           onClick={() => setMenuOpen((v) => !v)}
-          className="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl text-slate-800 hover:bg-slate-100 transition-colors duration-200"
+          className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors duration-200"
         >
           {menuOpen ? (
-            <MdClose className="w-7 h-7" aria-hidden="true" />
+            <MdClose className="w-6 h-6" aria-hidden="true" />
           ) : (
-            <MdMenu className="w-7 h-7" aria-hidden="true" />
+            <MdMenu className="w-6 h-6" aria-hidden="true" />
           )}
         </button>
       </div>
@@ -274,7 +274,7 @@ export function Navbar() {
             transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
             className="lg:hidden overflow-hidden border-t border-slate-200 bg-white shadow-2xl"
           >
-            <div className="px-6 py-6 flex flex-col gap-3">
+            <div className="px-6 py-5 flex flex-col gap-2.5">
               <ul role="list" className="flex flex-col gap-1">
                 {NAV_ROUTES.map((item) => {
                   const isPageActive =
@@ -289,7 +289,7 @@ export function Navbar() {
                         onClick={(e) => handleNavClick(e, item)}
                         aria-current={isPageActive ? "page" : undefined}
                         className={cn(
-                          "block px-4 py-3 text-base rounded-xl transition-all duration-200 no-underline",
+                          "block px-4 py-2.5 text-sm rounded-lg transition-all duration-200 no-underline",
                           isPageActive
                             ? "text-[var(--color-primary)] font-black bg-[var(--color-primary)]/8"
                             : "text-slate-800 font-semibold hover:bg-slate-100",
@@ -302,28 +302,28 @@ export function Navbar() {
                 })}
               </ul>
 
-              <hr className="my-2 border-slate-200" />
+              <hr className="my-1 border-slate-200" />
 
-              <div className="flex flex-col gap-3 pt-1">
+              <div className="flex flex-col gap-2 pt-1">
                 {isDashboardRoute ? (
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold rounded-xl bg-red-600 text-white hover:bg-red-700 transition cursor-pointer shadow-md"
+                    className="flex items-center justify-center gap-2 px-4 h-[40px] text-xs font-bold rounded-lg bg-red-600 text-white hover:bg-red-700 transition cursor-pointer shadow-xs"
                   >
-                    <MdLogout className="w-5 h-5" />
+                    <MdLogout className="w-4 h-4" />
                     Sign Out
                   </button>
                 ) : (
                   <>
                     <Link
                       href="/login"
-                      className="flex items-center justify-center px-5 py-3 text-sm font-bold rounded-xl text-[var(--color-primary)] border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-200 no-underline shadow-xs"
+                      className="flex items-center justify-center px-4 h-[40px] text-xs font-bold rounded-lg text-[var(--color-primary)] border-2 border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white transition-all duration-200 no-underline shadow-xs"
                     >
                       {t("nav.login")}
                     </Link>
                     <Link
                       href="/register"
-                      className="flex items-center justify-center px-5 py-3 text-sm font-bold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition-colors duration-200 no-underline shadow-md"
+                      className="flex items-center justify-center px-4 h-[40px] text-xs font-bold rounded-lg bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition-colors duration-200 no-underline shadow-sm"
                     >
                       {t("nav.register")}
                     </Link>
