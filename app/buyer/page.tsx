@@ -78,6 +78,10 @@ export default function BuyerPortalPage() {
   });
   const [pickupTimeSlot, setPickupTimeSlot] = useState("10:00 AM - 01:00 PM");
   const [pickupNotes, setPickupNotes] = useState("I will arrive with exact cash to collect the item.");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [completedOrderData, setCompletedOrderData] = useState<any>(null);
@@ -658,6 +662,91 @@ export default function BuyerPortalPage() {
                           <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/80">✓ PhonePe</span>
                           <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/80">✓ Paytm</span>
                           <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/80">✓ BHIM</span>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* ── CARD / NETBANKING DETAILS FORM ───────────────────────────── */}
+                    {paymentMethod === "CARD" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex flex-col gap-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <MdCreditCard className="w-4 h-4 text-blue-600" />
+                            Credit / Debit Card Details
+                          </span>
+                          <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500">
+                            <span className="bg-slate-200 px-1.5 py-0.5 rounded">Visa</span>
+                            <span className="bg-slate-200 px-1.5 py-0.5 rounded">Mastercard</span>
+                            <span className="bg-slate-200 px-1.5 py-0.5 rounded">RuPay</span>
+                          </div>
+                        </div>
+
+                        {/* Card Number */}
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[11px] font-bold text-slate-600">Card Number *</label>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              required
+                              maxLength={19}
+                              placeholder="4532 •••• •••• 8941"
+                              value={cardNumber}
+                              onChange={(e) => setCardNumber(e.target.value)}
+                              className="w-full h-9 px-3 text-xs font-mono font-bold rounded-xl border border-slate-300 focus:border-[var(--color-primary)] outline-none bg-white"
+                            />
+                            <MdCreditCard className="w-4 h-4 text-slate-400 absolute right-3 top-2.5" />
+                          </div>
+                        </div>
+
+                        {/* Cardholder Name */}
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[11px] font-bold text-slate-600">Cardholder Name *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="Full name as printed on card"
+                            value={cardName}
+                            onChange={(e) => setCardName(e.target.value)}
+                            className="w-full h-9 px-3 text-xs font-semibold rounded-xl border border-slate-300 focus:border-[var(--color-primary)] outline-none bg-white uppercase"
+                          />
+                        </div>
+
+                        {/* Expiry & CVV */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[11px] font-bold text-slate-600">Expiry Date (MM/YY) *</label>
+                            <input
+                              type="text"
+                              required
+                              maxLength={5}
+                              placeholder="MM / YY"
+                              value={cardExpiry}
+                              onChange={(e) => setCardExpiry(e.target.value)}
+                              className="w-full h-9 px-3 text-xs font-mono font-bold rounded-xl border border-slate-300 focus:border-[var(--color-primary)] outline-none bg-white text-center"
+                            />
+                          </div>
+
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[11px] font-bold text-slate-600">CVV / Security Code *</label>
+                            <input
+                              type="password"
+                              required
+                              maxLength={4}
+                              placeholder="•••"
+                              value={cardCvv}
+                              onChange={(e) => setCardCvv(e.target.value)}
+                              className="w-full h-9 px-3 text-xs font-mono font-bold rounded-xl border border-slate-300 focus:border-[var(--color-primary)] outline-none bg-white text-center"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="text-[10px] text-slate-400 flex items-center gap-1 pt-1">
+                          <span>🔒 256-Bit SSL PCI-DSS Encrypted Payment Protocol</span>
                         </div>
                       </motion.div>
                     )}
