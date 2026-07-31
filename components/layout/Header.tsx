@@ -14,7 +14,7 @@ import {
 
 /**
  * Header — Government of India style top bar.
- * Language switcher changes the entire site language via LanguageContext.
+ * Full-width 100% browser alignment with 40-60px horizontal padding.
  */
 export function Header() {
   const [currentDate, setCurrentDate] = useState<string>("");
@@ -50,8 +50,8 @@ export function Header() {
 
       {/* ── Top Government Bar ────────────────────────────────── */}
       <div className="bg-[var(--color-primary)] text-white relative z-[999]">
-        <div className="container-gov">
-          <div className="flex items-center justify-between py-1.5 gap-4 flex-wrap">
+        <div className="w-full px-6 sm:px-10 md:px-12 lg:px-14">
+          <div className="flex items-center justify-between py-2 gap-4 flex-wrap">
 
             {/* Left: Emblem + Portal name */}
             <div className="flex items-center gap-3">
@@ -59,13 +59,13 @@ export function Header() {
                 className="flex items-center justify-center w-7 h-7 rounded-full bg-white/15 border border-white/25 shrink-0"
                 aria-hidden="true"
               >
-                <span className="text-[10px] font-bold text-white">🇮🇳</span>
+                <span className="text-[11px] font-bold text-white">🇮🇳</span>
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-white/90">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-white/95">
                   {t("header.govt")}
                 </span>
-                <span className="text-[10px] text-white/65 hidden sm:block">
+                <span className="text-[10px] text-white/70 hidden sm:block font-medium">
                   {GOV_INFO.ministry}
                 </span>
               </div>
@@ -75,16 +75,16 @@ export function Header() {
 
               {/* Official portal badge */}
               <span
-                className="hidden md:inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-white/80"
+                className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/85"
                 aria-label="Official Government Portal"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-gov-stripe-2)] shrink-0" aria-hidden="true" />
+                <span className="w-2 h-2 rounded-full bg-[var(--color-gov-stripe-2)] shrink-0 animate-pulse" aria-hidden="true" />
                 {t("header.portal")}
               </span>
             </div>
 
             {/* Right: Helpline + Language Selector + Date */}
-            <div className="flex items-center gap-4 text-[11px]">
+            <div className="flex items-center gap-4 sm:gap-6 text-[11px]">
 
               {/* Helpline */}
               <a
@@ -93,7 +93,7 @@ export function Header() {
                 aria-label={`${GOV_INFO.helplineLabel}: ${GOV_INFO.helpline}`}
               >
                 <MdPhone className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                <span className="font-semibold">{GOV_INFO.helpline}</span>
+                <span className="font-bold">{GOV_INFO.helpline}</span>
                 <span className="hidden sm:inline text-white/60">· {t("header.tollFree")}</span>
               </a>
 
@@ -110,14 +110,13 @@ export function Header() {
                   aria-label={`${t("lang.select")}: ${currentLanguage.nativeLabel}`}
                   onClick={() => setLangOpen((v) => !v)}
                   className={cn(
-                    "flex items-center gap-1.5 text-white/90 hover:text-white",
-                    "transition-colors duration-150 py-0.5 px-1 rounded",
+                    "flex items-center gap-1.5 text-white/90 hover:text-white font-semibold",
+                    "transition-colors duration-150 py-0.5 px-1.5 rounded bg-white/10 hover:bg-white/20",
                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
                   )}
                 >
-                  <MdLanguage className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                  {/* Show native label on desktop */}
-                  <span className="hidden sm:inline font-medium">
+                  <MdLanguage className="w-4 h-4 shrink-0 text-cyan-300" aria-hidden="true" />
+                  <span className="font-bold text-xs">
                     {currentLanguage.nativeLabel}
                   </span>
                   <MdKeyboardArrowDown
@@ -137,14 +136,13 @@ export function Header() {
                     aria-label={t("lang.select")}
                     className={cn(
                       "absolute right-0 top-full mt-2 z-[9999]",
-                      "bg-white border border-gray-200 rounded-lg",
-                      "shadow-2xl min-w-[200px] overflow-hidden",
+                      "bg-white border border-gray-200 rounded-xl",
+                      "shadow-2xl min-w-[210px] overflow-hidden",
                       "py-1 text-gray-900",
                     )}
                   >
-                    {/* Dropdown header */}
-                    <div className="px-3 py-2 border-b border-gray-100">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                    <div className="px-3.5 py-2 border-b border-gray-100 bg-slate-50">
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500">
                         {t("lang.select")}
                       </p>
                     </div>
@@ -162,16 +160,16 @@ export function Header() {
                             setLangOpen(false);
                           }}
                           className={cn(
-                            "w-full text-left px-3 py-2.5",
+                            "w-full text-left px-3.5 py-2.5",
                             "flex items-center justify-between gap-3",
-                            "transition-colors duration-100",
+                            "transition-colors duration-100 cursor-pointer",
                             isActive
-                              ? "bg-[var(--color-primary)]/8 text-[var(--color-primary)]"
-                              : "text-gray-700 hover:bg-gray-50",
+                              ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold"
+                              : "text-gray-700 hover:bg-gray-50 font-medium",
                           )}
                         >
                           <div className="flex flex-col leading-tight">
-                            <span className={cn("text-sm font-medium", isActive && "font-semibold")}>
+                            <span className={cn("text-sm", isActive && "font-extrabold")}>
                               {language.nativeLabel}
                             </span>
                             <span className="text-[11px] text-gray-400">
@@ -194,7 +192,7 @@ export function Header() {
                   <div className="h-4 w-px bg-white/25 hidden lg:block" aria-hidden="true" />
                   <time
                     dateTime={new Date().toISOString().split("T")[0]}
-                    className="text-white/65 hidden lg:block"
+                    className="text-white/70 hidden lg:block font-medium"
                     aria-label={`Today's date: ${currentDate}`}
                   >
                     {currentDate}
@@ -208,7 +206,7 @@ export function Header() {
 
       {/* ── Digital India bar ─────────────────────────────────── */}
       <div className="bg-[var(--color-primary-light)] border-b border-[var(--color-primary-dark)]/40 text-white/90">
-        <div className="container-gov">
+        <div className="w-full px-6 sm:px-10 md:px-12 lg:px-14">
           <div className="flex items-center justify-between py-1 text-[11px] font-medium flex-wrap gap-2">
             <div className="flex items-center gap-3">
               <Link
