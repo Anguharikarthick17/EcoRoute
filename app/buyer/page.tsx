@@ -644,9 +644,6 @@ export default function BuyerPortalPage() {
                           <span className="font-extrabold text-sm text-emerald-700">
                             Pay ₹{bidAmount || activeItem.price.replace(/[^0-9]/g, "")}
                           </span>
-                          <span className="text-[11px] text-slate-500">
-                            Merchant: <strong>M ANGU</strong> · <strong className="font-mono">batmanangu@okhdfcbank</strong>
-                          </span>
                         </div>
                       </motion.div>
                     )}
