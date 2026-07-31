@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   MdPhotoCamera,
   MdCloudUpload,
-  MdLocationOn,
   MdDelete,
   MdCheckCircle,
   MdPhone,
@@ -133,6 +132,9 @@ const makeItem = (): ScrapItem => ({
   collapsed: false,
 });
 
+// High contrast input styling helper
+const inputBaseStyle = "w-full h-11 px-3.5 bg-white text-slate-900 font-semibold text-sm rounded-xl border border-slate-300 placeholder:text-slate-400 placeholder:font-normal focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none transition-all shadow-xs";
+
 // ─────────────────────────────────────────────────────────────────────────────
 export default function SellScrapPage() {
   const router = useRouter();
@@ -166,11 +168,11 @@ export default function SellScrapPage() {
       const u = JSON.parse(stored);
       setContact((p) => ({
         ...p,
-        sellerName: u.fullName || "",
-        email: u.email || "",
-        phone: u.mobile || "",
-        whatsapp: u.mobile || "",
-        city: u.city || "",
+        sellerName: u.fullName || p.sellerName,
+        email: u.email || p.email,
+        phone: u.mobile || p.phone,
+        whatsapp: u.mobile || p.whatsapp,
+        city: u.city || p.city,
         state: u.state || "Tamil Nadu",
       }));
     } catch {}
@@ -424,27 +426,27 @@ export default function SellScrapPage() {
   // ── Success ──────────────────────────────────────────────────────────────────
   if (submitted) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-5 text-center">
+      <div className="flex flex-col items-center justify-center py-16 gap-5 text-center bg-white/95 backdrop-blur-md rounded-2xl p-8 border border-slate-200 shadow-xl">
         <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
           <MdCheckCircle className="w-12 h-12 text-emerald-600" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900">
+        <h2 className="text-2xl font-black text-slate-900">
           {items.length} Item{items.length > 1 ? "s" : ""} AI-Verified & Listed Successfully!
         </h2>
-        <p className="text-sm text-slate-600 max-w-md">
+        <p className="text-sm text-slate-600 max-w-md font-medium leading-relaxed">
           Your scrap items have been scanned by AI and published to the EcoRoute Live Marketplace.
           Verified Recyclers and Government Officers can now view and contact you.
         </p>
         <div className="flex items-center gap-3 mt-2">
           <button
             onClick={() => { setSubmitted(false); setItems([makeItem()]); }}
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer"
+            className="px-5 py-2.5 text-sm font-extrabold rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 cursor-pointer shadow-xs"
           >
             List More Items
           </button>
           <button
             onClick={() => router.push("/#marketplace")}
-            className="px-5 py-2.5 text-sm font-bold rounded-lg bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] cursor-pointer flex items-center gap-2"
+            className="px-6 py-2.5 text-sm font-extrabold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] cursor-pointer flex items-center gap-2 shadow-md"
           >
             <MdStorefront className="w-4 h-4" />
             View Marketplace
@@ -454,7 +456,7 @@ export default function SellScrapPage() {
     );
   }
 
-  // ── Form ─────────────────────────────────────────────────────────────────────
+  // ── Main Dashboard Upload View ───────────────────────────────────────────────
   return (
     <div className="flex flex-col gap-8 relative">
 
@@ -551,40 +553,40 @@ export default function SellScrapPage() {
         </div>
       )}
 
-      {/* Header */}
-      <div className="border-b border-slate-200 pb-5">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full bg-indigo-100 text-indigo-700 flex items-center gap-1">
-            <MdAutoAwesome className="w-3 h-3 text-indigo-600" /> AI Vision Scanner Enabled
+      {/* Header Banner */}
+      <div className="border-b border-slate-200/80 pb-5">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="px-3 py-1 text-xs font-black uppercase tracking-wider rounded-full bg-indigo-100 text-indigo-800 flex items-center gap-1.5 shadow-2xs">
+            <MdAutoAwesome className="w-3.5 h-3.5 text-indigo-600" /> AI Vision Scanner Enabled
           </span>
         </div>
-        <h1 className="text-xl font-bold text-slate-900">Sell Your Scrap / E-Waste</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Sell Your Scrap / E-Waste</h1>
+        <p className="text-sm font-medium text-slate-600 mt-1">
           Take a photo using camera or upload — EcoRoute Vision AI will verify authenticity, identify the device, and auto-populate all scrap details and price!
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
 
-        {/* ── STEP 1: Scrap Items ────────────────────────────────────────────── */}
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center">1</span>
+        {/* ── STEP 1: Scrap Items Card ────────────────────────────────────────── */}
+        <section className="bg-white/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-lg flex flex-col gap-5">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2.5">
+              <span className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-xs font-black flex items-center justify-center shadow-xs">1</span>
               Scrap Items
-              <span className="ml-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">{items.length}</span>
+              <span className="ml-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs font-black">{items.length}</span>
             </h2>
             <button
               type="button"
               onClick={addItem}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold hover:bg-[var(--color-primary)]/20 transition cursor-pointer border border-[var(--color-primary)]/20"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-extrabold hover:bg-[var(--color-primary)]/20 transition cursor-pointer border border-[var(--color-primary)]/20 shadow-2xs"
             >
               <MdAdd className="w-4 h-4" />
               Add Another Item
             </button>
           </div>
 
-          {/* Item cards */}
+          {/* Item cards list */}
           <div className="flex flex-col gap-4">
             {items.map((item, idx) => (
               <ItemCard
@@ -608,146 +610,196 @@ export default function SellScrapPage() {
           <button
             type="button"
             onClick={addItem}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-[var(--color-primary)]/30 text-[var(--color-primary)] text-sm font-semibold hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 transition cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-dashed border-[var(--color-primary)]/40 text-[var(--color-primary)] text-sm font-extrabold hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 transition cursor-pointer"
           >
             <MdAdd className="w-5 h-5" />
             Add Another Scrap Item
           </button>
         </section>
 
-        {/* ── STEP 2: Contact ────────────────────────────────────────────────── */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center">2</span>
+        {/* ── STEP 2: Contact Details Card ────────────────────────────────────── */}
+        <section className="bg-white/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-lg flex flex-col gap-5">
+          <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2.5 border-b border-slate-100 pb-4">
+            <span className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-xs font-black flex items-center justify-center shadow-xs">2</span>
             Your Contact Details
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <FieldWrap label="Full Name" required error={errors.sellerName}>
               <div className="relative">
-                <MdPerson className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input type="text" value={contact.sellerName} onChange={(e) => setContact((p) => ({ ...p, sellerName: e.target.value }))}
+                <MdPerson className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5 pointer-events-none" />
+                <input
+                  type="text"
+                  value={contact.sellerName}
+                  onChange={(e) => setContact((p) => ({ ...p, sellerName: e.target.value }))}
                   placeholder="Your full name"
-                  className={`w-full h-10 pl-8 pr-3 text-sm rounded-lg border ${errors.sellerName ? "border-red-400" : "border-slate-300"} focus:border-[var(--color-primary)] outline-none`} />
+                  className={`${inputBaseStyle} pl-10 ${errors.sellerName ? "border-red-500 bg-red-50/20" : ""}`}
+                />
               </div>
             </FieldWrap>
 
             <FieldWrap label="Mobile Number" required error={errors.phone}>
               <div className="relative">
-                <MdPhone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input type="tel" value={contact.phone} maxLength={10} onChange={(e) => setContact((p) => ({ ...p, phone: e.target.value }))}
+                <MdPhone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5 pointer-events-none" />
+                <input
+                  type="tel"
+                  value={contact.phone}
+                  maxLength={10}
+                  onChange={(e) => setContact((p) => ({ ...p, phone: e.target.value }))}
                   placeholder="10-digit mobile"
-                  className={`w-full h-10 pl-8 pr-3 text-sm rounded-lg border ${errors.phone ? "border-red-400" : "border-slate-300"} focus:border-[var(--color-primary)] outline-none`} />
+                  className={`${inputBaseStyle} pl-10 ${errors.phone ? "border-red-500 bg-red-50/20" : ""}`}
+                />
               </div>
             </FieldWrap>
 
             <FieldWrap label="Email Address">
               <div className="relative">
-                <MdEmail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input type="email" value={contact.email} onChange={(e) => setContact((p) => ({ ...p, email: e.target.value }))}
-                  placeholder="your@email.com"
-                  className="w-full h-10 pl-8 pr-3 text-sm rounded-lg border border-slate-300 focus:border-[var(--color-primary)] outline-none" />
+                <MdEmail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5 pointer-events-none" />
+                <input
+                  type="email"
+                  value={contact.email}
+                  onChange={(e) => setContact((p) => ({ ...p, email: e.target.value }))}
+                  placeholder="yourname@example.com"
+                  className={`${inputBaseStyle} pl-10`}
+                />
               </div>
             </FieldWrap>
 
             <FieldWrap label="WhatsApp Number">
               <div className="relative">
-                <MdPhone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input type="tel" value={contact.whatsapp} maxLength={10} onChange={(e) => setContact((p) => ({ ...p, whatsapp: e.target.value }))}
+                <MdPhone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5 pointer-events-none" />
+                <input
+                  type="tel"
+                  value={contact.whatsapp}
+                  maxLength={10}
+                  onChange={(e) => setContact((p) => ({ ...p, whatsapp: e.target.value }))}
                   placeholder="WhatsApp (if different)"
-                  className="w-full h-10 pl-8 pr-3 text-sm rounded-lg border border-slate-300 focus:border-[var(--color-primary)] outline-none" />
+                  className={`${inputBaseStyle} pl-10`}
+                />
               </div>
             </FieldWrap>
           </div>
         </section>
 
-        {/* ── STEP 3: Location ───────────────────────────────────────────────── */}
-        <section className="flex flex-col gap-4">
-          <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center">3</span>
+        {/* ── STEP 3: Pickup Location Card ────────────────────────────────────── */}
+        <section className="bg-white/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-lg flex flex-col gap-5">
+          <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2.5 border-b border-slate-100 pb-4">
+            <span className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-xs font-black flex items-center justify-center shadow-xs">3</span>
             Pickup Location
           </h2>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <button type="button" onClick={detectLocation} disabled={isLocating}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--color-primary)] text-white text-sm font-bold hover:bg-[var(--color-primary-dark)] transition cursor-pointer disabled:opacity-60 w-fit">
+            <button
+              type="button"
+              onClick={detectLocation}
+              disabled={isLocating}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[var(--color-primary)] text-white text-xs font-extrabold hover:bg-[var(--color-primary-dark)] transition cursor-pointer disabled:opacity-60 w-fit shadow-md"
+            >
               <MdMyLocation className="w-4 h-4" />
-              {isLocating ? "Detecting..." : "Detect My Live Location"}
+              {isLocating ? "Detecting Live Location..." : "Detect My Live Location"}
             </button>
             {locationMsg && (
-              <span className={`text-xs font-medium ${locationMsg.startsWith("✓") ? "text-emerald-700" : "text-amber-700"}`}>
+              <span className={`text-xs font-extrabold ${locationMsg.startsWith("✓") ? "text-emerald-700" : "text-amber-700"}`}>
                 {locationMsg}
               </span>
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="sm:col-span-2">
               <FieldWrap label="Street Address / Area">
-                <input type="text" value={contact.address} onChange={(e) => setContact((p) => ({ ...p, address: e.target.value }))}
+                <input
+                  type="text"
+                  value={contact.address}
+                  onChange={(e) => setContact((p) => ({ ...p, address: e.target.value }))}
                   placeholder="House no, Street, Locality"
-                  className="w-full h-10 px-3 text-sm rounded-lg border border-slate-300 focus:border-[var(--color-primary)] outline-none" />
+                  className={inputBaseStyle}
+                />
               </FieldWrap>
             </div>
 
             <FieldWrap label="City" required error={errors.city}>
-              <input type="text" value={contact.city} onChange={(e) => setContact((p) => ({ ...p, city: e.target.value }))}
+              <input
+                type="text"
+                value={contact.city}
+                onChange={(e) => setContact((p) => ({ ...p, city: e.target.value }))}
                 placeholder="e.g. Chennai, Mumbai"
-                className={`w-full h-10 px-3 text-sm rounded-lg border ${errors.city ? "border-red-400" : "border-slate-300"} focus:border-[var(--color-primary)] outline-none`} />
+                className={`${inputBaseStyle} ${errors.city ? "border-red-500 bg-red-50/20" : ""}`}
+              />
             </FieldWrap>
 
             <FieldWrap label="PIN Code" required error={errors.pincode}>
-              <input type="text" value={contact.pincode} maxLength={6} onChange={(e) => setContact((p) => ({ ...p, pincode: e.target.value }))}
+              <input
+                type="text"
+                value={contact.pincode}
+                maxLength={6}
+                onChange={(e) => setContact((p) => ({ ...p, pincode: e.target.value }))}
                 placeholder="6-digit PIN"
-                className={`w-full h-10 px-3 text-sm rounded-lg border ${errors.pincode ? "border-red-400" : "border-slate-300"} focus:border-[var(--color-primary)] outline-none`} />
+                className={`${inputBaseStyle} ${errors.pincode ? "border-red-500 bg-red-50/20" : ""}`}
+              />
             </FieldWrap>
 
             <FieldWrap label="State">
-              <select value={contact.state} onChange={(e) => setContact((p) => ({ ...p, state: e.target.value }))}
-                className="w-full h-10 px-3 text-sm rounded-lg border border-slate-300 focus:border-[var(--color-primary)] outline-none bg-white">
+              <select
+                value={contact.state}
+                onChange={(e) => setContact((p) => ({ ...p, state: e.target.value }))}
+                className={inputBaseStyle}
+              >
                 {STATES.map((s) => <option key={s}>{s}</option>)}
               </select>
             </FieldWrap>
 
             {contact.latitude && (
               <FieldWrap label="GPS Coordinates">
-                <input readOnly value={`${contact.latitude}, ${contact.longitude}`}
-                  className="w-full h-10 px-3 text-sm rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 font-mono" />
+                <input
+                  readOnly
+                  value={`${contact.latitude}, ${contact.longitude}`}
+                  className="w-full h-11 px-3.5 text-xs font-mono font-bold rounded-xl border border-emerald-400 bg-emerald-50 text-emerald-900"
+                />
               </FieldWrap>
             )}
           </div>
         </section>
 
-        {/* ── Terms + Submit ─────────────────────────────────────────────────── */}
-        <section className="flex flex-col gap-4 pt-2 border-t border-slate-200">
+        {/* ── Terms + Submit Footer Bar ────────────────────────────────────────── */}
+        <section className="bg-white/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-slate-200/90 shadow-lg flex flex-col gap-5">
           <label className="flex items-start gap-3 cursor-pointer">
-            <input type="checkbox" checked={contact.acceptTerms}
+            <input
+              type="checkbox"
+              checked={contact.acceptTerms}
               onChange={(e) => setContact((p) => ({ ...p, acceptTerms: e.target.checked }))}
-              className="mt-0.5 w-4 h-4 accent-[var(--color-primary)]" />
-            <span className="text-xs text-slate-600 leading-relaxed">
-              I confirm I am the lawful owner of these scrap items and authorize their listing on the EcoRoute E-Waste Marketplace under <strong>E-Waste (Management) Rules, 2022</strong>.
+              className="mt-1 w-4 h-4 accent-[var(--color-primary)] rounded cursor-pointer"
+            />
+            <span className="text-xs font-bold text-slate-800 leading-relaxed">
+              I confirm I am the lawful owner of these scrap items and authorize their listing on the EcoRoute E-Waste Marketplace under <strong className="text-[var(--color-primary)]">E-Waste (Management) Rules, 2022</strong>.
             </span>
           </label>
-          {errors.acceptTerms && <p className="text-xs text-red-600">{errors.acceptTerms}</p>}
+          {errors.acceptTerms && <p className="text-xs font-bold text-red-600">{errors.acceptTerms}</p>}
 
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-400 flex items-center gap-1.5">
-              <MdInventory2 className="w-4 h-4" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-slate-100">
+            <span className="text-xs font-extrabold text-slate-700 flex items-center gap-2">
+              <MdInventory2 className="w-4 h-4 text-slate-500" />
               {items.length} item{items.length > 1 ? "s" : ""} ready to publish
             </span>
             <div className="flex items-center gap-3">
-              <button type="button" onClick={() => router.push("/dashboard")}
-                className="px-4 py-2.5 text-sm font-semibold rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer">
+              <button
+                type="button"
+                onClick={() => router.push("/dashboard")}
+                className="px-5 py-3 text-sm font-extrabold rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 transition shadow-xs cursor-pointer"
+              >
                 Cancel
               </button>
-              <button type="submit" disabled={isSubmitting}
-                className="px-7 py-2.5 text-sm font-bold rounded-lg bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition cursor-pointer disabled:opacity-60 flex items-center gap-2 shadow">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-7 py-3 text-sm font-extrabold rounded-xl bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition cursor-pointer disabled:opacity-60 flex items-center gap-2 shadow-lg"
+              >
                 {isSubmitting ? (
                   <span>Publishing {items.length} item{items.length > 1 ? "s" : ""}...</span>
                 ) : (
                   <>
-                    <MdCloudUpload className="w-4 h-4" />
+                    <MdCloudUpload className="w-5 h-5" />
                     Publish {items.length} Item{items.length > 1 ? "s" : ""} to Marketplace
-                    <MdArrowForward className="w-4 h-4" />
+                    <MdArrowForward className="w-5 h-5" />
                   </>
                 )}
               </button>
@@ -764,12 +816,12 @@ function FieldWrap({ label, required, error, children }: {
   label: string; required?: boolean; error?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="text-xs font-bold text-slate-700">
+    <div className="flex flex-col gap-1.5">
+      <label className="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
-      {error && <p className="text-xs text-red-600 flex items-center gap-1"><MdWarning className="w-3.5 h-3.5" />{error}</p>}
+      {error && <p className="text-xs font-semibold text-red-600 flex items-center gap-1 mt-0.5"><MdWarning className="w-3.5 h-3.5" />{error}</p>}
     </div>
   );
 }
@@ -803,61 +855,61 @@ function ItemCard({
   const priceError = errors[`price_${index}`];
 
   return (
-    <div className={`rounded-xl border-2 ${nameError || priceError ? "border-red-300" : "border-slate-200"} overflow-hidden bg-white shadow-sm`}>
+    <div className={`rounded-2xl border-2 ${nameError || priceError ? "border-red-300" : "border-slate-200/80"} overflow-hidden bg-white shadow-md`}>
       {/* Card header */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-200 cursor-pointer hover:bg-slate-100 transition"
+        className="flex items-center justify-between px-5 py-4 bg-slate-50/80 border-b border-slate-200/80 cursor-pointer hover:bg-slate-100/70 transition"
         onClick={onToggle}
       >
         <div className="flex items-center gap-3">
-          <span className="w-6 h-6 rounded-full bg-[var(--color-primary)] text-white text-xs font-bold flex items-center justify-center shrink-0">
+          <span className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white text-xs font-black flex items-center justify-center shrink-0 shadow-xs">
             {index + 1}
           </span>
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-slate-800 leading-tight flex items-center gap-2">
+            <span className="text-sm font-extrabold text-slate-900 leading-tight flex items-center gap-2">
               {item.deviceName || `Item ${index + 1}`}
               {item.aiVerified && (
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 flex items-center gap-1">
+                <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 flex items-center gap-1 shadow-2xs">
                   <MdAutoAwesome className="w-3 h-3 text-indigo-600" /> AI Verified
                 </span>
               )}
             </span>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-xs font-semibold text-slate-500 mt-0.5">
               {item.category} · {item.condition} · ₹{item.askingPrice}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {item.imageDataUrl && (
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">📷 Photo</span>
+            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">📷 Photo</span>
           )}
           {totalItems > 1 && (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onRemove(); }}
-              className="p-1 rounded hover:bg-red-50 text-red-400 hover:text-red-600 transition cursor-pointer"
+              className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 hover:text-red-700 transition cursor-pointer"
               title="Remove item"
             >
-              <MdDelete className="w-4 h-4" />
+              <MdDelete className="w-5 h-5" />
             </button>
           )}
-          {item.collapsed ? <MdExpandMore className="w-5 h-5 text-slate-400" /> : <MdExpandLess className="w-5 h-5 text-slate-400" />}
+          {item.collapsed ? <MdExpandMore className="w-5 h-5 text-slate-500" /> : <MdExpandLess className="w-5 h-5 text-slate-500" />}
         </div>
       </div>
 
       {/* Card body */}
       {!item.collapsed && (
-        <div className="p-4 flex flex-col gap-4">
+        <div className="p-5 flex flex-col gap-5">
 
           {/* AI Banner Verification Status */}
           {item.isScanningAI && (
-            <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center gap-3 animate-pulse">
+            <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center gap-3 animate-pulse shadow-2xs">
               <MdPsychology className="w-6 h-6 text-indigo-600 animate-spin" />
               <div className="flex flex-col">
-                <span className="text-xs font-bold text-indigo-900 flex items-center gap-1">
+                <span className="text-xs font-extrabold text-indigo-950 flex items-center gap-1">
                   ⚡ EcoRoute Vision AI Scanning & Verifying Photo...
                 </span>
-                <span className="text-[11px] text-indigo-700">
+                <span className="text-[11px] font-medium text-indigo-800">
                   Checking authenticity score, identifying device model, category, scrap metals & value...
                 </span>
               </div>
@@ -865,20 +917,20 @@ function ItemCard({
           )}
 
           {item.aiVerified && !item.isScanningAI && (
-            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 flex flex-col gap-2">
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col gap-2 shadow-2xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                <span className="text-xs font-extrabold text-emerald-950 flex items-center gap-1.5">
                   <MdVerifiedUser className="w-4 h-4 text-emerald-600" />
                   ⚡ AI Authentic Scrap Verified — {item.aiAuthenticityScore?.toFixed(1)}% Confidence
                 </span>
-                <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-200/60 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-200/70 px-2.5 py-0.5 rounded-full">
                   Real E-Waste Photo
                 </span>
               </div>
               {item.aiBadges && item.aiBadges.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {item.aiBadges.map((badge, bIdx) => (
-                    <span key={bIdx} className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-emerald-800">
+                    <span key={bIdx} className="text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-white border border-emerald-300 text-emerald-900 shadow-2xs">
                       ✦ {badge}
                     </span>
                   ))}
@@ -888,7 +940,7 @@ function ItemCard({
           )}
 
           {item.aiError && !item.isScanningAI && (
-            <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-2 text-amber-900 text-xs">
+            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5 text-amber-950 text-xs font-semibold">
               <MdWarning className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <span>{item.aiError}</span>
             </div>
@@ -896,38 +948,38 @@ function ItemCard({
 
           {/* Photo Container */}
           {item.imageDataUrl ? (
-            <div className="relative w-full max-w-xs h-44 rounded-xl overflow-hidden border-2 border-[var(--color-primary)] group shadow">
+            <div className="relative w-full max-w-xs h-44 rounded-xl overflow-hidden border-2 border-[var(--color-primary)] group shadow-md">
               <img src={item.imageDataUrl} alt="Preview" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
                 <button type="button" onClick={() => onUpdate({ imageDataUrl: null, aiVerified: false, aiBadges: [] })}
-                  className="px-2.5 py-1 rounded-lg bg-red-600 text-white text-xs font-semibold flex items-center gap-1 cursor-pointer">
-                  <MdDelete className="w-3.5 h-3.5" /> Remove
+                  className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold flex items-center gap-1 cursor-pointer shadow">
+                  <MdDelete className="w-4 h-4" /> Remove
                 </button>
                 <button type="button" onClick={() => fileRef.current?.click()}
-                  className="px-2.5 py-1 rounded-lg bg-white text-slate-800 text-xs font-semibold flex items-center gap-1 cursor-pointer">
-                  <MdFlip className="w-3.5 h-3.5" /> Replace
+                  className="px-3 py-1.5 rounded-lg bg-white text-slate-900 text-xs font-bold flex items-center gap-1 cursor-pointer shadow">
+                  <MdFlip className="w-4 h-4" /> Replace
                 </button>
               </div>
-              <span className="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
-                <MdCheckCircle className="w-3 h-3" /> Photo Uploaded
+              <span className="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
+                <MdCheckCircle className="w-3.5 h-3.5" /> Photo Uploaded
               </span>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col sm:flex-row gap-3">
               {/* LIVE CAMERA BUTTON */}
               <button
                 type="button"
                 onClick={onOpenCameraModal}
-                className="flex-1 flex flex-col items-center justify-center gap-1.5 h-32 rounded-xl border-2 border-dashed border-[var(--color-primary)] hover:bg-blue-50/50 cursor-pointer transition text-center p-3 bg-blue-50/20"
+                className="flex-1 flex flex-col items-center justify-center gap-1.5 h-36 rounded-xl border-2 border-dashed border-[var(--color-primary)] hover:bg-blue-50/70 cursor-pointer transition text-center p-3 bg-blue-50/30 shadow-2xs"
               >
-                <MdPhotoCamera className="w-8 h-8 text-[var(--color-primary)]" />
-                <span className="text-xs font-bold text-[var(--color-primary)]">Take Photo & AI Scan</span>
-                <span className="text-[10px] text-slate-500 font-semibold">Open Live Camera Stream</span>
+                <MdPhotoCamera className="w-9 h-9 text-[var(--color-primary)]" />
+                <span className="text-xs font-extrabold text-[var(--color-primary)]">Take Photo & AI Scan</span>
+                <span className="text-[11px] text-slate-600 font-bold">Open Live Camera Stream</span>
               </button>
 
               {/* UPLOAD FROM GALLERY BUTTON */}
               <label
-                className="flex-1 flex flex-col items-center justify-center gap-1.5 h-32 rounded-xl border-2 border-dashed border-slate-300 hover:border-[var(--color-primary)] hover:bg-blue-50/30 cursor-pointer transition text-center p-3"
+                className="flex-1 flex flex-col items-center justify-center gap-1.5 h-36 rounded-xl border-2 border-dashed border-slate-300 hover:border-[var(--color-primary)] hover:bg-blue-50/30 cursor-pointer transition text-center p-3 bg-slate-50/40 shadow-2xs"
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
               >
@@ -938,27 +990,31 @@ function ItemCard({
                   className="hidden"
                   onChange={(e) => e.target.files?.[0] && onImageFile(e.target.files[0])}
                 />
-                <MdCloudUpload className="w-8 h-8 text-slate-400" />
-                <span className="text-xs font-bold text-slate-700">Upload from Gallery</span>
-                <span className="text-[10px] text-slate-400">Select file / photo</span>
+                <MdCloudUpload className="w-9 h-9 text-slate-500" />
+                <span className="text-xs font-extrabold text-slate-800">Upload from Gallery</span>
+                <span className="text-[11px] text-slate-500 font-semibold">Select file / photo</span>
               </label>
             </div>
           )}
 
           {/* Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Device Name */}
             <div className="sm:col-span-2">
               <FieldWrap label="Device / Scrap Name" required error={nameError}>
                 <div className="relative">
-                  <input type="text" value={item.deviceName} onChange={(e) => onUpdate({ deviceName: e.target.value })}
+                  <input
+                    type="text"
+                    value={item.deviceName}
+                    onChange={(e) => onUpdate({ deviceName: e.target.value })}
                     placeholder="e.g. HP Laptop, Samsung TV..."
-                    className={`w-full h-10 px-3 text-sm rounded-lg border ${
-                      nameError ? "border-red-400" : item.aiAutoFilled ? "border-indigo-400 bg-indigo-50/40" : "border-slate-300"
-                    } focus:border-[var(--color-primary)] outline-none transition-colors`} />
+                    className={`${inputBaseStyle} ${
+                      nameError ? "border-red-500 bg-red-50/20" : item.aiAutoFilled ? "border-indigo-400 bg-indigo-50/50" : ""
+                    }`}
+                  />
                   {item.aiAutoFilled && item.deviceName && (
-                    <span className="absolute right-2.5 top-2.5 text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                      <MdAutoAwesome className="w-3 h-3 text-indigo-600" /> AI Filled
+                    <span className="absolute right-3 top-3 text-[10px] font-extrabold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-md flex items-center gap-1">
+                      <MdAutoAwesome className="w-3.5 h-3.5 text-indigo-600" /> AI Filled
                     </span>
                   )}
                 </div>
@@ -968,14 +1024,18 @@ function ItemCard({
             {/* Brand */}
             <FieldWrap label="Brand / Manufacturer">
               <div className="relative">
-                <input type="text" value={item.brand} onChange={(e) => onUpdate({ brand: e.target.value })}
+                <input
+                  type="text"
+                  value={item.brand}
+                  onChange={(e) => onUpdate({ brand: e.target.value })}
                   placeholder="e.g. Samsung, HP, LG"
-                  className={`w-full h-10 px-3 text-sm rounded-lg border ${
-                    item.aiAutoFilled && item.brand ? "border-indigo-400 bg-indigo-50/40" : "border-slate-300"
-                  } focus:border-[var(--color-primary)] outline-none transition-colors`} />
+                  className={`${inputBaseStyle} ${
+                    item.aiAutoFilled && item.brand ? "border-indigo-400 bg-indigo-50/50" : ""
+                  }`}
+                />
                 {item.aiAutoFilled && item.brand && (
-                  <span className="absolute right-2.5 top-2.5 text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                    <MdAutoAwesome className="w-3 h-3 text-indigo-600" /> AI Filled
+                  <span className="absolute right-3 top-3 text-[10px] font-extrabold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <MdAutoAwesome className="w-3.5 h-3.5 text-indigo-600" /> AI Filled
                   </span>
                 )}
               </div>
@@ -983,45 +1043,51 @@ function ItemCard({
 
             {/* Category */}
             <FieldWrap label="Category" required>
-              <select value={item.category} onChange={(e) => onCategoryChange(e.target.value)}
-                className={`w-full h-10 px-3 text-sm rounded-lg border ${
-                  item.aiAutoFilled ? "border-indigo-400 bg-indigo-50/40" : "border-slate-300 bg-white"
-                } focus:border-[var(--color-primary)] outline-none transition-colors`}>
+              <select
+                value={item.category}
+                onChange={(e) => onCategoryChange(e.target.value)}
+                className={`${inputBaseStyle} ${item.aiAutoFilled ? "border-indigo-400 bg-indigo-50/50" : ""}`}
+              >
                 {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
               </select>
             </FieldWrap>
 
             {/* Condition */}
             <FieldWrap label="Condition" required>
-              <select value={item.condition} onChange={(e) => onConditionChange(e.target.value)}
-                className={`w-full h-10 px-3 text-sm rounded-lg border ${
-                  item.aiAutoFilled ? "border-indigo-400 bg-indigo-50/40" : "border-slate-300 bg-white"
-                } focus:border-[var(--color-primary)] outline-none transition-colors`}>
+              <select
+                value={item.condition}
+                onChange={(e) => onConditionChange(e.target.value)}
+                className={`${inputBaseStyle} ${item.aiAutoFilled ? "border-indigo-400 bg-indigo-50/50" : ""}`}
+              >
                 {CONDITIONS.map((c) => <option key={c}>{c}</option>)}
               </select>
-              <p className="text-[10px] text-slate-400">Condition adjusts price automatically</p>
+              <p className="text-[11px] font-medium text-slate-500">Condition adjusts price automatically</p>
             </FieldWrap>
 
             {/* Asking Price */}
             <FieldWrap label="Asking Price (₹)" required error={priceError}>
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between mb-0.5">
                 {item.priceAutoFilled && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1">
-                    <MdAutoAwesome className="w-3 h-3" /> AI Valuated Price
+                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                    <MdAutoAwesome className="w-3 h-3 text-emerald-600" /> AI Valuated Price
                   </span>
                 )}
               </div>
               <div className="relative">
-                <MdCurrencyRupee className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                <input type="number" min="0" value={item.askingPrice}
+                <MdCurrencyRupee className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5 pointer-events-none" />
+                <input
+                  type="number"
+                  min="0"
+                  value={item.askingPrice}
                   onChange={(e) => onUpdate({ askingPrice: e.target.value, priceAutoFilled: false })}
                   placeholder="e.g. 1500"
-                  className={`w-full h-10 pl-8 pr-3 text-sm rounded-lg border transition-colors ${
-                    priceError ? "border-red-400" : item.priceAutoFilled ? "border-emerald-400 bg-emerald-50" : "border-slate-300"
-                  } focus:border-[var(--color-primary)] outline-none`} />
+                  className={`${inputBaseStyle} pl-10 ${
+                    priceError ? "border-red-500 bg-red-50/20" : item.priceAutoFilled ? "border-emerald-400 bg-emerald-50/60" : ""
+                  }`}
+                />
               </div>
               {item.priceAutoFilled && (
-                <p className="text-[10px] text-emerald-600 mt-0.5">
+                <p className="text-[11px] font-bold text-emerald-700 mt-1">
                   ₹{computePrice(item.category, item.condition)} = Base ₹{CATEGORY_PRICES[item.category] ?? 400} × {Math.round((CONDITION_MULTIPLIER[item.condition] ?? 1) * 100)}%
                 </p>
               )}
@@ -1030,14 +1096,19 @@ function ItemCard({
             {/* Weight */}
             <FieldWrap label="Estimated Weight (kg)">
               <div className="relative">
-                <input type="number" min="0" step="0.1" value={item.estimatedWeight}
+                <input
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={item.estimatedWeight}
                   onChange={(e) => onUpdate({ estimatedWeight: e.target.value })}
                   placeholder="e.g. 2.5"
-                  className={`w-full h-10 px-3 text-sm rounded-lg border ${
-                    item.aiAutoFilled && item.estimatedWeight ? "border-indigo-400 bg-indigo-50/40" : "border-slate-300"
-                  } focus:border-[var(--color-primary)] outline-none transition-colors`} />
+                  className={`${inputBaseStyle} ${
+                    item.aiAutoFilled && item.estimatedWeight ? "border-indigo-400 bg-indigo-50/50" : ""
+                  }`}
+                />
                 {item.aiAutoFilled && item.estimatedWeight && (
-                  <span className="absolute right-2.5 top-2.5 text-[10px] font-bold text-indigo-700 bg-indigo-100 px-1.5 py-0.5 rounded">
+                  <span className="absolute right-3 top-3 text-[10px] font-extrabold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-md">
                     AI Weight
                   </span>
                 )}
@@ -1046,29 +1117,39 @@ function ItemCard({
 
             {/* Age */}
             <FieldWrap label="Approximate Age">
-              <input type="text" value={item.estimatedAge}
+              <input
+                type="text"
+                value={item.estimatedAge}
                 onChange={(e) => onUpdate({ estimatedAge: e.target.value })}
                 placeholder="e.g. 4 years, 6 months"
-                className="w-full h-10 px-3 text-sm rounded-lg border border-slate-300 focus:border-[var(--color-primary)] outline-none" />
+                className={inputBaseStyle}
+              />
             </FieldWrap>
 
             {/* Quantity */}
             <FieldWrap label="Quantity / Units">
-              <input type="number" min="1" value={item.quantity}
+              <input
+                type="number"
+                min="1"
+                value={item.quantity}
                 onChange={(e) => onUpdate({ quantity: e.target.value })}
                 placeholder="1"
-                className="w-full h-10 px-3 text-sm rounded-lg border border-slate-300 focus:border-[var(--color-primary)] outline-none" />
+                className={inputBaseStyle}
+              />
             </FieldWrap>
 
             {/* Description */}
             <div className="sm:col-span-2">
               <FieldWrap label="Description / AI Inspection Notes">
-                <textarea rows={2} value={item.description}
+                <textarea
+                  rows={2}
+                  value={item.description}
                   onChange={(e) => onUpdate({ description: e.target.value })}
                   placeholder="Describe the issue, intact parts, battery status, etc."
-                  className={`w-full px-3 py-2 text-sm rounded-lg border ${
-                    item.aiAutoFilled && item.description ? "border-indigo-400 bg-indigo-50/40" : "border-slate-300"
-                  } focus:border-[var(--color-primary)] outline-none resize-none transition-colors`} />
+                  className={`w-full px-3.5 py-2.5 bg-white text-slate-900 font-semibold text-sm rounded-xl border ${
+                    item.aiAutoFilled && item.description ? "border-indigo-400 bg-indigo-50/50" : "border-slate-300"
+                  } focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 outline-none resize-none transition-all shadow-xs placeholder:text-slate-400 placeholder:font-normal`}
+                />
               </FieldWrap>
             </div>
           </div>
