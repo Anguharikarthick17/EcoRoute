@@ -1,0 +1,381 @@
+// ============================================================
+// EcoRoute — Prisma Schema (PostgreSQL)
+// Government AI Powered E-Waste Management Platform
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ────────────────────────────────────────────────────
+enum Role {
+  CITIZEN
+  OFFICER
+  ADMIN
+}
+
+enum PickupStatus {
+  SUBMITTED
+  APPROVED
+  ASSIGNED
+  COLLECTED
+  DELIVERED
+  RECYCLED
+  COMPLETED
+  CANCELLED
+}
+
+enum Priority {
+  NORMAL
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+enum HazardLevel {
+  LOW
+  MODERATE
+  HIGH
+  CRITICAL
+}
+
+enum NotificationType {
+  PICKUP
+  NOTICE
+  REWARD
+  REMINDER
+  SYSTEM
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  ESCALATED
+}
+
+// ── 1. User Model ────────────────────────────────────────────
+model User {
+  id               String   @id @default(uuid())
+  email            String   @unique
+  passwordHash     String
+  role             Role     @default(CITIZEN)
+  verified         Boolean  @default(false)
+  verificationToken String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  profile Profile?
+
+  // Relations
+  pickups       PickupRequest[]
+  notifications Notification[]
+  rewards       Reward[]
+  certificates  Certificate[]
+  complaints    Complaint[]
+  activityLogs  ActivityLog[]
+  driver        Driver?
+  officer       Officer?
+  admin         Admin?
+
+  @@map("users")
+}
+
+// ── 2. Profile Model ──────────────────────────────────────────
+model Profile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName      String
+  phone         String
+  address       String
+  city          String
+  state         String
+  pinCode       String
+  citizenId     String   @unique
+  aadhaarLinked Boolean  @default(false)
+  avatarUrl     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+// ── 3. Pickup Request Model ───────────────────────────────────
+model PickupRequest {
+  id              String       @id @default(uuid())
+  requestId       String       @unique
+  userId          String
+  user            User         @relation(fields: [userId], references: [id])
+  deviceName      String
+  category        String
+  brand           String?
+  requestDate     DateTime     @default(now())
+  pickupDate      String
+  timeSlot        String
+  status          PickupStatus @default(SUBMITTED)
+  priority        Priority     @default(NORMAL)
+  address         String
+  city            String
+  district        String
+  pinCode         String
+  estimatedWeight Float?
+  instructions    String?
+  contactMethod   String?      @default("SMS & Call")
+  rewardPoints    Int          @default(0)
+  hazardLevel     HazardLevel  @default(LOW)
+
+  centerId        String?
+  center          RecyclingCenter? @relation(fields: [centerId], references: [id])
+  driverId        String?
+  driver          Driver?          @relation(fields: [driverId], references: [id])
+  vehicleId       String?
+  vehicle         Vehicle?         @relation(fields: [vehicleId], references: [id])
+
+  ewasteItems     EWasteItem[]
+  certificate     Certificate?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("pickup_requests")
+}
+
+// ── 4. E-Waste Item Model ─────────────────────────────────────
+model EWasteItem {
+  id              String        @id @default(uuid())
+  pickupRequestId String
+  pickupRequest   PickupRequest @relation(fields: [pickupRequestId], references: [id], onDelete: Cascade)
+  deviceName      String
+  brand           String?
+  category        String
+  condition       String
+  estimatedAge    String?
+  description     String?
+  imageUrl        String?
+  createdAt       DateTime      @default(now())
+
+  @@map("ewaste_items")
+}
+
+// ── 5. Recycling Center Model ─────────────────────────────────
+model RecyclingCenter {
+  id                 String   @id @default(uuid())
+  name               String
+  registrationNo     String   @unique
+  address            String
+  city               String
+  state              String
+  pinCode            String
+  phone              String
+  email              String
+  workingHours       String
+  rating             Float    @default(4.5)
+  reviewCount        Int      @default(0)
+  distanceKm         Float    @default(0)
+  capacityTonnes     Float    @default(500)
+  monthlyLoadTonnes  Float    @default(0)
+  todayLoadKg        Float    @default(0)
+  isOpenNow          Boolean  @default(true)
+  status             String   @default("Operational")
+  latitude           Float
+  longitude          Float
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  pickups            PickupRequest[]
+  aiClassifications  AIClassification[]
+
+  @@map("recycling_centers")
+}
+
+// ── 6. Vehicle Model ──────────────────────────────────────────
+model Vehicle {
+  id                 String   @id @default(uuid())
+  vehicleNumber      String   @unique
+  type               String   @default("EV Van")
+  assignedDriverId   String?  @unique
+  district           String
+  currentRoute       String
+  status             String   @default("Idle")
+  batteryFuelPercent Int      @default(100)
+  lastMaintenance    String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  driver             Driver?  @relation(fields: [assignedDriverId], references: [id])
+  pickups            PickupRequest[]
+
+  @@map("vehicles")
+}
+
+// ── 7. Driver Model ───────────────────────────────────────────
+model Driver {
+  id                   String   @id @default(uuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  driverName           String
+  phone                String
+  district             String
+  availability         String   @default("Available")
+  rating               Float    @default(4.8)
+  assignedPickupsCount Int      @default(0)
+  completedToday       Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  vehicle              Vehicle?
+  pickups              PickupRequest[]
+
+  @@map("drivers")
+}
+
+// ── 8. Officer Model ──────────────────────────────────────────
+model Officer {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  officerCode String   @unique
+  department  String   @default("CPCB Regional Operations")
+  dutyZone    String
+  status      String   @default("Shift Active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  complaints  Complaint[]
+
+  @@map("officers")
+}
+
+// ── 9. Admin Model ────────────────────────────────────────────
+model Admin {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminCode  String   @unique
+  roleTitle  String   @default("CPCB Nodal Director")
+  department String   @default("MoEFCC Central Executive")
+  createdAt  DateTime @default(now())
+
+  @@map("admins")
+}
+
+// ── 10. Notification Model ───────────────────────────────────
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  message     String
+  type        NotificationType @default(SYSTEM)
+  read        Boolean          @default(false)
+  actionUrl   String?
+  actionLabel String?
+  createdAt   DateTime         @default(now())
+
+  @@map("notifications")
+}
+
+// ── 11. Reward Model ──────────────────────────────────────────
+model Reward {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String
+  description     String
+  iconName        String
+  pointsRequired  Int       @default(100)
+  progressPercent Int       @default(0)
+  isUnlocked      Boolean   @default(false)
+  unlockedAt      DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@map("rewards")
+}
+
+// ── 12. Certificate Model ─────────────────────────────────────
+model Certificate {
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  pickupRequestId String        @unique
+  pickupRequest   PickupRequest @relation(fields: [pickupRequestId], references: [id])
+  certificateNo   String        @unique
+  issueDate       String
+  recycledDevice  String
+  category        String
+  weightKg        Float
+  co2SavedKg      Float
+  recyclerName    String
+  cpbLicenseNo    String
+  downloadUrl     String?
+  createdAt       DateTime      @default(now())
+
+  @@map("certificates")
+}
+
+// ── 13. Complaint Model ───────────────────────────────────────
+model Complaint {
+  id                String          @id @default(uuid())
+  complaintId       String          @unique
+  userId            String
+  user              User            @relation(fields: [userId], references: [id])
+  category          String
+  priority          Priority        @default(NORMAL)
+  assignedOfficerId String?
+  assignedOfficer   Officer?        @relation(fields: [assignedOfficerId], references: [id])
+  status            ComplaintStatus @default(OPEN)
+  description       String
+  dateFiled         DateTime        @default(now())
+
+  @@map("complaints")
+}
+
+// ── 14. Announcement Model ────────────────────────────────────
+model Announcement {
+  id          String   @id @default(uuid())
+  title       String
+  category    String
+  target      String   @default("All Portals")
+  description String
+  dateText    String
+  publishedAt DateTime @default(now())
+
+  @@map("announcements")
+}
+
+// ── 15. AI Classification Model ──────────────────────────────
+model AIClassification {
+  id                      String           @id @default(uuid())
+  imageUrl                String
+  deviceCategory          String
+  confidenceScore         Float
+  estimatedValue          String
+  hazardLevel             HazardLevel      @default(MODERATE)
+  hazardDescription       String
+  disposalRecommendation  String
+  suggestedCenterId       String?
+  suggestedCenter         RecyclingCenter? @relation(fields: [suggestedCenterId], references: [id])
+  createdAt               DateTime         @default(now())
+
+  @@map("ai_classifications")
+}
+
+// ── 16. Activity Log Model ────────────────────────────────────
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  details   String
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@map("activity_logs")
+}
