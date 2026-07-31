@@ -33,8 +33,8 @@ export function HeroSection() {
       <section
         id="home"
         aria-labelledby="hero-heading"
-        className="relative w-full overflow-hidden"
-        style={{ minHeight: "700px", maxHeight: "850px", height: "80vh" }}
+        className="relative w-full overflow-hidden flex items-center"
+        style={{ minHeight: "680px", height: "calc(100vh - 120px)", maxHeight: "820px" }}
       >
         {/* ── Full-background video ─────────────────────────────── */}
         <video
@@ -50,59 +50,54 @@ export function HeroSection() {
           style={{ zIndex: 0 }}
         />
 
-        {/* ── Dark gradient overlay ─────────────────────────────── */}
+        {/* ── 45–55% Subtle Dark Overlay for readability & video focus ─────────────────────────────── */}
         <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.45))",
-            zIndex: 1,
-          }}
+          className="absolute inset-0 bg-gradient-to-r from-slate-950/75 via-slate-950/50 to-slate-950/30"
+          style={{ zIndex: 1 }}
           aria-hidden="true"
         />
 
-        {/* ── Hero content ─────────────────────────────────────── */}
+        {/* ── Hero content (70–90px Left Padding on Desktop) ─────────────────────────────────────── */}
         <div
-          className="relative flex flex-col justify-center h-full px-6 sm:px-10 lg:px-20 xl:px-28"
-          style={{ zIndex: 2, maxWidth: "860px" }}
+          className="relative z-10 w-full text-left pl-6 sm:pl-10 md:pl-16 lg:pl-[80px] xl:pl-[90px] pr-6 md:pr-12 py-12"
         >
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-6"
+            className="flex flex-col items-start"
           >
             {/* Badges */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[11px] font-bold uppercase tracking-widest bg-white/15 border border-white/30 text-white backdrop-blur-sm">
+            <div className="flex flex-wrap items-center gap-2.5 mb-5">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-widest bg-white/15 border border-white/30 text-white backdrop-blur-md shadow-xs">
                 ✦ {t("hero.badge.official")}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[11px] font-bold uppercase tracking-widest bg-[#2E7D32]/80 border border-[#4CAF50]/40 text-white backdrop-blur-sm">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-widest bg-[#2E7D32]/85 border border-[#4CAF50]/50 text-white backdrop-blur-md shadow-xs">
                 ✔ {t("hero.badge.verified")}
               </span>
             </div>
 
-            {/* Heading */}
+            {/* Heading (Desktop: 60px, Laptop: 56px, Tablet: 48px, Mobile: 36px, Weight: 800, LineHeight: 1.05, LetterSpacing: -1px, MaxWidth: 680px) */}
             <h1
               id="hero-heading"
-              className="text-4xl sm:text-5xl lg:text-[4rem] xl:text-[4.25rem] leading-[1.1] tracking-tight font-extrabold text-white"
+              className="text-[36px] sm:text-[48px] md:text-[56px] lg:text-[60px] font-[800] leading-[1.05] tracking-[-1px] max-w-[680px] text-white [text-shadow:0_4px_20px_rgba(0,0,0,0.35)]"
             >
               {t("hero.title")}
             </h1>
 
-            {/* Paragraph */}
+            {/* Paragraph (MaxWidth: 520px, FontSize: 18px, LineHeight: 1.7, Color: rgba(255,255,255,0.9), 24px Top Spacing) */}
             <p
-              className="text-base sm:text-lg leading-relaxed max-w-xl"
-              style={{ color: "rgba(255,255,255,0.88)" }}
+              className="text-[18px] leading-[1.7] max-w-[520px] mt-6 text-white/90 font-medium [text-shadow:0_2px_12px_rgba(0,0,0,0.35)]"
             >
               {t("hero.subtitle")}
             </p>
 
-            {/* CTA Buttons: Replaced Request Pickup with Login Button */}
-            <div className="flex flex-wrap gap-3 pt-1">
+            {/* CTA Buttons (28px below description, Height: 46px, Horizontal Padding: 24–28px, Radius: 10px, 0.3s transition) */}
+            <div className="flex flex-wrap items-center gap-3.5 mt-[28px]">
               <Link
                 href="/login"
                 id="hero-cta-login"
-                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-bold rounded bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition-colors duration-200 no-underline shadow-lg"
+                className="inline-flex items-center justify-center gap-2 h-[46px] px-6 sm:px-[26px] text-sm font-extrabold rounded-[10px] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition-all duration-300 ease-in-out no-underline shadow-lg hover:shadow-xl hover:scale-[1.02]"
               >
                 <MdLogin className="w-4 h-4" aria-hidden="true" />
                 Login to Portal
@@ -111,7 +106,7 @@ export function HeroSection() {
               <Link
                 href="/locate"
                 id="hero-cta-locate"
-                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-bold rounded bg-white/10 text-white border border-white/35 hover:bg-white/20 transition-all duration-200 no-underline backdrop-blur-sm"
+                className="inline-flex items-center justify-center gap-2 h-[46px] px-6 sm:px-[26px] text-sm font-extrabold rounded-[10px] bg-white/10 text-white border-2 border-white/80 hover:bg-white hover:text-slate-950 transition-all duration-300 ease-in-out no-underline backdrop-blur-md shadow-md hover:shadow-lg hover:scale-[1.02]"
               >
                 <MdLocationOn className="w-4 h-4" aria-hidden="true" />
                 {t("hero.cta.locate")}
@@ -119,17 +114,17 @@ export function HeroSection() {
             </div>
 
             {/* Trust badges */}
-            <div className="flex flex-wrap items-center gap-5 pt-3 border-t border-white/15">
-              <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "rgba(255,255,255,0.80)" }}>
-                <MdVerified className="w-4 h-4 text-green-400" aria-hidden="true" />
+            <div className="flex flex-wrap items-center gap-6 mt-8 pt-5 border-t border-white/20 max-w-[680px] w-full">
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/90 [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
+                <MdVerified className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
                 {t("hero.trust.authorized")}
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "rgba(255,255,255,0.80)" }}>
-                <MdSecurity className="w-4 h-4 text-blue-300" aria-hidden="true" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/90 [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
+                <MdSecurity className="w-4 h-4 text-cyan-300 shrink-0" aria-hidden="true" />
                 {t("hero.trust.security")}
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "rgba(255,255,255,0.80)" }}>
-                <span className="text-base" aria-hidden="true">🇮🇳</span>
+              <div className="flex items-center gap-2 text-xs font-semibold text-white/90 [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
+                <span className="text-base leading-none" aria-hidden="true">🇮🇳</span>
                 {t("hero.trust.madeInIndia")}
               </div>
             </div>
