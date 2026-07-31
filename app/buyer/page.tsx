@@ -620,6 +620,48 @@ export default function BuyerPortalPage() {
                       </div>
                     </div>
 
+                    {/* ── LIVE UPI QR CODE BOX ─────────────────────────────── */}
+                    {paymentMethod === "UPI" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-gradient-to-br from-slate-900 via-slate-800 to-[var(--color-primary)] text-white p-4 rounded-2xl border border-slate-700 shadow-md flex flex-col items-center text-center gap-3"
+                      >
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-300">
+                          <MdQrCodeScanner className="w-4 h-4" />
+                          Scan QR with GPay / PhonePe / Paytm / BHIM
+                        </div>
+
+                        {/* QR Image */}
+                        <div className="p-3 bg-white rounded-xl shadow-lg border-2 border-cyan-400">
+                          <img
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
+                              `upi://pay?pa=ecoroute.${activeItem.sellerName.toLowerCase().replace(/[^a-z]/g, "") || "seller"}@upi&pn=${encodeURIComponent(activeItem.sellerName)}&am=${bidAmount || activeItem.price.replace(/[^0-9]/g, "")}&cu=INR&tn=EcoRoute Scrap Purchase`
+                            )}`}
+                            alt="UPI QR Code"
+                            className="w-36 h-36 object-contain"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-0.5 text-xs">
+                          <span className="font-extrabold text-sm text-emerald-400">
+                            Pay ₹{bidAmount || activeItem.price.replace(/[^0-9]/g, "")}
+                          </span>
+                          <span className="text-[11px] text-slate-300">
+                            Seller UPI VPA: <strong className="font-mono text-white">ecoroute.{activeItem.sellerName.toLowerCase().replace(/[^a-z]/g, "") || "seller"}@upi</strong>
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-1">
+                          <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/80">✓ GPay</span>
+                          <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/80">✓ PhonePe</span>
+                          <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/80">✓ Paytm</span>
+                          <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-white/80">✓ BHIM</span>
+                        </div>
+                      </motion.div>
+                    )}
+
                     {/* Pickup Collection Date & Time Slot */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="flex flex-col gap-1">
