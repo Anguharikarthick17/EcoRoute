@@ -95,7 +95,7 @@ export function NotificationCard({
         <h4 className="text-sm font-bold text-[var(--color-text)] mt-1">
           {notification.title}
         </h4>
-        <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+        <p className="text-xs text-[var(--color-text-muted)] leading-relaxed whitespace-pre-line">
           {notification.message}
         </p>
 

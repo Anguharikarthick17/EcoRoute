@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CitizenSectionHeader, NotificationCard } from "@/components/citizen";
-import type { CitizenNotification, NotificationType } from "@/types/citizen";
-import { MdDoneAll, MdFilterList } from "react-icons/md";
+import type { CitizenNotification } from "@/types/citizen";
+import { MdDoneAll, MdFilterList, MdDeleteSweep } from "react-icons/md";
 
 const MOCK_NOTIFICATIONS: CitizenNotification[] = [
   {
@@ -49,17 +49,50 @@ const MOCK_NOTIFICATIONS: CitizenNotification[] = [
 ];
 
 export default function NotificationsPage() {
-  const [items, setItems] = useState(MOCK_NOTIFICATIONS);
+  const [items, setItems] = useState<CitizenNotification[]>(MOCK_NOTIFICATIONS);
   const [filter, setFilter] = useState<string>("all");
 
+  // Load dynamic notifications stored when buyers order scrap
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("ecoroute_notifications");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Merge dynamic notifications with mock ones, preventing duplicates
+          const mockIds = new Set(MOCK_NOTIFICATIONS.map((n) => n.id));
+          const customOnly = parsed.filter((n: any) => !mockIds.has(n.id));
+          setItems([...customOnly, ...MOCK_NOTIFICATIONS]);
+        }
+      }
+    } catch {}
+  }, []);
+
   const handleMarkRead = (id: string) => {
-    setItems((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
-    );
+    setItems((prev) => {
+      const updated = prev.map((n) => (n.id === id ? { ...n, read: true } : n));
+      try {
+        localStorage.setItem("ecoroute_notifications", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   const handleMarkAllRead = () => {
-    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+    setItems((prev) => {
+      const updated = prev.map((n) => ({ ...n, read: true }));
+      try {
+        localStorage.setItem("ecoroute_notifications", JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const handleClearNotifications = () => {
+    setItems(MOCK_NOTIFICATIONS);
+    try {
+      localStorage.removeItem("ecoroute_notifications");
+    } catch {}
   };
 
   const filteredItems = items.filter((item) => {
@@ -74,16 +107,18 @@ export default function NotificationsPage() {
     <div className="flex flex-col gap-6">
       <CitizenSectionHeader
         title="Notifications Hub"
-        subtitle="Stay updated on pickup schedules, reward points, and government CPCB circulars."
+        subtitle="Stay updated on buyer orders, pickup schedules, reward points, and CPCB circulars."
         badge="Activity Stream"
         action={
-          <button
-            onClick={handleMarkAllRead}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-[var(--color-border)] text-xs font-semibold hover:bg-slate-50"
-          >
-            <MdDoneAll className="w-4 h-4 text-[var(--color-accent)]" />
-            Mark All as Read
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleMarkAllRead}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-[var(--color-border)] text-xs font-semibold hover:bg-slate-50 cursor-pointer"
+            >
+              <MdDoneAll className="w-4 h-4 text-[var(--color-accent)]" />
+              Mark All as Read
+            </button>
+          </div>
         }
       />
 
@@ -93,9 +128,9 @@ export default function NotificationsPage() {
           <MdFilterList className="w-4 h-4" /> Filter:
         </span>
         {[
-          { id: "all", label: "All Notifications" },
-          { id: "unread", label: "Unread Only" },
-          { id: "pickup", label: "Pickups" },
+          { id: "all", label: `All Notifications (${items.length})` },
+          { id: "unread", label: `Unread (${items.filter(n => !n.read).length})` },
+          { id: "pickup", label: "Pickups & Orders" },
           { id: "reward", label: "Rewards" },
           { id: "notice", label: "CPCB Notices" },
         ].map((tab) => {
@@ -104,7 +139,7 @@ export default function NotificationsPage() {
             <button
               key={tab.id}
               onClick={() => setFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                 isActive
                   ? "bg-[var(--color-primary)] text-white"
                   : "bg-slate-100 text-[var(--color-text-muted)] hover:bg-slate-200"
