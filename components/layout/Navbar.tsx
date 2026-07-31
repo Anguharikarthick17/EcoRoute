@@ -97,7 +97,7 @@ export function Navbar() {
       const targetElement = document.getElementById(item.sectionId);
       if (targetElement) {
         e.preventDefault();
-        const yOffset = -88;
+        const yOffset = -20;
         const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: "smooth" });
         setActiveSection(item.sectionId);
@@ -123,7 +123,7 @@ export function Navbar() {
       role="navigation"
       aria-label="Main national navigation"
       className={cn(
-        "sticky top-0 z-[var(--z-sticky)] w-full bg-white",
+        "relative w-full bg-white",
         "border-b border-slate-200/80 transition-all duration-250 ease-in-out",
         "shadow-[0_4px_18px_rgba(0,0,0,0.08)]",
       )}
