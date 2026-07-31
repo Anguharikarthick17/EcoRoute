@@ -386,14 +386,14 @@ export default function BuyerPortalPage() {
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-4 bg-[var(--color-primary)] text-white">
-                <div className="flex items-center gap-2">
-                  <MdShoppingCart className="w-5 h-5" />
-                  <h3 className="text-sm font-bold">
+                <div className="flex items-center gap-2 text-white">
+                  <MdShoppingCart className="w-5 h-5 text-white shrink-0" />
+                  <h3 className="text-base font-extrabold text-white tracking-wide">
                     {orderCompleted ? "Official Purchase Bill Receipt" : "Scrap Checkout & Payment"}
                   </h3>
                 </div>
-                <button onClick={() => setActiveItem(null)} className="text-white/70 hover:text-white cursor-pointer">
-                  <MdClose className="w-5 h-5" />
+                <button onClick={() => setActiveItem(null)} className="text-white/80 hover:text-white cursor-pointer transition p-1 rounded-full hover:bg-white/10">
+                  <MdClose className="w-5 h-5 text-white" />
                 </button>
               </div>
 
