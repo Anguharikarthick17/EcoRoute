@@ -196,7 +196,7 @@ export default function BuyerPortalPage() {
         buyerPhone: buyerUser?.mobile || "+91 98765 43210",
       };
 
-      // Push intimation notification to seller store/localStorage
+      // Push intimation notification to seller store/localStorage AND global server API
       const newNotif = {
         id: `notif-${Date.now()}`,
         title: "🚚 Scrap Order & Pickup Scheduled!",
@@ -204,12 +204,23 @@ export default function BuyerPortalPage() {
         timestamp: "Just now",
         type: "reward",
         read: false,
+        buyerName: orderData.buyerName,
+        buyerPhone: orderData.buyerPhone,
+        itemName: activeItem.deviceName,
+        itemPrice: `₹${orderData.amount}`,
       };
 
       try {
         const existing = JSON.parse(localStorage.getItem("ecoroute_notifications") || "[]");
         localStorage.setItem("ecoroute_notifications", JSON.stringify([newNotif, ...existing]));
       } catch {}
+
+      // Cross-device push to server API
+      fetch("/api/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newNotif),
+      }).catch(() => {});
 
       // Update listing status locally
       setListings((prev) =>

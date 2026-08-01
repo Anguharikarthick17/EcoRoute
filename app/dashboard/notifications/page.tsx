@@ -62,20 +62,32 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState<string>("all");
   const [activeChatNotif, setActiveChatNotif] = useState<CitizenNotification | null>(null);
 
-  // Load dynamic notifications stored when buyers order scrap
+  // Load dynamic notifications stored locally and fetch live cross-device notifications from API
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("ecoroute_notifications");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Merge dynamic notifications with mock ones, preventing duplicates
-          const mockIds = new Set(MOCK_NOTIFICATIONS.map((n) => n.id));
-          const customOnly = parsed.filter((n: any) => !mockIds.has(n.id));
-          setItems([...customOnly, ...MOCK_NOTIFICATIONS]);
-        }
-      }
-    } catch {}
+    const fetchLiveNotifs = () => {
+      fetch("/api/notifications")
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.success && Array.isArray(d.notifications)) {
+            const stored = JSON.parse(localStorage.getItem("ecoroute_notifications") || "[]");
+            const combined = [...d.notifications, ...stored];
+
+            const uniqueMap = new Map();
+            for (const item of combined) {
+              if (!uniqueMap.has(item.id)) {
+                uniqueMap.set(item.id, item);
+              }
+            }
+            const uniqueList = Array.from(uniqueMap.values());
+            setItems((prev) => (prev.length !== uniqueList.length ? uniqueList : prev));
+          }
+        })
+        .catch(() => {});
+    };
+
+    fetchLiveNotifs();
+    const interval = setInterval(fetchLiveNotifs, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleMarkRead = (id: string) => {

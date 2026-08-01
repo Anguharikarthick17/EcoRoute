@@ -1,44 +1,68 @@
 import { NextResponse } from "next/server";
+import {
+  getNotificationsStore,
+  addNotification,
+  markNotificationRead,
+  markAllNotificationsRead,
+} from "@/lib/notification-store";
 
 export async function GET() {
+  const notifications = getNotificationsStore();
   return NextResponse.json({
     success: true,
-    notifications: [
-      {
-        id: "notif-1",
-        title: "Pickup Agent Assigned",
-        message: "Agent Suresh Verma (DL 01 AB 8941) assigned for tomorrow's pickup at 10:00 AM.",
-        timestamp: "Today, 09:30 AM",
-        type: "pickup",
-        read: false,
-        actionUrl: "/dashboard/pickups/REQ-2026-8941",
-        actionLabel: "View Request",
-      },
-      {
-        id: "notif-2",
-        title: "+50 Green Points Credited",
-        message: "Your account was credited 50 points for successful laptop recycling.",
-        timestamp: "Yesterday, 04:15 PM",
-        type: "reward",
-        read: false,
-        actionUrl: "/dashboard/rewards",
-        actionLabel: "Check Rewards",
-      },
-    ],
+    notifications,
   });
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const newNotif = {
+      id: body.id || `notif-${Date.now()}`,
+      title: body.title || "🚚 Scrap Order & Pickup Scheduled!",
+      message: body.message || "Buyer has placed an order for your scrap item.",
+      timestamp: body.timestamp || "Just now",
+      type: body.type || "reward",
+      read: false,
+      buyerName: body.buyerName,
+      buyerPhone: body.buyerPhone,
+      itemName: body.itemName,
+      itemPrice: body.itemPrice,
+    };
+
+    const updatedList = await addNotification(newNotif);
+
+    return NextResponse.json({
+      success: true,
+      message: "Notification pushed globally across devices.",
+      notifications: updatedList,
+    });
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, message: err.message || "Failed to push notification" },
+      { status: 400 }
+    );
+  }
 }
 
 export async function PATCH(request: Request) {
   try {
     const body = await request.json();
+    let updatedList;
+    if (body.id) {
+      updatedList = markNotificationRead(body.id);
+    } else {
+      updatedList = markAllNotificationsRead();
+    }
+
     return NextResponse.json({
       success: true,
-      message: body.id ? `Notification ${body.id} marked as read.` : "All notifications marked as read.",
+      notifications: updatedList,
     });
-  } catch (err) {
+  } catch (err: any) {
     return NextResponse.json(
-      { success: false, message: "Update failed" },
-      { status: 400 },
+      { success: false, message: err.message || "Update failed" },
+      { status: 400 }
     );
   }
 }
