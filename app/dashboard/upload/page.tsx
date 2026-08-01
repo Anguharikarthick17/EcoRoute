@@ -178,13 +178,13 @@ export default function SellScrapPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Pre-fill contact from stored user (leaving mobile empty if default dummy)
+  // Pre-fill contact from stored user
   useEffect(() => {
     const stored = localStorage.getItem("ecoroute_user");
     if (!stored) return;
     try {
       const u = JSON.parse(stored);
-      const userPhone = (u.mobile && u.mobile !== "9876543210") ? u.mobile : "";
+      const userPhone = u.mobile ? u.mobile.replace(/\D/g, "").slice(0, 10) : "8072053327";
       setContact((p) => ({
         ...p,
         sellerName: u.fullName || p.sellerName,
@@ -381,14 +381,17 @@ export default function SellScrapPage() {
   // ── Validation ───────────────────────────────────────────────────────────────
   const validate = () => {
     const e: Record<string, string> = {};
+    const cleanPhone = (contact.phone || "").replace(/\D/g, "");
+    const cleanPin = (contact.pincode || "").replace(/\D/g, "");
+
     items.forEach((it, i) => {
       if (!it.deviceName.trim()) e[`name_${i}`] = `Item ${i + 1}: Device name required.`;
       if (!it.askingPrice || isNaN(Number(it.askingPrice))) e[`price_${i}`] = `Item ${i + 1}: Valid price required.`;
     });
     if (!contact.sellerName.trim()) e.sellerName = "Your name is required.";
-    if (!/^[6-9]\d{9}$/.test(contact.phone)) e.phone = "Enter a valid 10-digit mobile number.";
+    if (!cleanPhone || cleanPhone.length < 10) e.phone = "Enter a valid 10-digit mobile number.";
     if (!contact.city.trim()) e.city = "City is required.";
-    if (!/^\d{6}$/.test(contact.pincode)) e.pincode = "Enter valid 6-digit PIN code.";
+    if (!cleanPin || cleanPin.length < 6) e.pincode = "Enter valid 6-digit PIN code.";
     if (!contact.acceptTerms) e.acceptTerms = "You must accept the terms.";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -667,7 +670,13 @@ export default function SellScrapPage() {
                   type="tel"
                   value={contact.phone}
                   maxLength={10}
-                  onChange={(e) => setContact((p) => ({ ...p, phone: e.target.value }))}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    setContact((p) => ({ ...p, phone: val, whatsapp: p.whatsapp || val }));
+                    if (val.length === 10) {
+                      setErrors((prev) => ({ ...prev, phone: "" }));
+                    }
+                  }}
                   placeholder="10-digit mobile"
                   className={`${inputBaseStyle} pl-10 ${errors.phone ? "border-red-500 bg-red-50/20" : ""}`}
                 />
