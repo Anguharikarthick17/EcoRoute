@@ -130,7 +130,7 @@ function LoginContent() {
       }
 
       if (!userObj) {
-        const isRecyclerRole = role === "recycler" || roleParam === "recycler";
+        const isRecyclerRole = role === "recycler" || searchParams.get("role") === "recycler";
         userObj = {
           id: `usr_${Date.now()}`,
           fullName: identifier.split("@")[0] || "EcoRoute User",
@@ -158,7 +158,7 @@ function LoginContent() {
 
     } catch (err: any) {
       // Zero-error client fallback
-      const isRecyclerRole = role === "recycler" || roleParam === "recycler";
+      const isRecyclerRole = role === "recycler" || searchParams.get("role") === "recycler";
       const fallbackUser = {
         id: `usr_${Date.now()}`,
         fullName: identifier.split("@")[0] || "EcoRoute User",

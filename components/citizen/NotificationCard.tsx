@@ -14,6 +14,7 @@ import Link from "next/link";
 interface NotificationCardProps {
   notification: CitizenNotification;
   onMarkRead?: (id: string) => void;
+  onOpenChat?: (notif: CitizenNotification) => void;
 }
 
 const TYPE_CONFIG = {

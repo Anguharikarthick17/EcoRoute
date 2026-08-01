@@ -14,6 +14,7 @@ import {
 } from "react-icons/md";
 import {
   createOrGetThread,
+  getChatThread,
   sendChatMessage,
   ChatThread,
   ChatMessage,
