@@ -450,6 +450,7 @@ export default function SellScrapPage() {
             const existingCustom = JSON.parse(localStorage.getItem("ecoroute_custom_listings") || "[]");
             const updatedCustom = [data.data, ...existingCustom.filter((x: any) => x.id !== data.data.id)];
             localStorage.setItem("ecoroute_custom_listings", JSON.stringify(updatedCustom));
+            window.dispatchEvent(new Event("storage"));
           } catch {}
         }
       }

@@ -39,7 +39,18 @@ export function EWasteMarketplace() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
-          setListings(data.data);
+          let custom: any[] = [];
+          try {
+            custom = JSON.parse(localStorage.getItem("ecoroute_custom_listings") || "[]");
+          } catch {}
+          const combined = [...custom, ...data.data];
+          const uniqueMap = new Map();
+          for (const item of combined) {
+            if (!uniqueMap.has(item.id)) {
+              uniqueMap.set(item.id, item);
+            }
+          }
+          setListings(Array.from(uniqueMap.values()));
         }
         setLoading(false);
       })
@@ -48,8 +59,9 @@ export function EWasteMarketplace() {
 
   useEffect(() => {
     fetchListings();
+    const interval = setInterval(fetchListings, 3000);
+    window.addEventListener("storage", fetchListings);
 
-    // Try prefilling buyer info from localStorage if logged in
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("ecoroute_user");
       if (stored) {
@@ -61,6 +73,11 @@ export function EWasteMarketplace() {
         } catch (e) {}
       }
     }
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("storage", fetchListings);
+    };
   }, []);
 
   const categories = ["All", "Laptops & Mobiles", "Mobile Phones", "Computers & Displays", "Home Appliances", "Batteries & Cables"];
