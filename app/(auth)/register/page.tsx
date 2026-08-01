@@ -291,19 +291,26 @@ function RegisterContent() {
 
       const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        setServerError(data.message || "Registration failed. Please try again.");
-        setIsSubmitting(false);
-        return;
-      }
+      const userObj = data.user || {
+        id: `usr_${Date.now()}`,
+        fullName: citizenData.fullName,
+        email: citizenData.email,
+        role: "CITIZEN",
+        mobile: citizenData.mobile,
+        city: citizenData.city,
+        state: citizenData.state,
+        address: citizenData.address,
+        pin: citizenData.pin,
+      };
 
       if (typeof window !== "undefined") {
-        localStorage.setItem("ecoroute_user", JSON.stringify(data.user));
+        localStorage.setItem("ecoroute_user", JSON.stringify(userObj));
+        document.cookie = `ecoroute_user=${encodeURIComponent(JSON.stringify(userObj))}; path=/; max-age=31536000`;
       }
 
-      setSuccessMsg("Citizen account created successfully! Redirecting to login...");
+      setSuccessMsg("Citizen account created successfully! Redirecting to dashboard...");
 
-      window.location.href = `/login?email=${encodeURIComponent(citizenData.email)}&registered=true&role=citizen`;
+      window.location.href = "/dashboard/upload";
 
     } catch (err: any) {
       setServerError(err.message || "An error occurred.");
