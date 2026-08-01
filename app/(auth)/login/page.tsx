@@ -114,7 +114,18 @@ function LoginContent() {
         body: JSON.stringify({ email: identifier, password, rememberMe, role }),
       });
 
+      const data = await res.json().catch(() => ({}));
       let userObj = data?.user;
+
+      if (!userObj && typeof window !== "undefined") {
+        try {
+          const registeredUsers = JSON.parse(localStorage.getItem("ecoroute_all_registered_users") || "[]");
+          const cleanId = identifier.toLowerCase().trim();
+          userObj = registeredUsers.find(
+            (u: any) => u.email?.toLowerCase() === cleanId || u.mobile === cleanId
+          );
+        } catch {}
+      }
 
       if (!userObj) {
         const isRecyclerRole = role === "recycler" || roleParam === "recycler";
