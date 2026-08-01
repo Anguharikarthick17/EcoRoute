@@ -29,13 +29,21 @@ export function Navbar() {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { t } = useTranslation();
 
-  // Check auth state on mount and route change
+  // Check auth state & 1-hour session expiration on mount and route change
   useEffect(() => {
     const checkUser = () => {
       const stored = localStorage.getItem("ecoroute_user");
       if (stored) {
         try {
-          setUser(JSON.parse(stored));
+          const u = JSON.parse(stored);
+          // 1-Hour Session Expiration Check
+          if (u.sessionExpiresAt && Date.now() > u.sessionExpiresAt) {
+            localStorage.removeItem("ecoroute_user");
+            setUser(null);
+            window.location.replace("/login?expired=true");
+            return;
+          }
+          setUser(u);
         } catch {
           setUser(null);
         }
@@ -45,8 +53,12 @@ export function Navbar() {
     };
 
     checkUser();
+    const interval = setInterval(checkUser, 10000); // Poll every 10s for 1-hr expiration
     window.addEventListener("storage", checkUser);
-    return () => window.removeEventListener("storage", checkUser);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("storage", checkUser);
+    };
   }, [pathname]);
 
   // Active section detection on homepage

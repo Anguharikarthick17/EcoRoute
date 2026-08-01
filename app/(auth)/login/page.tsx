@@ -46,6 +46,7 @@ function LoginContent() {
     const paramEmail = searchParams.get("email");
     const registered = searchParams.get("registered");
     const roleParam = searchParams.get("role");
+    const expired = searchParams.get("expired");
 
     if (paramEmail) {
       setIdentifier(paramEmail);
@@ -54,7 +55,10 @@ function LoginContent() {
       setRole("recycler");
     }
     if (registered === "true") {
-      setSuccessMsg("Account registered successfully! Enter your password to log in to the portal.");
+      setSuccessMsg("Account registered successfully! Enter your password to log in (1-hour active session).");
+    }
+    if (expired === "true") {
+      setServerError("⚠️ Your 1-hour active session has expired. Please log in again to continue.");
     }
   }, [searchParams]);
 

@@ -29,10 +29,10 @@ export async function comparePassword(password: string, hash: string): Promise<b
 }
 
 /**
- * Sign a JWT token
+ * Sign a JWT token (Valid for 1 Hour)
  */
 export function signToken(payload: JWTPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
 }
 
 /**
@@ -58,7 +58,7 @@ export async function getAuthSession(): Promise<JWTPayload | null> {
 }
 
 /**
- * Set HTTP-only Auth Cookie
+ * Set HTTP-only Auth Cookie (1 Hour expiration)
  */
 export async function setAuthCookie(token: string) {
   const cookieStore = await cookies();
@@ -66,7 +66,7 @@ export async function setAuthCookie(token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60, // 7 days
+    maxAge: 3600, // 1 Hour (3600 seconds)
     path: "/",
   });
 }

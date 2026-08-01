@@ -10,7 +10,7 @@ function setCookieOnResponse(response: NextResponse, token: string): NextRespons
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60,
+    maxAge: 3600, // Exactly 1 hour
     path: "/",
   });
   return response;
