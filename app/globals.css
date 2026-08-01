@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+/* ── Performance & GPU Hardware Acceleration ──────────────── */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  text-rendering: optimizeSpeed;
+}
+
+.gpu-accelerate {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
 /* ============================================================
    EcoRoute — Design System (Tailwind CSS v4)
    Government of India Standard

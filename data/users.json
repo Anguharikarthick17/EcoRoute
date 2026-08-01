@@ -1,0 +1,123 @@
+[
+  {
+    "id": "usr_rajesh_kumar",
+    "email": "rajesh.kumar@example.in",
+    "passwordHash": "$2a$10$e7c.h5a0U1g80g0V.b0c.e0z00000000000000000000000000000",
+    "fullName": "Rajesh Kumar",
+    "mobile": "9876543210",
+    "address": "Flat 402, Green Park Apartments, Sector 14",
+    "city": "New Delhi",
+    "state": "DL",
+    "pin": "110016",
+    "citizenId": "DL-2026-8941",
+    "role": "CITIZEN"
+  },
+  {
+    "id": "usr_ecorecycle_buyer",
+    "email": "recycler@ecoroute.gov.in",
+    "passwordHash": "$2a$10$e7c.h5a0U1g80g0V.b0c.e0z00000000000000000000000000000",
+    "fullName": "Suresh Sharma",
+    "mobile": "9876543211",
+    "address": "Industrial Area Phase 2",
+    "city": "New Delhi",
+    "state": "DL",
+    "pin": "110020",
+    "recyclerLicenseNo": "CPCB-REC-2026-9041",
+    "role": "RECYCLER",
+    "recyclerProfile": {
+      "shopName": "EcoRecycle India Pvt Ltd",
+      "ownerName": "Suresh Sharma",
+      "aadhaarNumber": "123456789012",
+      "aadhaarVerified": true,
+      "shopAddress": "Plot 42, Industrial Area Phase 2",
+      "city": "New Delhi",
+      "district": "South Delhi",
+      "state": "Delhi",
+      "pincode": "110020",
+      "latitude": "28.5355",
+      "longitude": "77.2610",
+      "businessType": "Recycler",
+      "acceptedEWaste": [
+        "Mobiles",
+        "Laptops",
+        "Computers",
+        "TV",
+        "Batteries"
+      ],
+      "documents": {
+        "shopPhoto": "uploaded_shop.jpg",
+        "shopLicense": "cpcb_license.pdf",
+        "ownerIdProof": "aadhaar_proof.pdf"
+      }
+    }
+  },
+  {
+    "id": "usr_anguharikarthick",
+    "email": "anguharikarthick@gmail.com",
+    "passwordHash": "$2a$10$e7c.h5a0U1g80g0V.b0c.e0z00000000000000000000000000000",
+    "fullName": "Angu Hari Karthick",
+    "mobile": "",
+    "address": "EcoRoute Portal, Chennai",
+    "city": "Chennai",
+    "state": "TN",
+    "pin": "600001",
+    "citizenId": "TN-2026-9901",
+    "role": "CITIZEN"
+  },
+  {
+    "id": "usr_1785557185380",
+    "email": "testuser@ecoroute.in",
+    "passwordHash": "$2b$10$.JQvH4LW0cv3wBn6Il8a6uWg1RQczvGO1RSC4qiw881/VoMgbEXdy",
+    "fullName": "Test User",
+    "mobile": "9123456789",
+    "address": "123 Main St",
+    "city": "Chennai",
+    "state": "TN",
+    "pin": "600002",
+    "citizenId": "DL-2026-4608",
+    "role": "CITIZEN"
+  },
+  {
+    "id": "usr_rec_1785560836664",
+    "email": "doms1@gmail.com",
+    "passwordHash": "$2b$10$OQ6YEtUGPSNutPEaM6rZleNdU29SAmzthax2UHDDDiXaZmTjnyabS",
+    "fullName": "Doms",
+    "mobile": "8765432567",
+    "address": "Gandhipuram",
+    "city": "Coimbatore",
+    "state": "TN",
+    "pin": "636015",
+    "recyclerLicenseNo": "CPCB-REC-2026-6919",
+    "role": "RECYCLER",
+    "recyclerProfile": {
+      "shopName": "doms Store",
+      "ownerName": "Doms",
+      "aadhaarNumber": "123412341234",
+      "aadhaarVerified": true,
+      "shopAddress": "Gandhipuram",
+      "city": "Coimbatore",
+      "district": "Coimbatore",
+      "state": "TN",
+      "pincode": "636015",
+      "latitude": "10.933160",
+      "longitude": "76.977196",
+      "businessType": "Recycler",
+      "acceptedEWaste": [
+        "Mobiles",
+        "Laptops",
+        "Computers",
+        "Other",
+        "Batteries",
+        "TV",
+        "Refrigerators",
+        "Printers",
+        "Chargers"
+      ],
+      "documents": {
+        "shopPhoto": "uploaded_shop_photo.png",
+        "shopLicense": "uploaded_license.pdf",
+        "ownerIdProof": "uploaded_owner_id.pdf"
+      }
+    }
+  }
+]

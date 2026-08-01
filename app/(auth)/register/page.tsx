@@ -347,11 +347,12 @@ function RegisterContent() {
 
       if (typeof window !== "undefined") {
         localStorage.setItem("ecoroute_user", JSON.stringify(data.user));
+        document.cookie = `ecoroute_user=${encodeURIComponent(JSON.stringify(data.user))}; path=/; max-age=31536000`;
       }
 
-      setSuccessMsg("Verified Recycler account created successfully! Redirecting to login...");
+      setSuccessMsg("Verified Recycler account created successfully! Redirecting to dashboard...");
 
-      window.location.href = `/login?email=${encodeURIComponent(recyclerData.email)}&registered=true&role=recycler`;
+      window.location.href = "/buyer";
 
     } catch (err: any) {
       setServerError(err.message || "An error occurred.");

@@ -28,20 +28,31 @@ import {
   MdCalendarMonth,
   MdAccessTime,
   MdOutlineMessage,
+  MdChatBubbleOutline,
+  MdNotifications,
 } from "react-icons/md";
 import { EWasteListing } from "@/lib/ewaste-store";
 import { useTranslation } from "@/lib/i18n";
+import { BuyerChatModal } from "@/components/citizen/BuyerChatModal";
 
 const CATEGORIES = [
   "All",
   "Laptops & Computers",
   "Mobile Phones & Tablets",
+  "Copper Wire & Windings",
+  "Metals & Aluminium Scrap",
+  "Printed Circuit Boards (PCBs)",
+  "Brass, Lead & Heavy Metals",
+  "Industrial Electrical Motors",
   "TVs & Monitors",
   "Refrigerators & ACs",
   "Washing Machines",
-  "Home Appliances",
-  "Batteries & Cables",
-  "Other Electronics",
+  "Printers & Scanners",
+  "Cameras & Electronics",
+  "Batteries & Power Banks",
+  "Cables & Accessories",
+  "Plastic & Polymer Shells",
+  "Other Electronics & Scrap",
 ];
 
 const CONDITIONS_COLOR: Record<string, string> = {
@@ -89,14 +100,52 @@ export default function BuyerPortalPage() {
   const [bidAmount, setBidAmount] = useState("");
   const [buyerUser, setBuyerUser] = useState<any>(null);
   
+  // Buyer Notifications & Messages State
+  const [buyerNotifs, setBuyerNotifs] = useState<any[]>([]);
+  const [showNotifTray, setShowNotifTray] = useState(false);
+  const [activeBuyerChat, setActiveBuyerChat] = useState<any | null>(null);
+
   const receiptRef = useRef<HTMLDivElement>(null);
 
-  // Load buyer user info
+  // Load buyer user info & notifications
   useEffect(() => {
     const stored = localStorage.getItem("ecoroute_user");
     if (stored) {
       try { setBuyerUser(JSON.parse(stored)); } catch {}
     }
+
+    const loadBuyerNotifs = () => {
+      try {
+        const stored = localStorage.getItem("ecoroute_buyer_notifications");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setBuyerNotifs((prev) => (prev.length !== parsed.length ? parsed : prev));
+        } else {
+          setBuyerNotifs((prev) => {
+            if (prev.length === 0) {
+              return [
+                {
+                  id: "buyer-demo-1",
+                  title: "💬 Seller Anguharikarthick wants to message you",
+                  message: "Seller sent: \"Item is packed and ready for pickup!\" regarding 'Extruded Aluminium & Metal Sheet Scrap'",
+                  timestamp: "Just now",
+                  sellerName: "Anguharikarthick",
+                  sellerPhone: "+91 98765 43210",
+                  itemName: "Extruded Aluminium & Metal Sheet Scrap",
+                  itemPrice: "₹90",
+                  read: false,
+                },
+              ];
+            }
+            return prev;
+          });
+        }
+      } catch {}
+    };
+
+    loadBuyerNotifs();
+    const interval = setInterval(loadBuyerNotifs, 4000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchListings = () => {
@@ -204,21 +253,101 @@ export default function BuyerPortalPage() {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5">
-            <span className="text-xs font-semibold text-white/90">{t("buyer.portal")}</span>
-            <MdVerified className="w-4 h-4 text-cyan-300" />
-          </div>
+          <div className="flex items-center gap-3">
+            {/* Seller Messages & Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifTray((prev) => !prev)}
+                className="relative px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white flex items-center gap-1.5 text-xs font-bold transition cursor-pointer"
+              >
+                <MdNotifications className="w-4 h-4 text-amber-300" />
+                <span>Messages & Alerts</span>
+                {buyerNotifs.length > 0 && (
+                  <span className="bg-red-500 text-white text-[10px] font-extrabold px-1.5 py-0.2 rounded-full animate-pulse">
+                    {buyerNotifs.length}
+                  </span>
+                )}
+              </button>
 
-          <button
-            onClick={() => {
-              localStorage.removeItem("ecoroute_user");
-              window.location.replace("/login");
-            }}
-            className="flex items-center gap-1.5 text-xs font-bold text-white/80 hover:text-white transition cursor-pointer"
-          >
-            <MdLogout className="w-4 h-4" />
-            {t("nav.logout") || "Logout"}
-          </button>
+              {/* Notification Popover Tray */}
+              <AnimatePresence>
+                {showNotifTray && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 text-slate-800 overflow-hidden"
+                  >
+                    <div className="bg-slate-900 text-white p-3 px-4 flex items-center justify-between">
+                      <span className="text-xs font-extrabold flex items-center gap-1.5">
+                        <MdChatBubbleOutline className="w-4 h-4 text-emerald-400" />
+                        Seller Messages & Pickup Alerts
+                      </span>
+                      <button
+                        onClick={() => setShowNotifTray(false)}
+                        className="text-slate-400 hover:text-white"
+                      >
+                        <MdClose className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="max-h-80 overflow-y-auto p-3 flex flex-col gap-2">
+                      {buyerNotifs.length === 0 ? (
+                        <div className="p-6 text-center text-xs text-slate-400">
+                          No new messages or notifications.
+                        </div>
+                      ) : (
+                        buyerNotifs.map((n) => (
+                          <div
+                            key={n.id}
+                            className="bg-blue-50/60 border border-blue-200 rounded-xl p-3 flex flex-col gap-1.5 hover:bg-blue-50 transition"
+                          >
+                            <span className="text-xs font-bold text-slate-900">
+                              {n.title}
+                            </span>
+                            <p className="text-[11px] text-slate-600 leading-relaxed">
+                              {n.message}
+                            </p>
+                            <div className="flex items-center justify-between pt-1">
+                              <span className="text-[10px] text-slate-400 font-mono">
+                                {n.timestamp}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  setShowNotifTray(false);
+                                  setActiveBuyerChat(n);
+                                }}
+                                className="px-3 py-1 bg-[var(--color-primary)] text-white text-[11px] font-bold rounded-lg hover:bg-[var(--color-primary-dark)] flex items-center gap-1 cursor-pointer shadow-xs"
+                              >
+                                <MdChatBubbleOutline className="w-3.5 h-3.5" />
+                                Chat with Seller
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="hidden md:flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5">
+              <span className="text-xs font-semibold text-white/90">{t("buyer.portal")}</span>
+              <MdVerified className="w-4 h-4 text-cyan-300" />
+            </div>
+
+            <button
+              onClick={() => {
+                localStorage.removeItem("ecoroute_user");
+                window.location.replace("/login");
+              }}
+              className="flex items-center gap-1.5 text-xs font-bold text-white/80 hover:text-white transition cursor-pointer"
+            >
+              <MdLogout className="w-4 h-4" />
+              {t("nav.logout") || "Logout"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -808,6 +937,20 @@ export default function BuyerPortalPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* ── LIVE SELLER CHAT MESSAGING MODAL FOR BUYERS ─────────────────────── */}
+      {activeBuyerChat && (
+        <BuyerChatModal
+          isOpen={!!activeBuyerChat}
+          onClose={() => setActiveBuyerChat(null)}
+          notificationId={activeBuyerChat.id}
+          buyerName={activeBuyerChat.sellerName || "Seller Anguharikarthick"}
+          buyerPhone={activeBuyerChat.sellerPhone || "+91 98765 43210"}
+          itemName={activeBuyerChat.itemName || "Scrap Item"}
+          itemPrice={activeBuyerChat.itemPrice || "₹90"}
+          initialMessage={activeBuyerChat.message || "Hello! Let's arrange the pickup."}
+        />
+      )}
     </div>
   );
 }

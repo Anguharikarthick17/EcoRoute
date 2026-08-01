@@ -1197,3 +1197,41 @@ export function addEWasteListing(item: Omit<EWasteListing, "id" | "createdAt" | 
   globalEWaste.ewasteStore.unshift(newListing);
   return newListing;
 }
+
+export async function deleteEWasteListingAsync(id: string): Promise<boolean> {
+  if (globalEWaste.ewasteStore) {
+    globalEWaste.ewasteStore = globalEWaste.ewasteStore.filter((item) => item.id !== id);
+  }
+  if (isSupabaseConfigured()) {
+    try {
+      await supabaseAdmin.from("ewaste_listings").delete().eq("id", id);
+    } catch (e) {
+      console.warn("Supabase delete error:", e);
+    }
+  }
+  return true;
+}
+
+export function deleteEWasteListing(id: string): boolean {
+  if (globalEWaste.ewasteStore) {
+    const initialLen = globalEWaste.ewasteStore.length;
+    globalEWaste.ewasteStore = globalEWaste.ewasteStore.filter((item) => item.id !== id);
+    return globalEWaste.ewasteStore.length < initialLen;
+  }
+  return false;
+}
+
+export function deleteEWasteListingsByKeyword(keyword: string): number {
+  if (globalEWaste.ewasteStore) {
+    const initialLen = globalEWaste.ewasteStore.length;
+    const lower = keyword.toLowerCase();
+    globalEWaste.ewasteStore = globalEWaste.ewasteStore.filter(
+      (item) =>
+        !item.deviceName.toLowerCase().includes(lower) &&
+        !item.description.toLowerCase().includes(lower) &&
+        !item.imageUrl.toLowerCase().includes(lower)
+    );
+    return initialLen - globalEWaste.ewasteStore.length;
+  }
+  return 0;
+}

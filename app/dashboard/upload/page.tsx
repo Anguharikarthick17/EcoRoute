@@ -32,6 +32,14 @@ import {
 const CATEGORIES = [
   "Laptops & Computers",
   "Mobile Phones & Tablets",
+  "Smartwatches & Wearables",
+  "Bluetooth Earbuds & Audio",
+  "Electrical Switches & Sockets",
+  "Copper Wire & Windings",
+  "Metals & Aluminium Scrap",
+  "Printed Circuit Boards (PCBs)",
+  "Brass, Lead & Heavy Metals",
+  "Industrial Electrical Motors",
   "TVs & Monitors",
   "Refrigerators & ACs",
   "Washing Machines",
@@ -39,21 +47,31 @@ const CATEGORIES = [
   "Cameras & Electronics",
   "Batteries & Power Banks",
   "Cables & Accessories",
-  "Other Electronics",
+  "Plastic & Polymer Shells",
+  "Other Electronics & Scrap",
 ];
 
 // ── Base scrap prices per category (₹) — Working Perfect condition ────────────
 const CATEGORY_PRICES: Record<string, number> = {
-  "Laptops & Computers":     1800,
-  "Mobile Phones & Tablets":  950,
-  "TVs & Monitors":           1200,
-  "Refrigerators & ACs":      2500,
-  "Washing Machines":         1500,
-  "Printers & Scanners":       600,
-  "Cameras & Electronics":     800,
-  "Batteries & Power Banks":   300,
-  "Cables & Accessories":      150,
-  "Other Electronics":         400,
+  "Laptops & Computers":           1800,
+  "Mobile Phones & Tablets":        950,
+  "Smartwatches & Wearables":       550,
+  "Bluetooth Earbuds & Audio":      400,
+  "Electrical Switches & Sockets":  250,
+  "Copper Wire & Windings":         750,
+  "Metals & Aluminium Scrap":       450,
+  "Printed Circuit Boards (PCBs)":  1100,
+  "Brass, Lead & Heavy Metals":     650,
+  "Industrial Electrical Motors":   1600,
+  "TVs & Monitors":                 1200,
+  "Refrigerators & ACs":            2500,
+  "Washing Machines":               1500,
+  "Printers & Scanners":             600,
+  "Cameras & Electronics":           800,
+  "Batteries & Power Banks":         300,
+  "Cables & Accessories":            250,
+  "Plastic & Polymer Shells":        200,
+  "Other Electronics & Scrap":       400,
 };
 
 // ── Condition multipliers ─────────────────────────────────────────────────────
@@ -160,18 +178,19 @@ export default function SellScrapPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // Pre-fill contact from stored user
+  // Pre-fill contact from stored user (leaving mobile empty if default dummy)
   useEffect(() => {
     const stored = localStorage.getItem("ecoroute_user");
     if (!stored) return;
     try {
       const u = JSON.parse(stored);
+      const userPhone = (u.mobile && u.mobile !== "9876543210") ? u.mobile : "";
       setContact((p) => ({
         ...p,
         sellerName: u.fullName || p.sellerName,
         email: u.email || p.email,
-        phone: u.mobile || p.phone,
-        whatsapp: u.mobile || p.whatsapp,
+        phone: userPhone,
+        whatsapp: userPhone,
         city: u.city || p.city,
         state: u.state || "Tamil Nadu",
       }));
@@ -238,7 +257,7 @@ export default function SellScrapPage() {
       fetch(dataUrl)
         .then((res) => res.blob())
         .then((blob) => {
-          const file = new File([blob], `live_camera_scan_${Date.now()}.jpg`, { type: "image/jpeg" });
+          const file = new File([blob], `live_e_waste_scan_${Date.now()}.jpg`, { type: "image/jpeg" });
           handleImageFile(activeCameraItemId, file);
         });
     }
@@ -462,93 +481,97 @@ export default function SellScrapPage() {
 
       {/* ── LIVE CAMERA VIEWFINDER MODAL ─────────────────────────────────────── */}
       {cameraModalOpen && (
-        <div className="fixed inset-0 z-[9999] bg-black/90 flex flex-col items-center justify-between p-4 sm:p-6 backdrop-blur-md">
-          {/* Top Bar */}
-          <div className="w-full max-w-lg flex items-center justify-between text-white py-2">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-red-500 animate-ping" />
-              <span className="text-sm font-bold tracking-wide">LIVE CAMERA AI SCANNER</span>
+        <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-700/80 rounded-3xl p-4 sm:p-5 flex flex-col items-center gap-4 shadow-2xl text-white relative animate-in fade-in zoom-in-95 duration-200">
+            {/* Top Bar */}
+            <div className="w-full flex items-center justify-between pb-1 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
+                <span className="text-xs font-extrabold tracking-wide uppercase text-slate-200">
+                  LIVE AI SCANNER
+                </span>
+              </div>
+              <button
+                onClick={closeCameraModal}
+                className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
+              >
+                <MdClose className="w-5 h-5" />
+              </button>
             </div>
-            <button
-              onClick={closeCameraModal}
-              className="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition cursor-pointer"
-            >
-              <MdClose className="w-6 h-6" />
-            </button>
-          </div>
 
-          {/* Camera Viewfinder */}
-          <div className="relative w-full max-w-lg aspect-[4/3] bg-slate-950 rounded-2xl overflow-hidden border-2 border-indigo-500 shadow-2xl flex items-center justify-center">
-            {cameraError ? (
-              <div className="p-6 text-center text-white flex flex-col items-center gap-3">
-                <MdWarning className="w-10 h-10 text-amber-400" />
-                <p className="text-xs text-amber-200">{cameraError}</p>
-                <button
-                  onClick={closeCameraModal}
-                  className="px-4 py-2 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/30 text-white cursor-pointer"
-                >
-                  Close & Use Upload Option
-                </button>
-              </div>
-            ) : (
-              <>
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-full object-cover"
-                />
-
-                {/* Target Frame / Crosshair */}
-                <div className="absolute inset-8 border-2 border-dashed border-white/60 rounded-xl pointer-events-none flex flex-col items-center justify-between p-3">
-                  <div className="flex justify-between w-full text-white/70 text-[10px] uppercase font-mono">
-                    <span>✦ Align Scrap Item</span>
-                    <span>AI Vision Active</span>
-                  </div>
-                  <MdCenterFocusWeak className="w-12 h-12 text-white/80 animate-pulse" />
-                  <div className="text-white/80 text-[11px] font-semibold bg-black/60 px-3 py-1 rounded-full">
-                    Position item inside frame & tap Shutter
-                  </div>
+            {/* Camera Viewfinder */}
+            <div className="relative w-full aspect-[4/3] max-h-[300px] bg-slate-950 rounded-2xl overflow-hidden border-2 border-indigo-500 shadow-xl flex items-center justify-center">
+              {cameraError ? (
+                <div className="p-4 text-center text-white flex flex-col items-center gap-2">
+                  <MdWarning className="w-8 h-8 text-amber-400" />
+                  <p className="text-[11px] text-amber-200">{cameraError}</p>
+                  <button
+                    onClick={closeCameraModal}
+                    className="px-3 py-1.5 text-xs font-bold rounded-lg bg-white/20 hover:bg-white/30 text-white cursor-pointer"
+                  >
+                    Close & Use Upload Option
+                  </button>
                 </div>
-              </>
-            )}
-          </div>
+              ) : (
+                <>
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover"
+                  />
 
-          {/* Bottom Controls */}
-          <div className="w-full max-w-lg flex items-center justify-around py-4">
-            {/* Flip camera */}
-            <button
-              onClick={switchCamera}
-              type="button"
-              className="p-3.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition cursor-pointer flex flex-col items-center gap-1"
-              title="Switch Front/Back Camera"
-            >
-              <MdCameraswitch className="w-6 h-6" />
-              <span className="text-[10px]">Flip</span>
-            </button>
+                  {/* Target Frame / Crosshair */}
+                  <div className="absolute inset-4 border-2 border-dashed border-white/60 rounded-xl pointer-events-none flex flex-col items-center justify-between p-2">
+                    <div className="flex justify-between w-full text-white/80 text-[9px] uppercase font-mono">
+                      <span>✦ Align Item</span>
+                      <span>AI Active</span>
+                    </div>
+                    <MdCenterFocusWeak className="w-10 h-10 text-white/80 animate-pulse" />
+                    <div className="text-white/90 text-[10px] font-semibold bg-black/70 px-2.5 py-0.5 rounded-full">
+                      Align item inside frame & tap Shutter
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
-            {/* Shutter Button */}
-            <button
-              onClick={capturePhotoFromCamera}
-              type="button"
-              disabled={!!cameraError}
-              className="w-20 h-20 rounded-full border-4 border-white bg-red-600 hover:bg-red-500 active:scale-95 transition shadow-2xl flex items-center justify-center cursor-pointer disabled:opacity-50"
-            >
-              <div className="w-16 h-16 rounded-full border-2 border-white/60 bg-red-600 flex items-center justify-center">
-                <MdPhotoCamera className="w-8 h-8 text-white" />
-              </div>
-            </button>
+            {/* Bottom Controls (Positioned directly under screen, no scrolling needed) */}
+            <div className="w-full flex items-center justify-center gap-6 pt-1">
+              {/* Flip camera */}
+              <button
+                onClick={switchCamera}
+                type="button"
+                className="w-11 h-11 rounded-full bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer flex items-center justify-center shadow"
+                title="Switch Front/Back Camera"
+              >
+                <MdCameraswitch className="w-5 h-5" />
+              </button>
 
-            {/* Cancel */}
-            <button
-              onClick={closeCameraModal}
-              type="button"
-              className="p-3.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition cursor-pointer flex flex-col items-center gap-1"
-            >
-              <MdClose className="w-6 h-6" />
-              <span className="text-[10px]">Close</span>
-            </button>
+              {/* Shutter Button */}
+              <button
+                onClick={capturePhotoFromCamera}
+                type="button"
+                disabled={!!cameraError}
+                className="w-16 h-16 rounded-full border-4 border-white bg-red-600 hover:bg-red-500 active:scale-95 transition shadow-2xl flex items-center justify-center cursor-pointer disabled:opacity-50"
+                title="Capture Photo"
+              >
+                <div className="w-12 h-12 rounded-full border-2 border-white/60 bg-red-600 flex items-center justify-center">
+                  <MdPhotoCamera className="w-6 h-6 text-white" />
+                </div>
+              </button>
+
+              {/* Cancel */}
+              <button
+                onClick={closeCameraModal}
+                type="button"
+                className="w-11 h-11 rounded-full bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer flex items-center justify-center shadow"
+                title="Close Scanner"
+              >
+                <MdClose className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       )}

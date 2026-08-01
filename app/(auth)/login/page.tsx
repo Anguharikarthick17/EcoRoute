@@ -47,6 +47,34 @@ function LoginContent() {
     const registered = searchParams.get("registered");
     const roleParam = searchParams.get("role");
     const expired = searchParams.get("expired");
+    const logout = searchParams.get("logout");
+
+    if (logout === "true") {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("ecoroute_user");
+      }
+    } else if (expired === "true") {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("ecoroute_user");
+      }
+      setServerError("⚠️ Your session expired. Please log in again to continue.");
+    } else if (typeof window !== "undefined") {
+      // Auto-Login: Check if user is already logged in
+      const savedUserStr = localStorage.getItem("ecoroute_user");
+      if (savedUserStr) {
+        try {
+          const savedUser = JSON.parse(savedUserStr);
+          if (savedUser && savedUser.email) {
+            if (savedUser.role === "RECYCLER") {
+              router.replace("/buyer");
+            } else {
+              router.replace("/dashboard/upload");
+            }
+            return;
+          }
+        } catch (e) {}
+      }
+    }
 
     if (paramEmail) {
       setIdentifier(paramEmail);
@@ -55,12 +83,10 @@ function LoginContent() {
       setRole("recycler");
     }
     if (registered === "true") {
-      setSuccessMsg("Account registered successfully! Enter your password to log in (1-hour active session).");
+      setSuccessMsg("Account registered successfully! Enter your password to log in.");
     }
-    if (expired === "true") {
-      setServerError("⚠️ Your 1-hour active session has expired. Please log in again to continue.");
-    }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const identifierError =
     showErrors && !identifier
@@ -98,11 +124,12 @@ function LoginContent() {
 
       if (typeof window !== "undefined") {
         localStorage.setItem("ecoroute_user", JSON.stringify(data.user));
+        document.cookie = `ecoroute_user=${encodeURIComponent(JSON.stringify(data.user))}; path=/; max-age=31536000`;
       }
 
       // Recyclers go to Buyer Marketplace; Citizens go to Sell Scrap page
       const userRole = data.user?.role;
-      if (userRole === "RECYCLER") {
+      if (userRole === "RECYCLER" || role === "recycler") {
         window.location.replace("/buyer");
       } else {
         window.location.replace("/dashboard/upload");

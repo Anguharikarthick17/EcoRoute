@@ -407,12 +407,12 @@ export default function RewardsPage() {
                   required
                   placeholder={
                     selectedOption.category === "CASH"
-                      ? "e.g. 9876543210@upi or name@okicici"
+                      ? "e.g. mobile@upi or name@okicici"
                       : selectedOption.category === "EB_BILL"
                       ? "e.g. 04-219-005-1234 (Consumer No)"
                       : selectedOption.category === "WATER_BILL"
                       ? "e.g. WTR-641021-99"
-                      : "e.g. +91 98765 43210"
+                      : "e.g. Enter your 10-digit mobile number"
                   }
                   value={upiOrBillNo}
                   onChange={(e) => setUpiOrBillNo(e.target.value)}

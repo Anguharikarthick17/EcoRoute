@@ -38,16 +38,18 @@ export interface StoredUser {
   recyclerProfile?: RecyclerProfile;
 }
 
-// In-memory store persistent during node process lifecycle
-const globalUsers = globalThis as unknown as {
-  usersStore?: Map<string, StoredUser>;
-};
+import fs from "fs";
+import path from "path";
 
-if (!globalUsers.usersStore) {
-  globalUsers.usersStore = new Map<string, StoredUser>();
+// In-memory store persistent during node process lifecycle & synced to disk
+const DATA_DIR = path.join(process.cwd(), "data");
+const USERS_FILE = path.join(DATA_DIR, "users.json");
+
+function ensureUsersFileOnDisk(): Map<string, StoredUser> {
+  const store = new Map<string, StoredUser>();
 
   // Default demo citizen user
-  globalUsers.usersStore.set("rajesh.kumar@example.in", {
+  store.set("rajesh.kumar@example.in", {
     id: "usr_rajesh_kumar",
     email: "rajesh.kumar@example.in",
     passwordHash: "$2a$10$e7c.h5a0U1g80g0V.b0c.e0z00000000000000000000000000000",
@@ -62,7 +64,7 @@ if (!globalUsers.usersStore) {
   });
 
   // Default demo recycler user
-  globalUsers.usersStore.set("recycler@ecoroute.gov.in", {
+  store.set("recycler@ecoroute.gov.in", {
     id: "usr_ecorecycle_buyer",
     email: "recycler@ecoroute.gov.in",
     passwordHash: "$2a$10$e7c.h5a0U1g80g0V.b0c.e0z00000000000000000000000000000",
@@ -95,6 +97,52 @@ if (!globalUsers.usersStore) {
       },
     },
   });
+
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+
+    if (fs.existsSync(USERS_FILE)) {
+      const raw = fs.readFileSync(USERS_FILE, "utf-8");
+      const parsed: StoredUser[] = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        for (const u of parsed) {
+          if (u.email) {
+            store.set(u.email.toLowerCase().trim(), u);
+          }
+        }
+      }
+    } else {
+      // Save initial store to disk
+      const usersList = Array.from(store.values());
+      fs.writeFileSync(USERS_FILE, JSON.stringify(usersList, null, 2), "utf-8");
+    }
+  } catch (err) {
+    console.warn("Failed to load users from disk:", err);
+  }
+
+  return store;
+}
+
+function saveUsersToDisk(store: Map<string, StoredUser>) {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    const usersList = Array.from(store.values());
+    fs.writeFileSync(USERS_FILE, JSON.stringify(usersList, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Failed to save users to disk:", err);
+  }
+}
+
+const globalUsers = globalThis as unknown as {
+  usersStore?: Map<string, StoredUser>;
+};
+
+if (!globalUsers.usersStore) {
+  globalUsers.usersStore = ensureUsersFileOnDisk();
 }
 
 export const usersStore = globalUsers.usersStore;
@@ -156,7 +204,16 @@ export async function findUserByEmail(email: string): Promise<StoredUser | undef
     }
   }
 
-  return usersStore.get(lowerEmail);
+  let user = usersStore.get(lowerEmail);
+  if (!user) {
+    // Re-sync with disk store to ensure all persistent users are loaded
+    const freshStore = ensureUsersFileOnDisk();
+    for (const [k, v] of freshStore.entries()) {
+      usersStore.set(k, v);
+    }
+    user = usersStore.get(lowerEmail);
+  }
+  return user;
 }
 
 export async function findUserByEmailOrMobile(identifier: string): Promise<StoredUser | undefined> {
@@ -204,6 +261,7 @@ export async function createUser(userData: {
   };
 
   usersStore.set(lowerEmail, newUser);
+  saveUsersToDisk(usersStore);
 
   if (isSupabaseConfigured()) {
     try {
@@ -297,6 +355,7 @@ export async function createRecycler(userData: {
   };
 
   usersStore.set(lowerEmail, newRecycler);
+  saveUsersToDisk(usersStore);
 
   if (isSupabaseConfigured()) {
     try {

@@ -7,6 +7,7 @@ import {
   MdAccessTime,
   MdCampaign,
   MdArrowForward,
+  MdChatBubbleOutline,
 } from "react-icons/md";
 import Link from "next/link";
 
@@ -51,23 +52,30 @@ const TYPE_CONFIG = {
 export function NotificationCard({
   notification,
   onMarkRead,
+  onOpenChat,
 }: NotificationCardProps) {
   const config = TYPE_CONFIG[notification.type] || TYPE_CONFIG.system;
   const Icon = config.icon;
 
+  const isOrderOrPickup =
+    notification.title.includes("Order") ||
+    notification.title.includes("Pickup") ||
+    notification.message.includes("Buyer") ||
+    notification.message.includes("💬");
+
   return (
     <div
       className={cn(
-        "p-4 rounded-lg border transition-all duration-200 flex items-start gap-4",
+        "p-4 rounded-xl border transition-all duration-200 flex items-start gap-4 hover:shadow-md",
         notification.read
-          ? "bg-white border-[var(--color-border)] opacity-85"
-          : "bg-blue-50/30 border-blue-200 shadow-sm",
+          ? "bg-white border-[var(--color-border)] opacity-90"
+          : "bg-blue-50/40 border-blue-200 shadow-sm",
       )}
     >
       {/* Icon */}
       <div
         className={cn(
-          "w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5",
+          "w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-0.5 shadow-xs",
           config.bg,
           config.color,
         )}
@@ -92,15 +100,26 @@ export function NotificationCard({
           </span>
         </div>
 
-        <h4 className="text-sm font-bold text-[var(--color-text)] mt-1">
+        <h4 className="text-sm font-extrabold text-[var(--color-text)] mt-1">
           {notification.title}
         </h4>
-        <p className="text-xs text-[var(--color-text-muted)] leading-relaxed whitespace-pre-line">
+        <p className="text-xs text-[var(--color-text-muted)] leading-relaxed whitespace-pre-line font-medium">
           {notification.message}
         </p>
 
-        {notification.actionUrl && (
-          <div className="mt-2">
+        {/* Actions Bar */}
+        <div className="mt-2.5 flex items-center gap-3 flex-wrap">
+          {isOrderOrPickup && onOpenChat && (
+            <button
+              onClick={() => onOpenChat(notification)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-primary)] text-white text-xs font-bold hover:bg-[var(--color-primary-dark)] transition cursor-pointer shadow-xs"
+            >
+              <MdChatBubbleOutline className="w-4 h-4" />
+              Chat & Text Buyer
+            </button>
+          )}
+
+          {notification.actionUrl && (
             <Link
               href={notification.actionUrl}
               className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-secondary)] hover:underline"
@@ -108,14 +127,14 @@ export function NotificationCard({
               {notification.actionLabel || "View Details"}
               <MdArrowForward className="w-3 h-3" />
             </Link>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {!notification.read && onMarkRead && (
         <button
           onClick={() => onMarkRead(notification.id)}
-          className="text-xs font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] shrink-0 pt-1"
+          className="text-xs font-bold text-blue-600 hover:text-blue-800 shrink-0 pt-1 cursor-pointer"
           title="Mark as read"
         >
           Mark Read

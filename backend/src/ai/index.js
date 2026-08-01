@@ -18,7 +18,7 @@ const generateExplanation = require('./explainEngine');
 
 // Import the Gemini Vision function.
 // analyzeWasteImage(imagePath) -> async, returns { item, material, condition, confidence }
-const analyzeWasteImage = require('./gemini');
+const { analyzeWasteImage } = require('./gemini');
 
 // Export all AI engine functions from a single entry point.
 // This lets other files import everything from './ai' instead of each file separately.
