@@ -47,11 +47,6 @@ export function CitizenSidebar() {
     if (stored) {
       try {
         const u = JSON.parse(stored);
-        if (u.sessionExpiresAt && Date.now() > u.sessionExpiresAt) {
-          localStorage.removeItem("ecoroute_user");
-          window.location.href = "/login?expired=true";
-          return;
-        }
         if (u.fullName) {
           setUserName(u.fullName);
           const parts = u.fullName.split(" ");

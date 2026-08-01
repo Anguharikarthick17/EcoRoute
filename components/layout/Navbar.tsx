@@ -37,12 +37,6 @@ export function Navbar() {
         try {
           const u = JSON.parse(stored);
           // 1-Hour Session Expiration Check
-          if (u.sessionExpiresAt && Date.now() > u.sessionExpiresAt) {
-            localStorage.removeItem("ecoroute_user");
-            setUser(null);
-            window.location.replace("/login?expired=true");
-            return;
-          }
           setUser(u);
         } catch {
           setUser(null);
@@ -53,10 +47,8 @@ export function Navbar() {
     };
 
     checkUser();
-    const interval = setInterval(checkUser, 10000); // Poll every 10s for 1-hr expiration
     window.addEventListener("storage", checkUser);
     return () => {
-      clearInterval(interval);
       window.removeEventListener("storage", checkUser);
     };
   }, [pathname]);
