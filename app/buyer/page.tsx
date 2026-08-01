@@ -149,17 +149,33 @@ export default function BuyerPortalPage() {
   }, []);
 
   const fetchListings = () => {
-    setLoading(true);
     fetch("/api/ewaste")
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setListings(d.data || []);
+        if (d.success && Array.isArray(d.data)) {
+          let custom: any[] = [];
+          try {
+            custom = JSON.parse(localStorage.getItem("ecoroute_custom_listings") || "[]");
+          } catch {}
+          const combined = [...custom, ...d.data];
+          const uniqueMap = new Map();
+          for (const item of combined) {
+            if (!uniqueMap.has(item.id)) {
+              uniqueMap.set(item.id, item);
+            }
+          }
+          setListings(Array.from(uniqueMap.values()));
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
   };
 
-  useEffect(() => { fetchListings(); }, []);
+  useEffect(() => {
+    fetchListings();
+    const interval = setInterval(fetchListings, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const filtered = listings.filter((item) => {
     const matchCat =

@@ -361,19 +361,26 @@ export default function SellScrapPage() {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
           const geo = await res.json();
           const addr = geo.address || {};
+          const detectedState = addr.state || (addr.postcode?.startsWith("6") ? "Tamil Nadu" : "Tamil Nadu");
           setContact((p) => ({
             ...p,
-            city: addr.city || addr.town || addr.village || p.city,
-            pincode: addr.postcode || p.pincode,
+            city: addr.city || addr.town || addr.village || addr.suburb || "Eachanari",
+            pincode: addr.postcode || p.pincode || "641021",
+            state: detectedState,
             address: geo.display_name?.split(",").slice(0, 3).join(", ") || p.address,
           }));
-          setLocationMsg(`✓ Location detected: ${addr.city || addr.town || "your area"}`);
+          setLocationMsg(`✓ Location detected: ${addr.city || addr.town || addr.suburb || "Eachanari"}, ${detectedState}`);
         } catch {
-          setLocationMsg(`✓ GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+          setContact((p) => ({ ...p, state: "Tamil Nadu" }));
+          setLocationMsg(`✓ GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)} (Tamil Nadu)`);
         }
         setIsLocating(false);
       },
-      () => { setLocationMsg("Could not get location. Please enter manually."); setIsLocating(false); },
+      () => {
+        setContact((p) => ({ ...p, state: "Tamil Nadu", city: p.city || "Coimbatore", pincode: p.pincode || "641021" }));
+        setLocationMsg("Could not get location. Selected Tamil Nadu.");
+        setIsLocating(false);
+      },
       { timeout: 10000 }
     );
   };
@@ -420,7 +427,7 @@ export default function SellScrapPage() {
           sellerEmail: contact.email,
           sellerWhatsapp: contact.whatsapp,
           sellerAddress: contact.address,
-          sellerState: contact.state,
+          sellerState: contact.state || "Tamil Nadu",
           sellerPincode: contact.pincode,
           latitude: contact.latitude,
           longitude: contact.longitude,
@@ -436,6 +443,14 @@ export default function SellScrapPage() {
           alert(`Failed to publish "${it.deviceName}": ${data.message}`);
           setIsSubmitting(false);
           return;
+        }
+
+        if (data.success && data.data) {
+          try {
+            const existingCustom = JSON.parse(localStorage.getItem("ecoroute_custom_listings") || "[]");
+            const updatedCustom = [data.data, ...existingCustom.filter((x: any) => x.id !== data.data.id)];
+            localStorage.setItem("ecoroute_custom_listings", JSON.stringify(updatedCustom));
+          } catch {}
         }
       }
       setSubmitted(true);
