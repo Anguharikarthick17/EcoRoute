@@ -24,6 +24,29 @@ export async function POST(request: Request) {
       );
     }
 
+    // 🛑 REQUIREMENT 2: STRICT ROLE AUTHORIZATION CHECK (Buyer vs Seller Tab Validation)
+    const requestedRole = (validated.role || "citizen").toUpperCase();
+
+    if (requestedRole === "RECYCLER" && user.role !== "RECYCLER") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Role Mismatch: This account is a Citizen (Seller) account. Please switch to the 'Citizen' tab at the top to log in.",
+        },
+        { status: 403 }
+      );
+    }
+
+    if (requestedRole === "CITIZEN" && user.role !== "CITIZEN") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Role Mismatch: This account is a Verified Recycler (Buyer) account. Please switch to the 'Verified Recycler' tab at the top to log in.",
+        },
+        { status: 403 }
+      );
+    }
+
     // Verify Password if hash is set
     if (user.passwordHash && user.passwordHash.length > 20) {
       const isPasswordValid = await comparePassword(validated.password, user.passwordHash);
