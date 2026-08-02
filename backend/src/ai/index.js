@@ -23,7 +23,7 @@ const { analyzeWasteImage } = require('./gemini');
 // Export all AI engine functions from a single entry point.
 // This lets other files import everything from './ai' instead of each file separately.
 module.exports = {
-  calculateReward,      // Calculates EcoCoins for an item
+  calculateReward,      // Calculates EcoCoins 
   calculateTrustScore,  // Calculates a user's trust score
   calculatePriority,    // Calculates pickup priority
   generateExplanation,  // Builds human-readable result messages
