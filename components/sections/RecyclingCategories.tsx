@@ -1,105 +1,92 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import {
-  MdSmartphone,
-  MdLaptop,
-  MdDesktopMac,
-  MdTv,
-  MdKitchen,
-  MdPrint,
   MdCable,
   MdBatteryCharging80,
-  MdRouter,
-  MdLocalHospital,
+  MdKitchen,
+  MdLayers,
+  MdDescription,
+  MdAutoAwesome,
+  MdTv,
+  MdSettingsSuggest,
+  MdHandyman,
+  MdDeleteOutline,
+  MdElectricBolt,
 } from "react-icons/md";
+import { FaBoxesStacked } from "react-icons/fa6";
+import { GiMetalBar, GiAnvil } from "react-icons/gi";
+import Link from "next/link";
 
 const CATEGORIES = [
-  { id: "cat-mobile", icon: MdSmartphone, label: "Mobile Phones", count: "4,200+ collected" },
-  { id: "cat-laptop", icon: MdLaptop, label: "Laptops", count: "2,800+ collected" },
-  { id: "cat-desktop", icon: MdDesktopMac, label: "Desktop Computers", count: "1,500+ collected" },
-  { id: "cat-tv", icon: MdTv, label: "Televisions", count: "900+ collected" },
-  { id: "cat-appliance", icon: MdKitchen, label: "Home Appliances", count: "1,100+ collected" },
-  { id: "cat-printer", icon: MdPrint, label: "Printers & Scanners", count: "600+ collected" },
-  { id: "cat-cable", icon: MdCable, label: "Cables & Accessories", count: "3,000+ collected" },
-  { id: "cat-battery", icon: MdBatteryCharging80, label: "Batteries", count: "5,500+ collected" },
-  { id: "cat-network", icon: MdRouter, label: "Networking Devices", count: "800+ collected" },
-  { id: "cat-medical", icon: MdLocalHospital, label: "Medical Electronics", count: "300+ collected" },
+  { id: "cat-copper", icon: MdElectricBolt, label: "Copper Scrap", desc: "Windings, coils & pure copper wires", rate: "₹700 – ₹780/kg" },
+  { id: "cat-aluminium", icon: GiMetalBar, label: "Aluminium", desc: "Heatsinks, frames, sheets & cans", rate: "₹160 – ₹200/kg" },
+  { id: "cat-brass", icon: MdHandyman, label: "Brass Scrap", desc: "Fittings, valves, utensils & taps", rate: "₹420 – ₹490/kg" },
+  { id: "cat-iron", icon: GiAnvil, label: "Iron & Steel", desc: "Grills, rods, heavy structural scrap", rate: "₹32 – ₹40/kg" },
+  { id: "cat-appliances", icon: MdKitchen, label: "Appliances", desc: "Washing machines, fridges & ACs", rate: "₹1,200 – ₹3,500/unit" },
+  { id: "cat-ewaste", icon: MdTv, label: "E-Waste", desc: "Laptops, mobiles, TVs & monitors", rate: "₹350 – ₹2,500/unit" },
+  { id: "cat-cables", icon: MdCable, label: "Cables & Wires", desc: "Power cables, adapters & wiring", rate: "₹180 – ₹300/kg" },
+  { id: "cat-batteries", icon: MdBatteryCharging80, label: "Batteries", desc: "Lead acid, inverter & UPS cells", rate: "₹75 – ₹110/kg" },
+  { id: "cat-paper", icon: MdDescription, label: "Paper Scrap", desc: "Newspapers, books & office paper", rate: "₹14 – ₹18/kg" },
+  { id: "cat-cardboard", icon: FaBoxesStacked, label: "Cardboard", desc: "Corrugated shipping boxes & cartons", rate: "₹9 – ₹13/kg" },
+  { id: "cat-plastic", icon: MdDeleteOutline, label: "Plastic Scrap", desc: "HDPE containers, drums & shells", rate: "₹18 – ₹35/kg" },
+  { id: "cat-other", icon: MdLayers, label: "Other Scrap", desc: "Mixed recyclable scrap items", rate: "Market Valued" },
 ] as const;
 
 export function RecyclingCategories() {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
   return (
     <section
-      ref={ref}
-      id="locate-centre"
+      id="categories"
       aria-labelledby="categories-heading"
-      className="bg-[var(--color-background)] border-b border-[var(--color-border)]"
+      className="bg-white border-b border-slate-200/80 py-16 lg:py-24"
     >
-      <Container className="py-16 lg:py-20">
+      <Container>
         <SectionTitle
-          title="Accepted Recycling Categories"
-          subtitle="EcoRoute accepts all major categories of electronic waste. Not sure if your device qualifies? Use our AI identification tool."
+          title="Supported Recyclable Scrap Categories"
+          subtitle="EcoRoute AI recognizes all standard household and commercial scrap materials with transparent pricing."
           align="center"
           showRule
-          badge="Categories"
+          badge="Materials Accepted"
         />
 
-        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {CATEGORIES.map((cat, i) => {
+        <div className="mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+          {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             return (
-              <motion.div
+              <div
                 key={cat.id}
-                id={cat.id}
-                initial={{ opacity: 1, scale: 1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.35, delay: i * 0.055 }}
-                className="flex flex-col items-center text-center gap-3 p-4 bg-white border border-[var(--color-border)] rounded-lg hover:border-[var(--color-primary)]/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-default"
-                aria-label={`${cat.label}: ${cat.count}`}
+                className="flex flex-col p-4 sm:p-5 bg-slate-50/70 border border-slate-200 rounded-2xl hover:border-emerald-500/40 hover:bg-white hover:shadow-md transition-all duration-200 group"
               >
-                <div
-                  className="w-12 h-12 rounded-lg bg-[var(--color-primary)]/8 flex items-center justify-center"
-                  aria-hidden="true"
-                >
-                  <Icon className="w-6 h-6 text-[var(--color-primary)]" />
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-200 shadow-2xs">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-full">
+                    {cat.rate}
+                  </span>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-[var(--color-text)] leading-tight">
-                    {cat.label}
-                  </p>
-                  <p className="text-[10px] text-[var(--color-text-muted)] mt-0.5">
-                    {cat.count}
-                  </p>
-                </div>
-              </motion.div>
+
+                <h3 className="text-sm font-extrabold text-slate-900 leading-tight">
+                  {cat.label}
+                </h3>
+                <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                  {cat.desc}
+                </p>
+              </div>
             );
           })}
         </div>
 
-        {/* Note */}
-        <p className="mt-8 text-center text-xs text-[var(--color-text-muted)]">
-          Don&rsquo;t see your device?{" "}
-          <a
-            href="/services"
-            className="text-[var(--color-secondary)] font-medium underline underline-offset-2 hover:text-[var(--color-primary)] transition-colors"
-          >
-            View all accepted categories
-          </a>{" "}
-          or contact our helpline at{" "}
-          <a
-            href="tel:18002007911"
-            className="text-[var(--color-secondary)] font-medium underline underline-offset-2 hover:text-[var(--color-primary)] transition-colors"
-          >
-            1800-200-7911
-          </a>
-          .
-        </p>
+        <div className="mt-10 text-center">
+          <p className="text-xs text-slate-500">
+            Have scrap that is not listed here? Upload a photo to let{" "}
+            <Link href="/dashboard/upload" className="text-emerald-700 font-extrabold hover:underline">
+              EcoRoute AI Scrap Vision
+            </Link>{" "}
+            identify and value it automatically.
+          </p>
+        </div>
       </Container>
     </section>
   );

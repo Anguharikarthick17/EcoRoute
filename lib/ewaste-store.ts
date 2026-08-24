@@ -35,87 +35,87 @@ if (!globalEWaste.ewasteStore) {
   globalEWaste.ewasteStore = [
     {
       id: "ew_101",
-      deviceName: "HP Pavilion g6 Laptop Scrap (Screen & Hinge Broken)",
-      brand: "HP",
-      category: "Laptops & Computers",
+      deviceName: "Old Washing Machine Heavy Scrap (Steel Drum & Motor)",
+      brand: "IFB / Bosch",
+      category: "Appliances",
       condition: "Non-working / Damaged",
-      estimatedAge: "4 years",
-      description: "Motherboard fault. Screen panel removed, broken hinges, missing keys, exposed circuit board. Good for scrap metal & part extraction.",
-      imageUrl: "/images/scrap/hp_laptop_scrap.png",
+      estimatedAge: "6 years",
+      description: "Non-working washing machine scrap. Intact stainless steel drum, heavy copper motor winding, and metal chassis. Great for metal extraction.",
+      imageUrl: "/images/scrap/washing_machine_scrap.png",
       price: "₹1,800",
-      weightKg: 2.4,
+      weightKg: 45.0,
       sellerName: "Rajesh Kumar",
-      sellerCity: "New Delhi",
+      sellerCity: "Coimbatore",
       sellerPhone: "9876543210",
-      sellerAddress: "Rathinam Technical Campus, Eachanari",
+      sellerAddress: "Eachanari Road, Coimbatore",
       sellerState: "Tamil Nadu",
       sellerPincode: "641021",
-      sellerRole: "Citizen",
+      sellerRole: "Household / Seller",
       status: "AVAILABLE",
-      createdAt: "2026-07-31T10:30:00Z",
+      createdAt: "2026-08-24T10:30:00Z",
     },
     {
       id: "ew_102",
-      deviceName: "Samsung Galaxy S10 Plus (Shattered Screen Scrap)",
-      brand: "Samsung",
-      category: "Mobile Phones & Tablets",
-      condition: "Partially Working",
-      estimatedAge: "3 years",
-      description: "Shattered screen display, back glass removed, exposed motherboard & battery slot. High gold/copper scrap recovery.",
-      imageUrl: "/images/scrap/samsung_phone_scrap.png",
-      price: "₹950",
-      weightKg: 0.18,
+      deviceName: "Pure Copper Wire & Armature Windings Scrap",
+      brand: "Finolex / Havells",
+      category: "Copper",
+      condition: "Scrap for Parts & Metals",
+      estimatedAge: "2 years",
+      description: "Bundle of 4.5 kg high-purity electrical copper wire and burnt motor stator winding coils. 99.9% clean copper scrap.",
+      imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80",
+      price: "₹3,200",
+      weightKg: 4.5,
       sellerName: "Anbu Chezhian",
       sellerCity: "Salem",
       sellerPhone: "9876543211",
       sellerAddress: "Five Roads Junction, Salem",
       sellerState: "Tamil Nadu",
       sellerPincode: "636004",
-      sellerRole: "Citizen",
+      sellerRole: "Household / Seller",
       status: "AVAILABLE",
-      createdAt: "2026-07-31T11:15:00Z",
+      createdAt: "2026-08-24T11:15:00Z",
     },
     {
       id: "ew_103",
-      deviceName: "LG Refrigerator Heavy Scrap (Copper Coil & Motor)",
-      brand: "LG",
-      category: "Refrigerators & ACs",
-      condition: "Non-working / Damaged",
-      estimatedAge: "7 years",
-      description: "Heavy rust, dented metal frame, broken handle, removed compressor, exposed copper coils. Heavy metal recycling candidate.",
+      deviceName: "Extruded Aluminium Frame & Heatsink Scrap",
+      brand: "Hindalco / Generic",
+      category: "Aluminium",
+      condition: "Scrap for Parts & Metals",
+      estimatedAge: "3 years",
+      description: "12 kg lot of clean architectural extruded aluminium frames, heatsinks, and alloy sheet cutpieces ready for remelting.",
       imageUrl: "/images/scrap/refrigerator_scrap.png",
-      price: "₹3,500",
-      weightKg: 52.0,
+      price: "₹2,100",
+      weightKg: 12.0,
       sellerName: "Priya Sharma",
       sellerCity: "Bengaluru",
       sellerPhone: "9876543212",
       sellerAddress: "Peenya Industrial Area Phase 2",
       sellerState: "Karnataka",
       sellerPincode: "560058",
-      sellerRole: "Citizen",
-      status: "GOV_RESERVED",
-      createdAt: "2026-07-31T12:00:00Z",
+      sellerRole: "Household / Seller",
+      status: "AVAILABLE",
+      createdAt: "2026-08-24T12:00:00Z",
     },
     {
       id: "ew_104",
-      deviceName: "50 kg Pure Heavy Copper Winding Wire Scrap",
-      brand: "Industrial Copper",
-      category: "Batteries & Cables",
+      deviceName: "Corrugated Cardboard Boxes & Paper Bundles (28 kg)",
+      brand: "Packaging Scrap",
+      category: "Paper & Cardboard",
       condition: "Scrap for Parts & Metals",
-      estimatedAge: "5 years",
-      description: "50 kg bundle of heavy copper motor & transformer winding wire scrap. High purity electrical copper for recycling melting.",
-      imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80",
-      price: "₹28,500",
-      weightKg: 50.0,
+      estimatedAge: "Recent",
+      description: "Clean, dry stacked packaging cardboard cartons and old newspaper bundles. Stored in dry indoor area.",
+      imageUrl: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80",
+      price: "₹380",
+      weightKg: 28.0,
       sellerName: "Karthick A.",
       sellerCity: "Coimbatore",
       sellerPhone: "9876543213",
-      sellerAddress: "Rathinam Technical Campus, Eachanari",
+      sellerAddress: "Sundarapuram Junction, Coimbatore",
       sellerState: "Tamil Nadu",
-      sellerPincode: "641021",
-      sellerRole: "Citizen",
+      sellerPincode: "641024",
+      sellerRole: "Household / Seller",
       status: "AVAILABLE",
-      createdAt: "2026-07-31T13:00:00Z",
+      createdAt: "2026-08-24T13:00:00Z",
     },
     {
       id: "ew_105",
@@ -1089,15 +1089,22 @@ if (!globalEWaste.ewasteStore) {
 export const ewasteStore = globalEWaste.ewasteStore;
 
 export async function getEWasteListingsAsync(): Promise<EWasteListing[]> {
-  // Always start with local seed store (50+ items)
   const localItems = [...(globalEWaste.ewasteStore || [])];
 
   if (isSupabaseConfigured()) {
     try {
-      const { data, error } = await supabaseAdmin
+      const fetchPromise = supabaseAdmin
         .from("ewaste_listings")
         .select("*")
         .order("created_at", { ascending: false });
+
+      const timeoutPromise = new Promise<{ data: null; error: string }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: "timeout" }), 800)
+      );
+
+      const res = await Promise.race([fetchPromise, timeoutPromise]);
+      const data = (res as any)?.data;
+      const error = (res as any)?.error;
 
       if (data && !error && data.length > 0) {
         const supabaseItems: EWasteListing[] = data.map((item: any) => ({
@@ -1121,11 +1128,10 @@ export async function getEWasteListingsAsync(): Promise<EWasteListing[]> {
           sellerPincode: item.seller_pincode,
           latitude: item.latitude,
           longitude: item.longitude,
-          sellerRole: item.seller_role || "Citizen",
+          sellerRole: item.seller_role || "Household / Seller",
           status: item.status || "AVAILABLE",
           createdAt: item.created_at,
         }));
-        // Merge: Supabase items first (newest), then local seed items not already in Supabase
         const supabaseIds = new Set(supabaseItems.map((i) => i.id));
         const uniqueLocal = localItems.filter((i) => !supabaseIds.has(i.id));
         return [...supabaseItems, ...uniqueLocal];

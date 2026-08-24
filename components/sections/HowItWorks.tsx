@@ -2,53 +2,50 @@
 
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { useTranslation } from "@/lib/i18n";
 import {
-  MdPhotoCamera,
-  MdSmartToy,
-  MdSchedule,
+  MdCameraAlt,
+  MdAutoAwesome,
+  MdCurrencyRupee,
+  MdStorefront,
   MdLocalShipping,
-  MdRecycling,
 } from "react-icons/md";
 
 export function HowItWorks() {
-  const { t } = useTranslation();
-
   const STEPS = [
     {
       number: "01",
-      icon: MdPhotoCamera,
-      title: t("how.step1.title"),
-      description: t("how.step1.desc"),
+      icon: MdCameraAlt,
+      title: "1. Upload Your Scrap",
+      description: "Take a photo or upload an image of your recyclable scrap items.",
       id: "step-upload",
     },
     {
       number: "02",
-      icon: MdSmartToy,
-      title: t("how.step2.title"),
-      description: t("how.step2.desc"),
+      icon: MdAutoAwesome,
+      title: "2. AI Identifies It",
+      description: "EcoRoute AI vision analyzes the material, weight, and category.",
       id: "step-ai",
     },
     {
       number: "03",
-      icon: MdSchedule,
-      title: t("how.step3.title"),
-      description: t("how.step3.desc"),
-      id: "step-schedule",
+      icon: MdCurrencyRupee,
+      title: "3. Get an Estimate",
+      description: "Receive an instant approximate market value and weight range.",
+      id: "step-estimate",
     },
     {
       number: "04",
-      icon: MdLocalShipping,
-      title: t("how.step4.title"),
-      description: t("how.step4.desc"),
-      id: "step-collect",
+      icon: MdStorefront,
+      title: "4. Connect With a Dealer",
+      description: "Nearby scrap shops discover your listing and request collection.",
+      id: "step-dealer",
     },
     {
       number: "05",
-      icon: MdRecycling,
-      title: t("how.step5.title"),
-      description: t("how.step5.desc"),
-      id: "step-recycle",
+      icon: MdLocalShipping,
+      title: "5. Schedule Pickup",
+      description: "The dealer collects the scrap directly from your doorstep.",
+      id: "step-pickup",
     },
   ];
 
@@ -56,20 +53,21 @@ export function HowItWorks() {
     <section
       id="how-it-works"
       aria-labelledby="how-heading"
-      className="bg-[var(--color-background)] border-b border-[var(--color-border)]"
+      className="bg-slate-50 border-b border-slate-200/80 py-16 lg:py-24"
     >
-      <Container className="py-16 lg:py-20">
+      <Container>
         <SectionTitle
-          title={t("how.title")}
-          subtitle={t("how.subtitle")}
+          title="How EcoRoute Works"
+          subtitle="A simple 5-step journey connecting households with nearby scrap dealers — from image scan to doorstep pickup."
           align="center"
           showRule
-          badge="Process"
+          badge="Workflow"
         />
 
-        <div className="mt-14 relative">
+        <div className="mt-16 relative">
+          {/* Connector line for desktop */}
           <div
-            className="hidden lg:block absolute top-[52px] left-[calc(10%+32px)] right-[calc(10%+32px)] h-0.5 bg-[var(--color-border)]"
+            className="hidden lg:block absolute top-[44px] left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-emerald-200 via-teal-300 to-cyan-200"
             aria-hidden="true"
           />
 
@@ -80,22 +78,22 @@ export function HowItWorks() {
                 <li
                   key={step.id}
                   id={step.id}
-                  className="flex flex-col items-center text-center gap-4 lg:px-2"
+                  className="flex flex-col items-center text-center gap-4 lg:px-2 group"
                 >
                   <div className="relative flex flex-col items-center">
-                    <div className="w-16 h-16 rounded-full bg-white border-2 border-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary)] shadow-sm relative z-10">
-                      <Icon className="w-7 h-7" aria-hidden="true" />
+                    <div className="w-18 h-18 rounded-2xl bg-white border-2 border-emerald-500/30 flex items-center justify-center text-emerald-700 shadow-md group-hover:scale-105 group-hover:border-emerald-600 transition-all duration-200 relative z-10">
+                      <Icon className="w-8 h-8" aria-hidden="true" />
                     </div>
-                    <span className="mt-1 text-[11px] font-bold text-[var(--color-primary)] uppercase tracking-wider bg-white px-2 py-0.5 rounded border border-[var(--color-border)] shadow-xs">
+                    <span className="mt-2 text-[10px] font-black text-emerald-800 uppercase tracking-wider bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
                       Step {step.number}
                     </span>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="text-base font-bold text-[var(--color-text)]">
+                  <div className="flex flex-col gap-1.5 mt-1">
+                    <h3 className="text-sm font-extrabold text-slate-900">
                       {step.title}
                     </h3>
-                    <p className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+                    <p className="text-xs text-slate-600 leading-relaxed max-w-[220px]">
                       {step.description}
                     </p>
                   </div>

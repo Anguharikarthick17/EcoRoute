@@ -2,47 +2,43 @@
 
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { useTranslation } from "@/lib/i18n";
-import { MdArrowForward, MdLocationOn, MdRecycling } from "react-icons/md";
+import { MdArrowForward, MdStorefront, MdCameraAlt } from "react-icons/md";
 
 export function CTABanner() {
-  const { t } = useTranslation();
-
   return (
     <section
       aria-label="Call to action"
-      className="bg-[var(--color-primary)] text-white relative overflow-hidden"
+      className="bg-gradient-to-r from-[#0F5132] via-[#115E38] to-[#0F172A] text-white py-16 lg:py-20 relative overflow-hidden"
     >
-      <div className="gov-stripe" aria-hidden="true" />
+      <Container className="relative z-10">
+        <div className="max-w-3xl mx-auto text-center flex flex-col items-center gap-5">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+            Start Today
+          </span>
 
-      <Container className="py-16 lg:py-20 relative z-10">
-        <div className="max-w-3xl mx-auto text-center flex flex-col items-center gap-6">
-          <div className="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white">
-            <MdRecycling className="w-8 h-8" aria-hidden="true" />
-          </div>
-
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white">
-            {t("cta.title")}
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+            Ready to Turn Your Scrap Into Value?
           </h2>
 
-          <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-xl">
-            {t("cta.subtitle")}
+          <p className="text-sm sm:text-base text-emerald-100/90 leading-relaxed max-w-xl">
+            Upload a photo now to get instant AI scrap estimation and connect with trusted nearby dealers for convenient doorstep pickup.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
             <Link
-              href="/pickup"
-              className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-dark)] transition-colors duration-200 no-underline shadow-md"
+              href="/dashboard/upload"
+              className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-extrabold rounded-xl bg-emerald-400 text-slate-950 hover:bg-emerald-300 transition-all duration-200 no-underline shadow-lg hover:scale-[1.02]"
             >
-              {t("cta.pickup")}
-              <MdArrowForward className="w-4 h-4" aria-hidden="true" />
+              <MdCameraAlt className="w-5 h-5" />
+              Sell Your Scrap
+              <MdArrowForward className="w-4 h-4" />
             </Link>
             <Link
-              href="/locate"
-              className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded bg-white/10 text-white border border-white/30 hover:bg-white/20 transition-colors duration-200 no-underline"
+              href="/buyer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-xl bg-white/10 text-white border border-white/30 hover:bg-white/20 transition-all duration-200 no-underline"
             >
-              <MdLocationOn className="w-4 h-4" aria-hidden="true" />
-              {t("cta.locate")}
+              <MdStorefront className="w-5 h-5 text-emerald-300" />
+              Explore Marketplace
             </Link>
           </div>
         </div>

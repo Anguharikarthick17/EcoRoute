@@ -1,78 +1,108 @@
 // ============================================================
-// EcoRoute — Application Constants
+// EcoRoute — Application Constants (AI Scrap Marketplace)
 // ============================================================
 
 import type { NavItem, FooterSection, SocialLink, Language } from "@/types";
 
-// ── Government Information ───────────────────────────────────
-export const GOV_INFO = {
-  portalName: "EcoRoute",
-  portalFullName: "EcoRoute — AI-Powered E-Waste Management Portal",
-  ministry: "Ministry of Environment, Forest and Climate Change",
-  ministryShort: "MoEFCC",
-  government: "Government of India",
-  department: "Central Pollution Control Board (CPCB)",
-  helpline: "1800-200-7911",
-  helplineLabel: "Toll Free Helpline",
-  email: "anguharikarthick@gmail.com",
-  address: "Rathinam Technical Campus, Eachanari, Coimbatore, Tamil Nadu - 641021",
-  copyright: `© ${new Date().getFullYear()} EcoRoute. Government of India. All Rights Reserved.`,
-  lastUpdated: "31 July 2026",
-  version: "1.0.0",
+// ── Platform Information ─────────────────────────────────────
+export const PLATFORM_INFO = {
+  name: "EcoRoute",
+  fullName: "EcoRoute — AI-Powered Scrap Marketplace",
+  tagline: "Turn Your Scrap Into Value.",
+  subtitle: "Connect with nearby scrap dealers, get AI-powered scrap identification and price estimation, and arrange convenient pickup from your home.",
+  email: "support@ecoroute.market",
+  phone: "+91 98765 43210",
+  address: "Tech Park Avenue, Coimbatore, Tamil Nadu - 641021",
+  copyright: `© ${new Date().getFullYear()} EcoRoute Technologies. All Rights Reserved.`,
+  lastUpdated: "August 2026",
+  version: "2.0.0",
 } as const;
+
+// Backward-compatible alias for existing imports
+export const GOV_INFO = {
+  portalName: PLATFORM_INFO.name,
+  portalFullName: PLATFORM_INFO.fullName,
+  ministry: "AI-Powered Circular Economy Platform",
+  ministryShort: "EcoRoute Market",
+  government: "Smart Scrap Trading Network",
+  department: "Local Scrap Dealer Network",
+  helpline: "+91 98765 43210",
+  helplineLabel: "Marketplace Support",
+  email: PLATFORM_INFO.email,
+  address: PLATFORM_INFO.address,
+  copyright: PLATFORM_INFO.copyright,
+  lastUpdated: PLATFORM_INFO.lastUpdated,
+  version: PLATFORM_INFO.version,
+} as const;
+
+// ── Scrap Categories Supported ───────────────────────────────
+export const SCRAP_CATEGORIES = [
+  "Metal",
+  "Aluminium",
+  "Copper",
+  "Brass",
+  "Iron",
+  "Paper",
+  "Cardboard",
+  "Plastic",
+  "E-Waste",
+  "Batteries",
+  "Cables & Wires",
+  "Appliances",
+  "Other Recyclable Scrap",
+] as const;
 
 // ── Navigation Items ─────────────────────────────────────────
 export const NAV_ITEMS = [
   { label: "Home", href: "/", sectionId: "home" },
+  { label: "Marketplace", href: "/buyer", sectionId: "marketplace" },
+  { label: "How It Works", href: "/#how-it-works", sectionId: "how-it-works" },
+  { label: "Sell Scrap", href: "/dashboard/upload", sectionId: undefined },
+  { label: "Find Dealers", href: "/locate", sectionId: undefined },
   { label: "About", href: "/about", sectionId: "about" },
-  { label: "Locate Centre", href: "/locate-centre", sectionId: "locate-centre" },
-  { label: "Pickup", href: "/pickup", sectionId: "pickup" },
-  { label: "Contact", href: "/contact", sectionId: "contact" },
 ];
 
 // ── Footer Sections ──────────────────────────────────────────
 export const FOOTER_SECTIONS: FooterSection[] = [
   {
-    heading: "Quick Links",
+    heading: "Marketplace",
     links: [
-      { label: "Home", href: "/" },
+      { label: "Browse Scrap Listings", href: "/buyer" },
+      { label: "Sell Your Scrap", href: "/dashboard/upload" },
+      { label: "AI Scrap Vision Tool", href: "/dashboard/upload" },
+      { label: "Find Nearby Dealers", href: "/locate" },
+      { label: "Live Scrap Market Rates", href: "/#rates" },
+    ],
+  },
+  {
+    heading: "For Households & Dealers",
+    links: [
+      { label: "Household / Seller Guide", href: "/about" },
+      { label: "Join as Scrap Dealer", href: "/register?role=recycler" },
+      { label: "Schedule Doorstep Pickup", href: "/pickup" },
+      { label: "Green Coins Rewards", href: "/dashboard/rewards" },
+      { label: "AI Route Optimization", href: "/buyer" },
+    ],
+  },
+  {
+    heading: "Company & Trust",
+    links: [
       { label: "About EcoRoute", href: "/about" },
-      { label: "Locate Centre", href: "/locate-centre" },
-      { label: "Schedule Pickup", href: "/pickup" },
-      { label: "Contact Us", href: "/contact" },
-    ],
-  },
-  {
-    heading: "Citizen Services",
-    links: [
-      { label: "Register as Producer", href: "/services/producer" },
-      { label: "Register as Collector", href: "/services/collector" },
-      { label: "Track Your Request", href: "/services/track" },
-      { label: "E-Waste Certificate", href: "/services/certificate" },
-      { label: "Report Illegal Dumping", href: "/services/report" },
-      { label: "Download Reports", href: "/services/reports" },
-    ],
-  },
-  {
-    heading: "Policies & Help",
-    links: [
+      { label: "Field Research Story", href: "/#field-research" },
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
-      { label: "Accessibility Statement", href: "/accessibility" },
-      { label: "Disclaimer", href: "/disclaimer" },
-      { label: "Help & Support", href: "/help" },
-      { label: "RTI Information", href: "/rti" },
+      { label: "Contact Support", href: "/contact" },
     ],
   },
 ];
 
 // ── Social Media Links ───────────────────────────────────────
 export const SOCIAL_LINKS: SocialLink[] = [
-  { label: "Twitter / X", href: "https://twitter.com/ecoroute_india", icon: "FaXTwitter" },
-  { label: "Facebook", href: "https://facebook.com/ecorouteindia", icon: "FaFacebook" },
-  { label: "YouTube", href: "https://youtube.com/@ecorouteindia", icon: "FaYoutube" },
-  { label: "LinkedIn", href: "https://linkedin.com/company/ecoroute-india", icon: "FaLinkedin" },
-  { label: "Instagram", href: "https://instagram.com/ecoroute_india", icon: "FaInstagram" },
+  { label: "Twitter / X", href: "https://twitter.com/ecoroute_market", icon: "FaXTwitter" },
+  { label: "Facebook", href: "https://facebook.com/ecoroutemarket", icon: "FaFacebook" },
+  { label: "YouTube", href: "https://youtube.com/@ecoroutemarket", icon: "FaYoutube" },
+  { label: "LinkedIn", href: "https://linkedin.com/company/ecoroute-market", icon: "FaLinkedin" },
+  { label: "Instagram", href: "https://instagram.com/ecoroute_market", icon: "FaInstagram" },
 ];
 
 // ── Supported Languages ──────────────────────────────────────
@@ -90,6 +120,7 @@ export const LANGUAGES: Language[] = [
 // ── Routes ───────────────────────────────────────────────────
 export const ROUTES = {
   HOME: "/",
+  MARKETPLACE: "/buyer",
   ABOUT: "/about",
   SERVICES: "/services",
   LOCATE: "/locate",
@@ -101,15 +132,7 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   PRIVACY: "/privacy",
   TERMS: "/terms",
-  HELP: "/help",
+  HELP: "/dashboard/help",
   ACCESSIBILITY: "/accessibility",
 } as const;
 
-// ── Government External Links ────────────────────────────────
-export const GOV_LINKS = {
-  digitalIndia: "https://www.digitalindia.gov.in",
-  myGov: "https://www.mygov.in",
-  cpcb: "https://cpcb.nic.in",
-  moefcc: "https://moef.gov.in",
-  umang: "https://www.umang.gov.in",
-} as const;

@@ -2,35 +2,25 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { GOV_INFO } from "@/lib/constants";
+import { PLATFORM_INFO } from "@/lib/constants";
 import { SUPPORTED_LANGUAGES, useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
-  MdPhone,
+  MdTrendingUp,
   MdLanguage,
   MdKeyboardArrowDown,
   MdCheck,
+  MdAutoAwesome,
+  MdLocationOn,
 } from "react-icons/md";
 
 /**
- * Header — Government of India style top bar.
- * Full-width 100% browser alignment with 40-60px horizontal padding.
+ * Header — Clean private marketplace top ticker & utility bar.
  */
 export function Header() {
-  const [currentDate, setCurrentDate] = useState<string>("");
   const [langOpen, setLangOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { lang, setLang, t, currentLanguage } = useTranslation();
-
-  useEffect(() => {
-    const date = new Date().toLocaleDateString("en-IN", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    setCurrentDate(date);
-  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -45,60 +35,45 @@ export function Header() {
 
   return (
     <header role="banner" className="relative z-[999]">
-      {/* ── Tricolour stripe ─────────────────────────────────── */}
-      <div className="gov-stripe" aria-hidden="true" />
+      {/* ── Modern marketplace subtle accent line ──────────────── */}
+      <div className="marketplace-stripe" aria-hidden="true" />
 
-      {/* ── Top Government Bar ────────────────────────────────── */}
-      <div className="bg-[var(--color-primary)] text-white relative z-[999]">
-        <div className="w-full px-7 sm:px-8 md:px-8 lg:px-8">
-          <div className="flex items-center justify-between py-2 gap-4 flex-wrap">
+      {/* ── Top Utility & Live Rates Bar ────────────────────────── */}
+      <div className="bg-[#0F172A] text-white relative z-[999] border-b border-slate-800/80">
+        <div className="w-full px-5 sm:px-8 py-2">
+          <div className="flex items-center justify-between gap-4 flex-wrap text-xs">
 
-            {/* Left: Emblem + Portal name */}
+            {/* Left: Live AI Vision & Market Scrap Highlights */}
             <div className="flex items-center gap-3">
-              <div
-                className="flex items-center justify-center w-7 h-7 rounded-full bg-white/15 border border-white/25 shrink-0"
-                aria-hidden="true"
-              >
-                <span className="text-[11px] font-bold text-white">🇮🇳</span>
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-white/95">
-                  {t("header.govt")}
-                </span>
-                <span className="text-[10px] text-white/70 hidden sm:block font-medium">
-                  {GOV_INFO.ministry}
-                </span>
-              </div>
-
-              {/* Separator */}
-              <div className="h-6 w-px bg-white/25 hidden md:block" aria-hidden="true" />
-
-              {/* Official portal badge */}
-              <span
-                className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/85"
-                aria-label="Official Government Portal"
-              >
-                <span className="w-2 h-2 rounded-full bg-[var(--color-gov-stripe-2)] shrink-0 animate-pulse" aria-hidden="true" />
-                {t("header.portal")}
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[11px] border border-emerald-500/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+                AI Scrap Vision Live
               </span>
+
+              <div className="hidden md:flex items-center gap-2 text-slate-300 text-[11px]">
+                <MdTrendingUp className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span className="font-semibold text-white">Live Scrap Rates:</span>
+                <span>Copper ₹750/kg</span>
+                <span className="text-slate-600">·</span>
+                <span>Aluminium ₹180/kg</span>
+                <span className="text-slate-600">·</span>
+                <span>Brass ₹480/kg</span>
+                <span className="text-slate-600">·</span>
+                <span>Iron ₹38/kg</span>
+              </div>
             </div>
 
-            {/* Right: Helpline + Language Selector + Date */}
+            {/* Right: Quick Features + Language Selector */}
             <div className="flex items-center gap-4 sm:gap-6 text-[11px]">
-
-              {/* Helpline */}
-              <a
-                href={`tel:${GOV_INFO.helpline.replace(/-/g, "")}`}
-                className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors duration-150 no-underline"
-                aria-label={`${GOV_INFO.helplineLabel}: ${GOV_INFO.helpline}`}
+              <Link
+                href="/locate"
+                className="hidden sm:flex items-center gap-1 text-slate-300 hover:text-emerald-400 transition-colors duration-150 font-medium"
               >
-                <MdPhone className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                <span className="font-bold">{GOV_INFO.helpline}</span>
-                <span className="hidden sm:inline text-white/60">· {t("header.tollFree")}</span>
-              </a>
+                <MdLocationOn className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Find Nearby Dealers</span>
+              </Link>
 
-              {/* Separator */}
-              <div className="h-4 w-px bg-white/25" aria-hidden="true" />
+              <div className="h-3.5 w-px bg-slate-700 hidden sm:block" aria-hidden="true" />
 
               {/* ── Language Selector ── */}
               <div className="relative" ref={dropdownRef}>
@@ -110,13 +85,13 @@ export function Header() {
                   aria-label={`${t("lang.select")}: ${currentLanguage.nativeLabel}`}
                   onClick={() => setLangOpen((v) => !v)}
                   className={cn(
-                    "flex items-center gap-1.5 text-white/90 hover:text-white font-semibold",
-                    "transition-colors duration-150 py-0.5 px-1.5 rounded bg-white/10 hover:bg-white/20",
-                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+                    "flex items-center gap-1.5 text-slate-200 hover:text-white font-semibold",
+                    "transition-colors duration-150 py-0.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700",
+                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400",
                   )}
                 >
-                  <MdLanguage className="w-4 h-4 shrink-0 text-cyan-300" aria-hidden="true" />
-                  <span className="font-bold text-xs">
+                  <MdLanguage className="w-3.5 h-3.5 shrink-0 text-cyan-400" aria-hidden="true" />
+                  <span className="font-bold text-[11px]">
                     {currentLanguage.nativeLabel}
                   </span>
                   <MdKeyboardArrowDown
@@ -136,13 +111,13 @@ export function Header() {
                     aria-label={t("lang.select")}
                     className={cn(
                       "absolute right-0 top-full mt-2 z-[9999]",
-                      "bg-white border border-gray-200 rounded-xl",
-                      "shadow-2xl min-w-[210px] overflow-hidden",
-                      "py-1 text-gray-900",
+                      "bg-white border border-slate-200 rounded-xl",
+                      "shadow-2xl min-w-[200px] overflow-hidden",
+                      "py-1 text-slate-900",
                     )}
                   >
-                    <div className="px-3.5 py-2 border-b border-gray-100 bg-slate-50">
-                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500">
+                    <div className="px-3.5 py-1.5 border-b border-slate-100 bg-slate-50">
+                      <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
                         {t("lang.select")}
                       </p>
                     </div>
@@ -160,24 +135,24 @@ export function Header() {
                             setLangOpen(false);
                           }}
                           className={cn(
-                            "w-full text-left px-3.5 py-2.5",
+                            "w-full text-left px-3.5 py-2",
                             "flex items-center justify-between gap-3",
                             "transition-colors duration-100 cursor-pointer",
                             isActive
-                              ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold"
-                              : "text-gray-700 hover:bg-gray-50 font-medium",
+                              ? "bg-emerald-50 text-emerald-800 font-bold"
+                              : "text-slate-700 hover:bg-slate-50 font-medium",
                           )}
                         >
                           <div className="flex flex-col leading-tight">
-                            <span className={cn("text-sm", isActive && "font-extrabold")}>
+                            <span className={cn("text-xs", isActive && "font-extrabold")}>
                               {language.nativeLabel}
                             </span>
-                            <span className="text-[11px] text-gray-400">
+                            <span className="text-[10px] text-slate-400">
                               {language.label}
                             </span>
                           </div>
                           {isActive && (
-                            <MdCheck className="w-4 h-4 shrink-0 text-[var(--color-primary)]" aria-hidden="true" />
+                            <MdCheck className="w-3.5 h-3.5 shrink-0 text-emerald-600" aria-hidden="true" />
                           )}
                         </button>
                       );
@@ -185,66 +160,11 @@ export function Header() {
                   </div>
                 )}
               </div>
-
-              {/* Date */}
-              {currentDate && (
-                <>
-                  <div className="h-4 w-px bg-white/25 hidden lg:block" aria-hidden="true" />
-                  <time
-                    dateTime={new Date().toISOString().split("T")[0]}
-                    className="text-white/70 hidden lg:block font-medium"
-                    aria-label={`Today's date: ${currentDate}`}
-                  >
-                    {currentDate}
-                  </time>
-                </>
-              )}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Digital India bar ─────────────────────────────────── */}
-      <div className="bg-[var(--color-primary-light)] border-b border-[var(--color-primary-dark)]/40 text-white/90">
-        <div className="w-full px-7 sm:px-8 md:px-8 lg:px-8">
-          <div className="flex items-center justify-between py-1 text-[11px] font-medium flex-wrap gap-2">
-            <div className="flex items-center gap-3">
-              <Link
-                href="https://www.digitalindia.gov.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/90 hover:text-white transition-colors duration-150 no-underline font-semibold"
-                aria-label="Digital India (opens in new tab)"
-              >
-                Digital India
-              </Link>
-              <span aria-hidden="true" className="text-white/60">·</span>
-              <Link
-                href="https://cpcb.nic.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/90 hover:text-white transition-colors duration-150 no-underline font-semibold"
-                aria-label="Central Pollution Control Board (opens in new tab)"
-              >
-                CPCB
-              </Link>
-              <span aria-hidden="true" className="text-white/60">·</span>
-              <Link
-                href="https://moef.gov.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/90 hover:text-white transition-colors duration-150 no-underline font-semibold"
-                aria-label="Ministry of Environment, Forest and Climate Change (opens in new tab)"
-              >
-                MoEFCC
-              </Link>
-            </div>
-            <span className="text-white/80 font-medium">
-              {GOV_INFO.department}
-            </span>
           </div>
         </div>
       </div>
     </header>
   );
 }
+

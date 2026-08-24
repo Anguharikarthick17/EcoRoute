@@ -5,36 +5,43 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { MdAdd, MdRemove } from "react-icons/md";
+import Link from "next/link";
 
 const FAQ_ITEMS = [
   {
     id: "faq-1",
-    question: "Is the EcoRoute pickup service free for citizens?",
+    question: "How does the EcoRoute AI Scrap Vision price estimate work?",
     answer:
-      "Yes, the EcoRoute doorstep e-waste pickup service is completely free of charge for individual citizens and households. There are no collection fees, transportation charges, or processing costs. This service is funded through the Extended Producer Responsibility (EPR) framework mandated by the E-Waste Management Rules, 2022.",
+      "When you upload or snap a photo of your scrap items (metals, electronics, appliances, paper, etc.), EcoRoute's vision model detects the material category, estimates weight, and provides a realistic market price range based on live regional scrap commodity rates. Final weight is confirmed during dealer physical pickup.",
   },
   {
     id: "faq-2",
-    question: "What types of electronic devices does EcoRoute accept?",
+    question: "Is there any cost for households to list scrap on EcoRoute?",
     answer:
-      "EcoRoute accepts a comprehensive range of electronic waste including mobile phones, laptops, desktop computers, televisions, home appliances, printers, cables, batteries, networking devices, and medical electronics. For a complete list, please refer to the Accepted Categories section. If you are unsure, use our AI Device Identification tool to instantly classify your device.",
+      "Listing your scrap and receiving dealer pickup requests on EcoRoute is 100% free for households. Dealers pay you directly via Cash or UPI on pickup.",
   },
   {
     id: "faq-3",
-    question: "How is my personal data protected when I hand over a device?",
+    question: "Who are the scrap dealers on EcoRoute?",
     answer:
-      "We strongly advise all citizens to perform a factory reset on devices before handover. Our trained collection agents will remind you of this step. Additionally, EcoRoute's certified recycling partners follow strict data destruction protocols compliant with IS/ISO 27001 standards. A data destruction certificate is available upon request for corporate and institutional contributors.",
+      "EcoRoute partners with verified local scrap shops, kabadiwalas, and authorized recyclers operating in your city and neighborhood. Dealers can view nearby listings, propose offers, and arrange scheduled doorstep collection.",
   },
   {
     id: "faq-4",
-    question: "How long does the pickup process take after I book a request?",
+    question: "What types of recyclable scrap can I sell?",
     answer:
-      "Once your pickup request is confirmed, our logistics team will schedule a visit within 24 to 48 working hours depending on your location. You will receive an SMS and email notification with the agent's name, contact number, and scheduled time slot. You can also track the status in real time through your EcoRoute portal dashboard.",
+      "You can sell almost any recyclable scrap, including Copper wire and armature windings, Aluminium sheets and heatsinks, Brass fittings, Iron grills and rods, Old appliances (washing machines, fridges, ACs), E-waste (laptops, phones, monitors), Batteries, Paper, Cardboard boxes, and Plastic containers.",
+  },
+  {
+    id: "faq-5",
+    question: "How do scrap dealers benefit from AI Route Optimization?",
+    answer:
+      "Dealers accepting multiple pickups in a neighborhood can view an AI-optimized cluster route that sequences stops in shortest distance order, saving fuel and travel time.",
   },
 ] as const;
 
 export function FAQSection() {
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>("faq-1");
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -46,9 +53,9 @@ export function FAQSection() {
       ref={ref}
       id="faq"
       aria-labelledby="faq-heading"
-      className="bg-white border-b border-[var(--color-border)]"
+      className="bg-white border-b border-slate-200/80 py-16 lg:py-24"
     >
-      <Container className="py-16 lg:py-20">
+      <Container>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-16 items-start">
 
           {/* ── Left: Heading ─────────────────────────────── */}
@@ -59,23 +66,22 @@ export function FAQSection() {
           >
             <SectionTitle
               title="Frequently Asked Questions"
-              subtitle="Quick answers to the most common questions from citizens about EcoRoute's e-waste management services."
+              subtitle="Quick answers to common questions about selling scrap, AI identification, dealer pickups, and payments."
               align="left"
               showRule
               badge="FAQ"
             />
-            <a
-              href="/help"
-              className="inline-flex items-center gap-1.5 mt-6 text-sm font-semibold text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors no-underline"
-              aria-label="View all frequently asked questions"
+            <Link
+              href="/dashboard/help"
+              className="inline-flex items-center gap-1.5 mt-6 text-sm font-bold text-emerald-700 hover:text-emerald-800 transition-colors no-underline"
             >
-              View All FAQs →
-            </a>
+              Have more questions? Visit Help Center →
+            </Link>
           </motion.div>
 
           {/* ── Right: Accordion ──────────────────────────── */}
           <div
-            className="flex flex-col divide-y divide-[var(--color-border)]"
+            className="flex flex-col divide-y divide-slate-200"
             role="list"
             aria-label="Frequently asked questions"
           >
@@ -95,40 +101,33 @@ export function FAQSection() {
                     aria-expanded={isOpen}
                     aria-controls={`${item.id}-panel`}
                     onClick={() => toggle(item.id)}
-                    className="w-full flex items-start justify-between gap-4 py-5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-secondary)] rounded"
+                    className="w-full flex items-start justify-between gap-4 py-5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 rounded-lg cursor-pointer"
                   >
-                    <span className="text-sm font-semibold text-[var(--color-text)] leading-snug pr-2">
+                    <span className="text-sm font-extrabold text-slate-900 leading-snug pr-2">
                       {item.question}
                     </span>
-                    <span
-                      className={`shrink-0 w-6 h-6 rounded border flex items-center justify-center transition-colors duration-200 ${
-                        isOpen
-                          ? "bg-[var(--color-primary)] border-[var(--color-primary)] text-white"
-                          : "bg-white border-[var(--color-border)] text-[var(--color-text-muted)]"
-                      }`}
-                      aria-hidden="true"
-                    >
+                    <span className="shrink-0 mt-0.5 w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
                       {isOpen ? (
-                        <MdRemove className="w-4 h-4" />
+                        <MdRemove className="w-4 h-4 text-emerald-700" aria-hidden="true" />
                       ) : (
-                        <MdAdd className="w-4 h-4" />
+                        <MdAdd className="w-4 h-4 text-slate-600" aria-hidden="true" />
                       )}
                     </span>
                   </button>
 
-                  <AnimatePresence>
+                  <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
                         id={`${item.id}-panel`}
                         role="region"
                         aria-labelledby={`${item.id}-btn`}
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
                         className="overflow-hidden"
                       >
-                        <p className="pb-5 text-sm text-[var(--color-text-muted)] leading-relaxed border-l-2 border-[var(--color-primary)] pl-4 ml-0.5">
+                        <p className="pb-5 text-xs text-slate-600 leading-relaxed max-w-2xl">
                           {item.answer}
                         </p>
                       </motion.div>

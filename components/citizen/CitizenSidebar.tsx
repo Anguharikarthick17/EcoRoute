@@ -22,17 +22,16 @@ import {
 } from "react-icons/md";
 
 export const CITIZEN_NAV_ITEMS = [
-  { label: "Dashboard", href: "/dashboard", icon: MdDashboard },
+  { label: "Seller Dashboard", href: "/dashboard", icon: MdDashboard },
+  { label: "Sell Scrap / Upload", href: "/dashboard/upload", icon: MdCloudUpload },
   { label: "My Pickup Requests", href: "/dashboard/pickups", icon: MdLocalShipping },
   { label: "Schedule Pickup", href: "/dashboard/schedule-pickup", icon: MdCalendarMonth },
-  { label: "Upload E-Waste", href: "/dashboard/upload", icon: MdCloudUpload },
-  { label: "AI Device Result", href: "/dashboard/ai-result", icon: MdSmartToy },
-  { label: "Recycling Centers", href: "/dashboard/centers", icon: MdLocationOn },
+  { label: "AI Scrap Estimate", href: "/dashboard/ai-result", icon: MdSmartToy },
+  { label: "Nearby Scrap Dealers", href: "/dashboard/centers", icon: MdLocationOn },
   { label: "Pickup Tracking", href: "/dashboard/tracking", icon: MdTrackChanges },
-  { label: "Rewards & Points", href: "/dashboard/rewards", icon: MdEmojiEvents },
-  { label: "Certificates", href: "/dashboard/certificates", icon: MdVerified },
-  { label: "Notifications", href: "/dashboard/notifications", icon: MdNotifications, badge: "3" },
-  { label: "Citizen Profile", href: "/dashboard/profile", icon: MdPerson },
+  { label: "Rewards & Earnings", href: "/dashboard/rewards", icon: MdEmojiEvents },
+  { label: "Notifications & Chats", href: "/dashboard/notifications", icon: MdNotifications, badge: "3" },
+  { label: "Seller Profile", href: "/dashboard/profile", icon: MdPerson },
   { label: "Help & Support", href: "/dashboard/help", icon: MdHelp },
   { label: "Settings", href: "/dashboard/settings", icon: MdSettings },
 ];

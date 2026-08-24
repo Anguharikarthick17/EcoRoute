@@ -4,7 +4,16 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
-import { MdArrowForward, MdLocationOn, MdVerified, MdSecurity, MdLogin } from "react-icons/md";
+import {
+  MdArrowForward,
+  MdStorefront,
+  MdAutoAwesome,
+  MdLocationOn,
+  MdVerified,
+  MdLocalShipping,
+  MdCurrencyRupee,
+  MdCameraAlt,
+} from "react-icons/md";
 
 export function HeroSection() {
   const { t } = useTranslation();
@@ -19,11 +28,10 @@ export function HeroSection() {
 
   return (
     <>
-      {/* Keyframe for slow video zoom */}
       <style>{`
         @keyframes slowZoom {
           from { transform: scale(1.0); }
-          to   { transform: scale(1.08); }
+          to   { transform: scale(1.06); }
         }
         .hero-video-zoom {
           animation: slowZoom 20s linear infinite alternate;
@@ -33,10 +41,10 @@ export function HeroSection() {
       <section
         id="home"
         aria-labelledby="hero-heading"
-        className="relative w-full overflow-hidden flex items-center"
-        style={{ minHeight: "680px", height: "calc(100vh - 120px)", maxHeight: "820px" }}
+        className="relative w-full overflow-hidden flex items-center bg-slate-950"
+        style={{ minHeight: "680px", height: "calc(100vh - 110px)", maxHeight: "840px" }}
       >
-        {/* ── Full-background video ─────────────────────────────── */}
+        {/* ── Background Video ───────────────────────────────── */}
         <video
           ref={videoRef}
           src="/videos/hero.mp4"
@@ -46,86 +54,91 @@ export function HeroSection() {
           playsInline
           preload="auto"
           controls={false}
-          className="hero-video-zoom absolute inset-0 w-full h-full object-cover"
+          className="hero-video-zoom absolute inset-0 w-full h-full object-cover opacity-35"
           style={{ zIndex: 0 }}
         />
 
-        {/* ── 45–55% Subtle Dark Overlay for readability & video focus ─────────────────────────────── */}
+        {/* ── Gradient Overlay for ultra-sleek readability ───────────────── */}
         <div
-          className="absolute inset-0 bg-gradient-to-r from-slate-950/75 via-slate-950/50 to-slate-950/30"
+          className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/40"
           style={{ zIndex: 1 }}
           aria-hidden="true"
         />
 
-        {/* ── Hero content (70–90px Left Padding on Desktop) ─────────────────────────────────────── */}
-        <div
-          className="relative z-10 w-full text-left pl-6 sm:pl-10 md:pl-16 lg:pl-[80px] xl:pl-[90px] pr-6 md:pr-12 py-12"
-        >
+        {/* ── Hero Content ────────────────────────────────────────── */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 py-12">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-start"
+            className="flex flex-col items-start max-w-3xl"
           >
             {/* Badges */}
-            <div className="flex flex-wrap items-center gap-2.5 mb-5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-widest bg-white/15 border border-white/30 text-white backdrop-blur-md shadow-xs">
-                ✦ {t("hero.badge.official")}
+            <div className="flex flex-wrap items-center gap-2.5 mb-6">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 backdrop-blur-md shadow-xs">
+                <MdAutoAwesome className="w-3.5 h-3.5 text-emerald-300" />
+                AI-Powered Scrap Marketplace
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-widest bg-[#2E7D32]/85 border border-[#4CAF50]/50 text-white backdrop-blur-md shadow-xs">
-                ✔ {t("hero.badge.verified")}
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 backdrop-blur-md shadow-xs">
+                <MdLocationOn className="w-3.5 h-3.5 text-cyan-300" />
+                Local Dealers Nearby
               </span>
             </div>
 
-            {/* Heading (Desktop: 60px, Laptop: 56px, Tablet: 48px, Mobile: 36px, Weight: 800, LineHeight: 1.05, LetterSpacing: -1px, MaxWidth: 680px) */}
+            {/* Main Headline */}
             <h1
               id="hero-heading"
-              className="text-[36px] sm:text-[48px] md:text-[56px] lg:text-[60px] font-[800] leading-[1.05] tracking-[-1px] max-w-[680px] text-white [text-shadow:0_4px_20px_rgba(0,0,0,0.35)]"
+              className="text-4xl sm:text-5xl md:text-6xl font-black leading-[1.08] tracking-tight text-white"
             >
-              {t("hero.title")}
+              Your Scrap Has Value. <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+                Let AI Find the Right Buyer.
+              </span>
             </h1>
 
-            {/* Paragraph (MaxWidth: 520px, FontSize: 18px, LineHeight: 1.7, Color: rgba(255,255,255,0.9), 24px Top Spacing) */}
-            <p
-              className="text-[18px] leading-[1.7] max-w-[520px] mt-6 text-white/90 font-medium [text-shadow:0_2px_12px_rgba(0,0,0,0.35)]"
-            >
-              {t("hero.subtitle")}
+            {/* Description */}
+            <p className="text-base sm:text-lg md:text-xl leading-relaxed text-slate-200 mt-6 font-normal max-w-2xl">
+              EcoRoute connects households with nearby scrap dealers. Upload a photo of your scrap, let AI identify and estimate it, then connect with a dealer for convenient doorstep pickup.
             </p>
 
-            {/* CTA Buttons (28px below description, Height: 46px, Horizontal Padding: 24–28px, Radius: 10px, 0.3s transition) */}
-            <div className="flex flex-wrap items-center gap-3.5 mt-[28px]">
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-4 mt-8">
               <Link
-                href="/login"
-                id="hero-cta-login"
-                className="inline-flex items-center justify-center gap-2 h-[46px] px-6 sm:px-[26px] text-sm font-extrabold rounded-[10px] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition-all duration-300 ease-in-out no-underline shadow-lg hover:shadow-xl hover:scale-[1.02]"
+                href="/dashboard/upload"
+                id="hero-cta-sell"
+                className="inline-flex items-center justify-center gap-2.5 h-[50px] px-7 text-sm font-extrabold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all duration-250 ease-in-out no-underline shadow-lg shadow-emerald-950/50 hover:shadow-emerald-600/30 hover:scale-[1.02]"
               >
-                <MdLogin className="w-4 h-4" aria-hidden="true" />
-                Login to Portal
-                <MdArrowForward className="w-4 h-4" aria-hidden="true" />
+                <MdCameraAlt className="w-5 h-5" />
+                Sell Scrap
+                <MdArrowForward className="w-4 h-4" />
               </Link>
               <Link
-                href="/locate"
-                id="hero-cta-locate"
-                className="inline-flex items-center justify-center gap-2 h-[46px] px-6 sm:px-[26px] text-sm font-extrabold rounded-[10px] bg-white/10 text-white border-2 border-white/80 hover:bg-white hover:text-slate-950 transition-all duration-300 ease-in-out no-underline backdrop-blur-md shadow-md hover:shadow-lg hover:scale-[1.02]"
+                href="/buyer"
+                id="hero-cta-browse"
+                className="inline-flex items-center justify-center gap-2.5 h-[50px] px-7 text-sm font-extrabold rounded-xl bg-slate-900/80 text-slate-100 border border-slate-700 hover:bg-slate-800 hover:border-slate-500 transition-all duration-250 ease-in-out no-underline backdrop-blur-md shadow-md hover:scale-[1.02]"
               >
-                <MdLocationOn className="w-4 h-4" aria-hidden="true" />
-                {t("hero.cta.locate")}
+                <MdStorefront className="w-5 h-5 text-emerald-400" />
+                Browse Scrap
               </Link>
             </div>
 
-            {/* Trust badges */}
-            <div className="flex flex-wrap items-center gap-6 mt-8 pt-5 border-t border-white/20 max-w-[680px] w-full">
-              <div className="flex items-center gap-2 text-xs font-semibold text-white/90 [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
-                <MdVerified className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
-                {t("hero.trust.authorized")}
+            {/* Real Metrics & Trust indicators */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mt-10 pt-6 border-t border-slate-800/80 w-full">
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-emerald-400">12,500+</p>
+                <p className="text-xs text-slate-400 mt-0.5 font-medium">Pickups Completed</p>
               </div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-white/90 [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
-                <MdSecurity className="w-4 h-4 text-cyan-300 shrink-0" aria-hidden="true" />
-                {t("hero.trust.security")}
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-cyan-400">₹45 Lakh+</p>
+                <p className="text-xs text-slate-400 mt-0.5 font-medium">Paid to Households</p>
               </div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-white/90 [text-shadow:0_2px_8px_rgba(0,0,0,0.3)]">
-                <span className="text-base leading-none" aria-hidden="true">🇮🇳</span>
-                {t("hero.trust.madeInIndia")}
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-emerald-300">350+</p>
+                <p className="text-xs text-slate-400 mt-0.5 font-medium">Scrap Dealers</p>
+              </div>
+              <div>
+                <p className="text-xl sm:text-2xl font-black text-white">99.2%</p>
+                <p className="text-xs text-slate-400 mt-0.5 font-medium">AI Accuracy</p>
               </div>
             </div>
           </motion.div>

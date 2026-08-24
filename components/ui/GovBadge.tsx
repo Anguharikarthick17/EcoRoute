@@ -6,58 +6,51 @@ const variantConfig: Record<
   { label: string; classes: string }
 > = {
   official: {
-    label: "Official Portal",
-    classes: "bg-[var(--color-primary)] text-white border-[var(--color-primary)]",
+    label: "AI Verified",
+    classes: "bg-emerald-50 text-emerald-800 border-emerald-200",
   },
   verified: {
-    label: "Verified",
-    classes: "bg-[var(--color-accent)] text-white border-[var(--color-accent)]",
+    label: "Verified Dealer",
+    classes: "bg-teal-50 text-teal-800 border-teal-200",
   },
   gov: {
-    label: "Govt. of India",
-    classes: "bg-[var(--color-primary)] text-white border-[var(--color-primary)]",
+    label: "EcoRoute Certified",
+    classes: "bg-emerald-100 text-emerald-900 border-emerald-300",
   },
   new: {
-    label: "New",
-    classes: "bg-[var(--color-warning)] text-[var(--color-text)] border-[var(--color-warning)]",
+    label: "New Listing",
+    classes: "bg-amber-50 text-amber-800 border-amber-200",
   },
   beta: {
-    label: "Beta",
-    classes: "bg-[var(--color-secondary)] text-white border-[var(--color-secondary)]",
+    label: "AI Scrap Vision",
+    classes: "bg-sky-50 text-sky-800 border-sky-200",
   },
 };
 
 /**
- * GovBadge — Official Government of India badge chip.
- *
- * Use to mark portal sections as official, verified, or government-issued.
- *
- * @example
- * <GovBadge variant="official" />
- * <GovBadge variant="verified" label="CPCB Approved" />
+ * GovBadge / MarketplaceBadge — Clean marketplace status chip.
  */
 export function GovBadge({
   variant = "official",
   label,
   className,
 }: GovBadgeProps) {
-  const config = variantConfig[variant];
+  const config = variantConfig[variant] || variantConfig.official;
   const displayLabel = label ?? config.label;
 
   return (
     <span
-      role="img"
+      role="status"
       aria-label={`Badge: ${displayLabel}`}
       className={cn(
         "inline-flex items-center gap-1.5",
-        "px-2.5 py-1 rounded-sm",
-        "text-xs font-semibold uppercase tracking-wider",
-        "border",
+        "px-2.5 py-0.5 rounded-full",
+        "text-xs font-bold tracking-tight",
+        "border shadow-2xs",
         config.classes,
         className,
       )}
     >
-      {/* Ashoka Chakra — simplified dot indicator */}
       <span
         className="w-1.5 h-1.5 rounded-full bg-current opacity-80"
         aria-hidden="true"
@@ -66,3 +59,4 @@ export function GovBadge({
     </span>
   );
 }
+

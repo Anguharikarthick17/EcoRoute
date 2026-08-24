@@ -2,30 +2,34 @@ import type { Metadata } from "next";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TrustIndicators } from "@/components/sections/TrustIndicators";
 import { HowItWorks } from "@/components/sections/HowItWorks";
-import { StatsSection } from "@/components/sections/StatsSection";
-import { RecyclingCategories } from "@/components/sections/RecyclingCategories";
 import { EWasteMarketplace } from "@/components/sections/EWasteMarketplace";
+import { StatsSection } from "@/components/sections/StatsSection";
+import { WhyChoose } from "@/components/sections/WhyChoose";
+import { FieldResearchSection } from "@/components/sections/FieldResearchSection";
+import { RecyclingCategories } from "@/components/sections/RecyclingCategories";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { FAQSection } from "@/components/sections/FAQSection";
 
 // ── Page-level metadata ───────────────────────────────────────
 export const metadata: Metadata = {
-  title:
-    "EcoRoute | AI-Powered E-Waste Management | Government of India",
+  title: "EcoRoute — AI-Powered Scrap Marketplace | Turn Your Scrap Into Value",
   description:
-    "EcoRoute is the official Government of India platform for responsible electronic waste disposal. Schedule free doorstep pickups, locate CPCB-authorized recycling centres, and receive digital recycling certificates.",
+    "EcoRoute connects households with nearby scrap dealers. Upload a photo of your scrap, let AI identify and estimate it, then connect with a dealer for convenient doorstep pickup.",
   keywords: [
-    "e-waste pickup India",
-    "electronic waste recycling",
-    "CPCB authorized recycling",
-    "government e-waste platform",
-    "free e-waste collection",
+    "scrap marketplace",
+    "sell scrap online",
+    "AI scrap price estimation",
+    "scrap dealers nearby",
+    "metal scrap",
+    "copper scrap",
+    "aluminium scrap",
+    "appliances recycling",
     "EcoRoute",
   ],
   openGraph: {
-    title: "EcoRoute | AI-Powered E-Waste Management | Government of India",
+    title: "EcoRoute — AI-Powered Scrap Marketplace",
     description:
-      "Schedule free doorstep e-waste pickups, locate authorized recycling centres, and track your disposal — all through EcoRoute, India's official government e-waste platform.",
+      "Turn your scrap into value. Connect with nearby scrap dealers, get AI price estimates, and schedule doorstep pickup.",
     type: "website",
   },
 };
@@ -40,22 +44,28 @@ export default function HomePage() {
       {/* 2. Trust Indicators */}
       <TrustIndicators />
 
-      {/* 3. How It Works */}
+      {/* 3. How It Works (5-step flow) */}
       <HowItWorks />
 
-      {/* 4. Live E-Waste Scrap Marketplace */}
+      {/* 4. Live Nearby Scrap Listings */}
       <EWasteMarketplace />
 
-      {/* 5. Impact Statistics */}
+      {/* 5. Why EcoRoute (6 Feature cards) */}
+      <WhyChoose />
+
+      {/* 6. Field Research Connection: Built Around a Real Local Problem */}
+      <FieldResearchSection />
+
+      {/* 7. Marketplace Stats */}
       <StatsSection />
 
-      {/* 6. Recycling Categories */}
+      {/* 8. Supported Scrap Categories */}
       <RecyclingCategories />
 
-      {/* 7. CTA Banner */}
+      {/* 9. CTA Banner */}
       <CTABanner />
 
-      {/* 8. FAQ */}
+      {/* 10. FAQ */}
       <FAQSection />
     </>
   );

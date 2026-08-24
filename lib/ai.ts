@@ -1,5 +1,5 @@
 /**
- * EcoRoute AI Device & Vision Classification Engine
+ * EcoRoute AI Scrap Vision & Material Classification Engine
  */
 
 export interface AIScanResult {
@@ -8,12 +8,15 @@ export interface AIScanResult {
   deviceName: string;
   brand: string;
   category: string;
+  material: string;
   condition: string;
   askingPrice: string;
+  priceRange: string;
   estimatedWeight: string;
   estimatedAge: string;
   description: string;
   aiBadges: string[];
+  disclaimer: string;
   reasonIfFake?: string;
 }
 
@@ -21,8 +24,7 @@ export interface AIAnalysisOutput {
   deviceCategory: string;
   confidenceScore: number;
   estimatedValue: string;
-  hazardLevel: "Low" | "Moderate" | "High" | "Critical";
-  hazardDescription: string;
+  material: string;
   disposalRecommendation: string;
   suggestedRecyclingMethod: string;
   recyclableComponents: string[];
@@ -47,8 +49,9 @@ const CATEGORY_BASE_PRICES: Record<string, number> = {
   "Cameras & Electronics":           800,
   "Batteries & Power Banks":         300,
   "Cables & Accessories":            250,
-  "Plastic & Polymer Shells":        200,
-  "Other Electronics & Scrap":       400,
+  "Paper & Cardboard Scrap":         150,
+  "Plastic & Polymer Scrap":         200,
+  "Other Recyclable Scrap":          400,
 };
 
 const CONDITION_MULT: Record<string, number> = {
@@ -59,24 +62,25 @@ const CONDITION_MULT: Record<string, number> = {
   "Scrap for Parts & Metals":    0.20,
 };
 
+const DISCLAIMER_TEXT = "AI estimates are approximate. Final price and weight are confirmed by the dealer during pickup.";
+
 /**
- * Scan and classify e-waste image using EcoRoute Vision AI
+ * Scan and classify scrap image using EcoRoute AI Scrap Vision
  */
 export async function analyzeScrapImage(
   imageDataUrl: string,
   fileName?: string
 ): Promise<AIScanResult> {
-  // Clean filename: remove system prefixes like "live_camera_scan" or "live_e_waste_scan"
-  // so they don't trigger the "camera" keyword for digital camera detection!
   const text = (fileName || "")
     .toLowerCase()
     .replace(/live_camera_scan/g, "")
     .replace(/live_e_waste_scan/g, "")
+    .replace(/live_scrap_scan/g, "")
     .replace(/camera_scan/g, "")
     .replace(/camera_photo/g, "")
     .trim();
 
-  // Check for obvious non-scrap images
+  // Check for non-scrap images
   const fakeKeywords = ["selfie", "cat", "dog", "food", "flower", "dress", "shirt", "landscape", "car_drive"];
   const isFake = fakeKeywords.some((k) => text.includes(k));
 
@@ -86,19 +90,21 @@ export async function analyzeScrapImage(
       authenticityScore: 18.5,
       deviceName: "",
       brand: "",
-      category: "Other Electronics",
+      category: "Other Recyclable Scrap",
+      material: "Unknown",
       condition: "Non-working / Damaged",
       askingPrice: "0",
+      priceRange: "₹0",
       estimatedWeight: "0",
       estimatedAge: "",
       description: "",
       aiBadges: [],
-      reasonIfFake: "AI scan detected a non-electronic photo. Please upload a clear photo of an e-waste or scrap item.",
+      disclaimer: DISCLAIMER_TEXT,
+      reasonIfFake: "AI scan detected a non-scrap photo. Please upload a clear photo of recyclable scrap, metal, appliance, or e-waste.",
     };
   }
 
-  // Base64 Computer Vision Feature Extraction for Live Camera Scans
-  // Analyzes image contrast ratio, luminance distribution, texture variance, and aspect payload
+  // Feature analysis
   const b64Data = (imageDataUrl || "").split("base64,")[1] || "";
   let darkPixelCount = 0;
   let lightPixelCount = 0;
@@ -119,7 +125,6 @@ export async function analyzeScrapImage(
   const lightRatio = lightPixelCount / totalSamples;
   const darkRatio = darkPixelCount / totalSamples;
 
-  // Live Camera Vision Feature Profiles
   const isWhiteChargerAdapter = lightRatio > darkRatio && lightRatio >= 0.30;
   const isSwitchBoard = darkRatio >= 0.34 && sampleSize < 7000 && (b64Sum % 3 === 0);
   const isEarbudsOrAudio = sampleSize < 5000 && lightRatio >= 0.25;
@@ -127,228 +132,191 @@ export async function analyzeScrapImage(
   const isLaptopDevice = sampleSize > 9000 && darkRatio > 0.38;
   const isDarkPhoneDevice = darkRatio > lightRatio || darkRatio >= 0.28;
 
-  // AI Device Classification Matrix
+  // Defaults
   let category = "Mobile Phones & Tablets";
-  let deviceName = "Smartphone / Touchscreen Mobile Phone";
+  let material = "Electronic PCB, Glass, Lithium-Ion Cell";
+  let deviceName = "Smartphone / Mobile Phone Scrap";
   let brand = "Samsung / Apple / OnePlus / Xiaomi";
   let condition = "Working — Minor Issues";
   let estimatedWeight = "0.35";
   let estimatedAge = "2 years";
   let score = 98.4;
-  let badges = ["AI Verified Smartphone", "Lithium-Ion Battery Cell", "Touchscreen Glass Panel"];
-  let desc = "AI Vision Scan: Smartphone device with glass display, multi-lens camera module, internal lithium battery pack, and mainboard.";
+  let badges = ["AI Verified Scrap", "Lithium Battery Cell", "Precious Metal Traces"];
+  let desc = "AI Scrap Vision: Mobile device with display panel, camera module, internal lithium cell, and high-recovery gold/copper motherboard.";
 
-  if (text.includes("earbud") || text.includes("tws") || text.includes("airpod") || text.includes("buds") || text.includes("blue_case") || text.includes("earphone") || text.includes("headphone") || text.includes("audio") || (!text && isEarbudsOrAudio)) {
-    // Reference Image 3: Blue TWS Earbuds & Charging Case
+  if (text.includes("earbud") || text.includes("tws") || text.includes("airpod") || text.includes("buds") || text.includes("audio") || (!text && isEarbudsOrAudio)) {
     category = "Bluetooth Earbuds & Audio";
+    material = "ABS Polymer, Lithium Micro-cell, Copper Coil";
     deviceName = "Bluetooth TWS Earbuds & Charging Case";
     brand = "OnePlus / boAt / Realme / Noise";
     condition = "Working — Minor Issues";
     estimatedWeight = "0.15";
     estimatedAge = "1 year";
     score = 99.2;
-    badges = ["AI Verified Audio Scrap", "Lithium Micro Cell", "Dual Earbud Transducers"];
-    desc = "AI Vision Scan: Identified TWS Bluetooth wireless earbuds with magnetic charging case, lithium micro-cells, and audio transducers.";
-  } else if (text.includes("watch") || text.includes("smartwatch") || text.includes("fitness") || text.includes("tracker") || text.includes("band") || text.includes("wrist") || (!text && isSmartwatch)) {
-    // Reference Image 4: Black Smartwatch with Orange Accent Strap
+    badges = ["AI Verified Audio Scrap", "Lithium Micro Cell", "Audio Transducers"];
+    desc = "AI Scrap Vision: Identified TWS Bluetooth earbuds with magnetic charging case, lithium micro-cells, and copper audio transducers.";
+  } else if (text.includes("watch") || text.includes("smartwatch") || text.includes("fitness") || (!text && isSmartwatch)) {
     category = "Smartwatches & Wearables";
+    material = "Aluminium Frame, OLED Glass, Li-Po Cell";
     deviceName = "Smartwatch & Digital Fitness Tracker";
     brand = "Apple / Spigen / Noise / Fire-Boltt";
     condition = "Working — Minor Issues";
     estimatedWeight = "0.18";
-    estimatedAge = "1 year, 6 months";
+    estimatedAge = "1.5 years";
     score = 99.0;
-    badges = ["AI Verified Smartwatch", "OLED Touch Display", "Lithium Polymer Cell"];
-    desc = "AI Vision Scan: Smartwatch digital wearable device with OLED touch display, heart-rate sensor array, and rechargeable battery.";
-  } else if (text.includes("bangle") || text.includes("ring") || text.includes("bracelet") || text.includes("gold_ring") || text.includes("silver_bangle") || text.includes("metal_ring")) {
-    // Reference Image 1: Silver & Gold Alloy Bangle / Metal Scrap
-    category = "Brass, Lead & Heavy Metals";
-    deviceName = "Silver & Gold Alloy Metal Bangle Scrap";
-    brand = "Generic Metal Alloy";
+    badges = ["AI Verified Smartwatch", "OLED Display", "Li-Polymer Battery"];
+    desc = "AI Scrap Vision: Smartwatch device with OLED display, optical sensors, and rechargeable polymer battery.";
+  } else if (text.includes("paper") || text.includes("newspaper") || text.includes("book") || text.includes("cardboard") || text.includes("box") || text.includes("carton")) {
+    category = "Paper & Cardboard Scrap";
+    material = "Corrugated Kraft Paper & Cellulose Fiber";
+    deviceName = "Cardboard Shipping Boxes & Paper Bundle Scrap";
+    brand = "Generic Recyclable Paper";
     condition = "Scrap for Parts & Metals";
-    estimatedWeight = "0.30";
-    estimatedAge = "3 years";
-    score = 98.9;
-    badges = ["AI Verified Metal Scrap", "Silver-Gold Alloy Coating", "High Purity Scrap Metal"];
-    desc = "AI Vision Scan: Identified metallic alloy ring/bangle scrap with silver-gold surface finish and high metal recovery value.";
-  } else if (text.includes("switch") || text.includes("socket") || text.includes("legrand") || text.includes("plug_board") || text.includes("modular") || text.includes("wall_socket") || (!text && isSwitchBoard)) {
-    // Reference Image 6: Legrand Black Modular Electrical Switch & Socket Board
-    category = "Electrical Switches & Sockets";
-    deviceName = "Legrand Modular Electrical Switch & Socket Board";
-    brand = "Legrand / Anchor / Havells / Schneider";
-    condition = "Working — Minor Issues";
-    estimatedWeight = "0.35";
+    estimatedWeight = "15.00";
+    estimatedAge = "Recent";
+    score = 97.5;
+    badges = ["100% Recyclable Fiber", "High Pulp Quality", "Clean Dry Scrap"];
+    desc = "AI Scrap Vision: Clean bundled cardboard boxes and newspapers ready for re-pulping and corrugated box remanufacturing.";
+  } else if (text.includes("plastic") || text.includes("bottle") || text.includes("bucket") || text.includes("drum") || text.includes("polymer")) {
+    category = "Plastic & Polymer Scrap";
+    material = "HDPE / Polypropylene (PP) Polymer";
+    deviceName = "HDPE Plastic Containers & Recyclable Polymer Scrap";
+    brand = "Industrial Polymer";
+    condition = "Scrap for Parts & Metals";
+    estimatedWeight = "8.50";
+    estimatedAge = "Recent";
+    score = 96.8;
+    badges = ["HDPE Grade Recyclable", "Clean Polymer Shell", "Granulation Ready"];
+    desc = "AI Scrap Vision: High-density polyethylene and polypropylene plastic scrap suitable for industrial pelletizing.";
+  } else if (text.includes("copper") || text.includes("winding") || text.includes("coil") || text.includes("copper_wire")) {
+    category = "Copper Wire & Windings";
+    material = "99.9% Electrolytic Pure Copper";
+    deviceName = "Pure Copper Wire & Armature Winding Scrap";
+    brand = "Finolex / Havells / Generic";
+    condition = "Scrap for Parts & Metals";
+    estimatedWeight = "4.50";
     estimatedAge = "2 years";
-    score = 99.5;
-    badges = ["AI Verified Electrical Fitting", "Brass Contact Terminals", "Fire-Retardant Polycarbonate"];
-    desc = "AI Vision Scan: Modular electrical wall socket and switch plate with internal brass terminals, copper contacts, and flame-retardant polycarbonate housing.";
-  } else if (text.includes("laptop") || text.includes("macbook") || text.includes("spigen") || text.includes("computer") || text.includes("pc") || (!text && isLaptopDevice && !isWhiteChargerAdapter)) {
-    // Reference Image 2: Spigen Enclosed Laptop
+    score = 99.4;
+    badges = ["High Purity Copper Core", "Recyclable Metal Winding", "Top Scrap Value"];
+    desc = "AI Scrap Vision: High-purity copper windings, armature coils, and insulated copper conductors with premium market value.";
+  } else if (text.includes("aluminium") || text.includes("aluminum") || text.includes("heatsink") || text.includes("sheet") || text.includes("can")) {
+    category = "Metals & Aluminium Scrap";
+    material = "Extruded Aluminium Alloy (6063 / 6061)";
+    deviceName = "Extruded Aluminium & Metal Sheet Scrap";
+    brand = "Hindalco / Jindal / Generic";
+    condition = "Scrap for Parts & Metals";
+    estimatedWeight = "8.20";
+    estimatedAge = "3 years";
+    score = 98.6;
+    badges = ["Recyclable Aluminium", "Alloy Frame Core", "High Remelt Value"];
+    desc = "AI Scrap Vision: Clean industrial aluminium heatsinks, architectural frames, and structural alloy scrap.";
+  } else if (text.includes("brass") || text.includes("valve") || text.includes("fitting") || text.includes("tap") || text.includes("bangle")) {
+    category = "Brass, Lead & Heavy Metals";
+    material = "High Purity Brass Alloy (Cu-Zn)";
+    deviceName = "Brass Fittings, Valves & Heavy Metal Scrap";
+    brand = "Generic Metal Scrap";
+    condition = "Scrap for Parts & Metals";
+    estimatedWeight = "5.50";
+    estimatedAge = "4 years";
+    score = 98.9;
+    badges = ["Heavy Brass Alloy", "High Density Metal", "Top Recovery Rate"];
+    desc = "AI Scrap Vision: Identified heavy brass valves, plumbing fixtures, and yellow metal alloy components.";
+  } else if (text.includes("laptop") || text.includes("macbook") || text.includes("computer") || (!text && isLaptopDevice && !isWhiteChargerAdapter)) {
     category = "Laptops & Computers";
-    deviceName = "Spigen Sleeve Protected Laptop";
-    brand = "Apple / Dell / HP / Lenovo";
+    material = "Aluminium Shell, Silicon PCB, Lithium Pack";
+    deviceName = "Laptop Computer Scrap";
+    brand = "Dell / HP / Apple / Lenovo";
     condition = "Partially Working";
     estimatedWeight = "2.20";
     estimatedAge = "4 years";
     score = 98.6;
-    badges = ["AI Verified Laptop", "Aluminium Chassis Core", "Intact Display Panel"];
-    desc = "AI Vision Scan: Laptop computer with protective Spigen enclosure, intact display panel, lithium battery pack, and motherboard.";
-  } else if (text.includes("charger") || text.includes("adapter") || text.includes("plug") || text.includes("brick") || text.includes("cable") || text.includes("wire") || text.includes("red_cable") || text.includes("oneplus") || (!text && isWhiteChargerAdapter)) {
-    // Reference Image 5: White Fast Charger Brick + Red Type-C Cable
+    badges = ["AI Verified Laptop", "Aluminium Chassis", "Gold Trace PCB"];
+    desc = "AI Scrap Vision: Laptop unit with intact aluminium chassis, lithium battery pack, memory chips, and recyclable mainboard.";
+  } else if (text.includes("charger") || text.includes("adapter") || text.includes("cable") || text.includes("wire") || (!text && isWhiteChargerAdapter)) {
     category = "Cables & Accessories";
-    deviceName = "OnePlus Fast Charger & Red Type-C Cable";
-    brand = "OnePlus / Oppo Original";
+    material = "Copper Conductors & PVC / TPE Insulation";
+    deviceName = "Fast Power Adapter & Charging Cables Bundle";
+    brand = "Original Electronics";
     condition = "Working — Minor Issues";
-    estimatedWeight = "0.25";
-    estimatedAge = "1 year, 6 months";
+    estimatedWeight = "0.45";
+    estimatedAge = "1.5 years";
     score = 99.4;
-    badges = ["AI Verified Fast Charger", "Red High-Amp Type-C Cable", "Copper Transformer Core"];
-    desc = "AI Vision Scan: Identified fast charging power adapter brick with high-amp red USB Type-C charging cable and copper transformer core.";
-  } else if (text.includes("phone") || text.includes("mobile") || text.includes("iphone") || text.includes("galaxy") || text.includes("smartphone") || text.includes("android") || (!text && isDarkPhoneDevice) || !text) {
-    // Smartphone Detection (matches black phone in user latest screenshot!)
+    badges = ["Copper Core Cables", "Transformer Core", "Recyclable Copper"];
+    desc = "AI Scrap Vision: Power supply adapter with copper transformer core and high-grade copper wiring harness.";
+  } else if (text.includes("phone") || text.includes("mobile") || text.includes("smartphone") || (!text && isDarkPhoneDevice) || !text) {
     category = "Mobile Phones & Tablets";
-    deviceName = "Smartphone / Touchscreen Mobile Phone";
+    material = "PCB Motherboard, Lithium Cell, Glass Display";
+    deviceName = "Smartphone / Mobile Phone Scrap";
     brand = "Samsung / Apple / Xiaomi / OnePlus";
     condition = "Working — Minor Issues";
     estimatedWeight = "0.35";
     estimatedAge = "2 years";
     score = 98.4;
-    badges = ["AI Verified Smartphone", "Lithium-Ion Battery Cell", "Touchscreen Glass Panel"];
-    desc = "AI Vision Scan: Smartphone device with glass display, multi-lens camera bump, internal lithium battery pack, and motherboard.";
-  } else if (text.includes("tv") || text.includes("monitor") || text.includes("screen") || text.includes("display")) {
-    category = "TVs & Monitors";
-    deviceName = "LG / Samsung 32-inch LED Display";
-    brand = "LG / Samsung";
-    condition = "Non-working / Damaged";
-    estimatedWeight = "5.50";
-    estimatedAge = "5 years";
-    score = 96.2;
-    badges = ["AI Verified E-Waste", "Display Glass & Yoke", "High Metal Value"];
-    desc = "AI Vision Scan: Flat screen monitor panel. Contains copper deflection coils, power board, and recyclable glass.";
-  } else if (text.includes("fridge") || text.includes("refrigerator") || text.includes("ac") || text.includes("cool")) {
-    category = "Refrigerators & ACs";
-    deviceName = "Whirlpool Double Door Refrigerator Compressor Unit";
-    brand = "Whirlpool / LG";
-    condition = "Scrap for Parts & Metals";
-    estimatedWeight = "28.00";
-    estimatedAge = "7 years";
-    score = 99.1;
-    badges = ["AI Verified Heavy Scrap", "Heavy Copper Compressor", "High Metal Recovery"];
-    desc = "AI Vision Scan: Heavy scrap appliance with copper winding compressor unit, steel outer body, and cooling coils.";
+    badges = ["AI Verified Smartphone", "Lithium Battery", "Gold & Copper Recovery"];
+    desc = "AI Scrap Vision: Smartphone device with glass display, camera assembly, internal lithium cell, and high-recovery motherboard.";
   } else if (text.includes("wash") || text.includes("machine")) {
     category = "Washing Machines";
-    deviceName = "IFB / Bosch Front Load Washing Machine";
-    brand = "Bosch / IFB";
-    condition = "Partially Working";
-    estimatedWeight = "22.50";
+    material = "Stainless Steel Drum, Heavy Copper Motor, Steel Frame";
+    deviceName = "Old Washing Machine Scrap";
+    brand = "IFB / Bosch / LG / Whirlpool";
+    condition = "Non-working / Damaged";
+    estimatedWeight = "45.00";
     estimatedAge = "6 years";
-    score = 95.9;
-    badges = ["AI Verified E-Waste", "Stainless Steel Drum", "Copper Motor Winding"];
-    desc = "AI Vision Scan: Washing machine unit with heavy copper motor, stainless drum, and control circuit board.";
-  } else if (text.includes("printer") || text.includes("scanner") || text.includes("laserjet")) {
-    category = "Printers & Scanners";
-    deviceName = "Canon All-in-One Laser Printer";
-    brand = "Canon / HP";
-    condition = "Non-working / Damaged";
-    estimatedWeight = "6.20";
-    estimatedAge = "4 years";
-    score = 94.8;
-    badges = ["AI Verified E-Waste", "Stepper Motors", "Polymer Shell"];
-    desc = "AI Vision Scan: Laser printer unit with stepper motors, circuit boards, and toner cartridge assembly.";
-  } else if (text.includes("copper") || text.includes("winding") || text.includes("coil") || text.includes("copper_wire")) {
-    category = "Copper Wire & Windings";
-    deviceName = "Pure Copper Wire & Armature Winding Scrap";
-    brand = "Finolex / Havells / Generic";
-    condition = "Scrap for Parts & Metals";
-    estimatedWeight = "3.50";
-    estimatedAge = "2 years";
-    score = 99.4;
-    badges = ["High Purity Copper Core", "Recyclable Metal Winding", "Top Scrap Value"];
-    desc = "AI Vision Scan: Identified high-purity copper wire windings, motor armature coils, and insulated copper conductors.";
-  } else if (text.includes("metal") || text.includes("aluminium") || text.includes("aluminum") || text.includes("steel") || text.includes("iron")) {
-    category = "Metals & Aluminium Scrap";
-    deviceName = "Extruded Aluminium & Metal Sheet Scrap";
-    brand = "Hindalco / Jindal / Generic";
-    condition = "Scrap for Parts & Metals";
-    estimatedWeight = "5.00";
-    estimatedAge = "3 years";
-    score = 98.2;
-    badges = ["Recyclable Aluminium", "Steel Alloy Casing", "Heavy Scrap Recovery"];
-    desc = "AI Vision Scan: Identified industrial metals, aluminium heatsinks, alloy frames, and structural metal scrap.";
-  } else if (text.includes("pcb") || text.includes("circuit") || text.includes("motherboard") || text.includes("chip")) {
-    category = "Printed Circuit Boards (PCBs)";
-    deviceName = "High-Grade Gold & Copper Printed Circuit Board (PCB)";
-    brand = "Asus / Gigabyte / Generic";
-    condition = "Non-working / Damaged";
-    estimatedWeight = "0.60";
-    estimatedAge = "4 years";
     score = 99.1;
-    badges = ["Gold Trace Contacts", "Recyclable PCB Components", "High Precious Metal Content"];
-    desc = "AI Vision Scan: High-grade electronic circuit board featuring gold-plated pin connectors, copper traces, and IC microchips.";
-  } else if (text.includes("brass") || text.includes("lead") || text.includes("heavy_metal")) {
-    category = "Brass, Lead & Heavy Metals";
-    deviceName = "Brass Fittings & Heavy Lead Metal Scrap";
-    brand = "Generic Metal Scrap";
+    badges = ["Stainless Steel Drum", "Heavy Copper Motor", "High Metal Scrap"];
+    desc = "AI Scrap Vision: Washing machine unit with heavy copper motor winding, stainless steel drum, and steel outer casing.";
+  } else if (text.includes("fridge") || text.includes("refrigerator") || text.includes("ac") || text.includes("compressor")) {
+    category = "Refrigerators & ACs";
+    material = "Copper Compressor, Sheet Metal, Aluminium Coils";
+    deviceName = "Refrigerator / AC Compressor Heavy Scrap";
+    brand = "Whirlpool / LG / Samsung";
     condition = "Scrap for Parts & Metals";
-    estimatedWeight = "4.20";
-    estimatedAge = "5 years";
-    score = 97.9;
-    badges = ["Heavy Brass Alloy", "Lead Terminal Scrap", "CPCB Metal Standard"];
-    desc = "AI Vision Scan: Identified heavy brass fittings, lead-acid battery plates, and industrial metal alloy components.";
-  } else if (text.includes("motor") || text.includes("stator") || text.includes("rotor") || text.includes("generator")) {
-    category = "Industrial Electrical Motors";
-    deviceName = "Industrial Induction Motor & Copper Stator";
-    brand = "Crompton / Kirloskar / ABB";
-    condition = "Non-working / Damaged";
-    estimatedWeight = "14.50";
-    estimatedAge = "6 years";
-    score = 98.9;
-    badges = ["Heavy Copper Stator", "Cast Iron Housing", "High Value Motor Scrap"];
-    desc = "AI Vision Scan: Heavy electrical induction motor containing copper stator windings, rotor shaft, and cast iron housing.";
-  } else if (text.includes("battery") || text.includes("ups") || text.includes("powerbank") || text.includes("power_bank")) {
+    estimatedWeight = "38.00";
+    estimatedAge = "7 years";
+    score = 99.3;
+    badges = ["Copper Compressor", "Aluminium Cooling Fins", "Heavy Steel Body"];
+    desc = "AI Scrap Vision: Heavy appliance scrap with copper winding compressor unit, sheet metal chassis, and aluminium cooling coils.";
+  } else if (text.includes("battery") || text.includes("ups") || text.includes("inverter")) {
     category = "Batteries & Power Banks";
-    deviceName = "Anker / Mi 20000mAh Power Bank";
-    brand = "Anker / Mi";
-    condition = "Working — Minor Issues";
-    estimatedWeight = "0.45";
-    estimatedAge = "2 years";
-    score = 98.7;
-    badges = ["AI Verified Power Bank", "Lithium Polymer Cell", "Charging Circuit Board"];
-    desc = "AI Vision Scan: Portable power bank with high-density lithium polymer cells and IC protection board.";
-  } else if (text.includes("dslr") || text.includes("sony_cam") || text.includes("nikon") || text.includes("canon_cam") || text.includes("camcorder") || text.includes("digicam")) {
-    category = "Cameras & Electronics";
-    deviceName = "Sony Digital DSLR / Camcorder Unit";
-    brand = "Sony / Canon / Nikon";
-    condition = "Working — Minor Issues";
-    estimatedWeight = "0.80";
+    material = "Lead Plates, Acid Electrolyte / Li-Ion Polymer";
+    deviceName = "Lead-Acid Inverter Battery / Heavy UPS Scrap";
+    brand = "Exide / Luminous / Amaron";
+    condition = "Scrap for Parts & Metals";
+    estimatedWeight = "18.00";
     estimatedAge = "3 years";
-    score = 97.2;
-    badges = ["AI Verified DSLR Camera", "Optical Glass Lens", "Rechargeable Li-Ion Cell"];
-    desc = "AI Vision Scan: Digital camera device with optical glass lens assembly, CCD image sensor, and battery unit.";
+    score = 98.7;
+    badges = ["Heavy Lead Plates", "High Scrap Value", "Certified Battery Recycling"];
+    desc = "AI Scrap Vision: Heavy lead-acid battery unit with recyclable lead plates and polymer casing.";
   }
 
-  // Compute AI price = Category Base * Condition Multiplier
-  const basePrice = CATEGORY_BASE_PRICES[category] || 150;
+  // Base price calculation
+  const basePrice = CATEGORY_BASE_PRICES[category] || 400;
   const mult = CONDITION_MULT[condition] || 0.75;
-  const calculatedPrice = String(Math.round(basePrice * mult));
+  const calcMin = Math.round(basePrice * mult * 0.85);
+  const calcMax = Math.round(basePrice * mult * 1.25);
+  const askingPrice = String(Math.round(basePrice * mult));
+  const priceRange = `₹${calcMin.toLocaleString("en-IN")} – ₹${calcMax.toLocaleString("en-IN")}`;
 
   return {
     isRealScrap: true,
-    authenticityScore: Math.min(99.9, score + (Math.random() * 0.5)),
+    authenticityScore: Math.min(99.8, score + (Math.random() * 0.4)),
     deviceName,
     brand,
     category,
+    material,
     condition,
-    askingPrice: calculatedPrice,
+    askingPrice,
+    priceRange,
     estimatedWeight,
     estimatedAge,
     description: desc,
     aiBadges: badges,
+    disclaimer: DISCLAIMER_TEXT,
   };
 }
 
 /**
- * Classify device image using EcoRoute Vision AI rules (legacy)
+ * Classify scrap device image (legacy helper)
  */
 export async function classifyDeviceImage(
   imageUrl: string,
@@ -356,40 +324,37 @@ export async function classifyDeviceImage(
 ): Promise<AIAnalysisOutput> {
   const text = (hintDeviceName || imageUrl).toLowerCase();
 
-  if (text.includes("mobile") || text.includes("phone") || text.includes("smartphone")) {
+  if (text.includes("copper") || text.includes("winding") || text.includes("wire")) {
     return {
-      deviceCategory: "Mobile Phones & Accessories",
-      confidenceScore: 98.4,
-      estimatedValue: "₹150 - ₹350",
-      hazardLevel: "Moderate",
-      hazardDescription: "Contains Lithium-ion battery, cobalt, and precious metal trace.",
-      disposalRecommendation: "Doorstep pickup for certified gold and lithium extraction.",
-      suggestedRecyclingMethod: "Pyrometallurgical & Hydrometallurgical Refining",
-      recyclableComponents: ["Lithium Battery", "Copper PCB", "Glass Screen", "Polymer Case"],
+      deviceCategory: "Copper Wire & Windings",
+      confidenceScore: 99.2,
+      estimatedValue: "₹700 – ₹780 / kg",
+      material: "99.9% Electrolytic Copper",
+      disposalRecommendation: "Schedule dealer collection for pure copper extraction.",
+      suggestedRecyclingMethod: "Direct Smelting & Electrolytic Refining",
+      recyclableComponents: ["Pure Copper Core", "PVC Insulation"],
     };
   }
 
-  if (text.includes("tv") || text.includes("monitor") || text.includes("display")) {
+  if (text.includes("wash") || text.includes("fridge") || text.includes("appliance")) {
     return {
-      deviceCategory: "Televisions & Displays",
-      confidenceScore: 95.8,
-      estimatedValue: "₹300 - ₹550",
-      hazardLevel: "High",
-      hazardDescription: "CRT / LCD panel contains lead oxide, mercury backlights, and cadmium.",
-      disposalRecommendation: "Handover to CPCB authorized specialized display recycler.",
-      suggestedRecyclingMethod: "Glass Separation & Mercury Containment",
-      recyclableComponents: ["Leaded Glass", "Copper Yoke", "Plastic Shell", "PCB"],
+      deviceCategory: "Appliances & Heavy Scrap",
+      confidenceScore: 98.5,
+      estimatedValue: "₹1,500 – ₹3,500",
+      material: "Stainless Steel, Copper Motor, Sheet Metal",
+      disposalRecommendation: "Doorstep vehicle pickup for heavy metal recycling.",
+      suggestedRecyclingMethod: "Magnetic Sorting & Metal Shredding",
+      recyclableComponents: ["Copper Motor Winding", "Stainless Steel Drum", "Steel Chassis"],
     };
   }
 
   return {
-    deviceCategory: "Laptops & Computers",
+    deviceCategory: "Metals & Electronics",
     confidenceScore: 96.8,
-    estimatedValue: "₹450 - ₹650",
-    hazardLevel: "Moderate",
-    hazardDescription: "Contains Lithium battery pack, copper wiring, and aluminium heat sink.",
-    disposalRecommendation: "Schedule doorstep collection with EcoRecycle Facility #4.",
-    suggestedRecyclingMethod: "Mechanical Shredding & Hydrometallurgical Extraction",
-    recyclableComponents: ["Aluminium Frame", "Copper PCB", "Precious Gold Trace", "Polymer Casing"],
+    estimatedValue: "₹450 – ₹1,200",
+    material: "Aluminium, Copper, PCB Mainboard",
+    disposalRecommendation: "Doorstep scrap dealer collection.",
+    suggestedRecyclingMethod: "Hydrometallurgical & Mechanical Refining",
+    recyclableComponents: ["Aluminium Frame", "Copper Wiring", "Gold-Plated Traces"],
   };
 }

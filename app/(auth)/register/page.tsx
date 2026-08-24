@@ -431,25 +431,25 @@ function RegisterContent() {
           <div className="relative z-10 flex flex-col gap-6">
             {/* Top Brand Tag */}
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg">
-                <MdRecycling className="w-6 h-6 text-emerald-400 animate-spin-slow" />
+              <div className="w-10 h-10 rounded-xl bg-emerald-600/30 backdrop-blur-md border border-emerald-400/40 flex items-center justify-center shadow-lg">
+                <MdRecycling className="w-6 h-6 text-emerald-400" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-extrabold tracking-tight text-white">EcoRoute</span>
-                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Digital India · CPCB Compliant</span>
+                <span className="text-xl font-black tracking-tight text-white">EcoRoute ♻️</span>
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">AI Scrap Marketplace</span>
               </div>
             </div>
 
             {/* Main Headline */}
             <div className="mt-4 flex flex-col gap-3">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-none text-white">
-                Join India&apos;s Smart <br />
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-white">
+                Turn Your Scrap <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300">
-                  E-Waste Network
+                  Into Value.
                 </span>
               </h1>
               <p className="text-sm text-slate-300 leading-relaxed max-w-md">
-                Official Ministry of Environment, Forest and Climate Change portal for citizens, verified buyers, and government officers across all 28 States & 8 UTs.
+                Connect with nearby scrap dealers, get AI-powered scrap identification and price estimation, and arrange convenient pickup from your home.
               </p>
             </div>
 
@@ -457,27 +457,27 @@ function RegisterContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-6">
               {[
                 {
-                  title: "Schedule Pickup",
-                  desc: "Doorstep e-waste collection with live GPS tracking",
-                  icon: MdLocalShipping,
+                  title: "AI Scrap Vision",
+                  desc: "Instant material identification & market pricing",
+                  icon: MdRecycling,
                   color: "from-emerald-500/20 to-teal-500/20 border-emerald-500/30 text-emerald-300",
                 },
                 {
-                  title: "Sell Scrap Securely",
-                  desc: "AI valuation & instant cash or EB bill rebates",
+                  title: "Doorstep Pickup",
+                  desc: "Nearby dealers collect directly from your location",
+                  icon: MdLocalShipping,
+                  color: "from-cyan-500/20 to-blue-500/20 border-cyan-500/30 text-cyan-300",
+                },
+                {
+                  title: "Direct UPI & Cash",
+                  desc: "Fair payments based on verified scrap weight",
                   icon: MdPayments,
                   color: "from-amber-500/20 to-yellow-500/20 border-amber-500/30 text-amber-300",
                 },
                 {
-                  title: "Verified Buyers",
-                  desc: "100% CPCB authorized recycling facilities",
-                  icon: MdVerified,
-                  color: "from-cyan-500/20 to-blue-500/20 border-cyan-500/30 text-cyan-300",
-                },
-                {
-                  title: "Government Certified",
-                  desc: "MoEFCC & Digital India security protocol",
-                  icon: MdShield,
+                  title: "Verified Dealers",
+                  desc: "Trusted local scrap shops in your neighborhood",
+                  icon: MdStorefront,
                   color: "from-purple-500/20 to-indigo-500/20 border-purple-500/30 text-purple-300",
                 },
               ].map((f) => {
@@ -505,13 +505,13 @@ function RegisterContent() {
           <div className="relative z-10 pt-6 mt-8 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
             <span className="flex items-center gap-1.5">
               <MdSecurity className="w-4 h-4 text-emerald-400" />
-              ISO 27001 Certified Security
+              Verified Local Scrap Network
             </span>
-            <span className="text-emerald-400 font-bold">256-Bit SSL Encrypted</span>
+            <span className="text-emerald-400 font-bold">Safe & Transparent</span>
           </div>
         </motion.div>
 
-        {/* ── RIGHT SECTION (55-60% width, lg:col-span-7) ───────────────── */}
+        {/* ── RIGHT SECTION ───────────────── */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -535,12 +535,12 @@ function RegisterContent() {
                 className={cn(
                   "flex items-center justify-center gap-2 py-3 px-4 text-xs sm:text-sm font-extrabold rounded-lg transition-all duration-200 cursor-pointer",
                   role === "citizen"
-                    ? "bg-[var(--color-accent)] text-white shadow-md scale-[1.01]"
+                    ? "bg-emerald-700 text-white shadow-md scale-[1.01]"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 )}
               >
                 <MdPerson className="w-4 h-4 sm:w-5 sm:h-5" />
-                Citizen
+                Household / Seller
               </button>
               <button
                 type="button"
@@ -553,12 +553,12 @@ function RegisterContent() {
                 className={cn(
                   "flex items-center justify-center gap-2 py-3 px-4 text-xs sm:text-sm font-extrabold rounded-lg transition-all duration-200 cursor-pointer",
                   role === "recycler"
-                    ? "bg-[var(--color-primary)] text-white shadow-md scale-[1.01]"
+                    ? "bg-emerald-700 text-white shadow-md scale-[1.01]"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                 )}
               >
                 <MdStorefront className="w-4 h-4 sm:w-5 sm:h-5" />
-                Verified Recycler (Buyer)
+                Scrap Dealer
               </button>
             </div>
           </div>
@@ -566,12 +566,12 @@ function RegisterContent() {
           {/* Heading */}
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              {role === "recycler" ? "Verified Recycler (Buyer) Registration" : "Create Citizen Account"}
+              {role === "recycler" ? "Scrap Dealer Registration" : "Household / Seller Registration"}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
               {role === "recycler"
-                ? "Register your facility for official CPCB authorization, scrap bidding & doorstep pickups."
-                : "Register with EcoRoute to schedule doorstep pickups and access civic bill discounts."}
+                ? "Register your scrap shop to discover nearby household listings and arrange collections."
+                : "List your recyclable scrap, get instant AI estimates, and connect with verified local dealers."}
             </p>
           </div>
 
