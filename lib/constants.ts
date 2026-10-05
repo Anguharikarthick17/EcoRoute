@@ -88,6 +88,7 @@ export const FOOTER_SECTIONS: FooterSection[] = [
     heading: "Company & Trust",
     links: [
       { label: "About EcoRoute", href: "/about" },
+      { label: "Review 2 Research Portfolio", href: "/research" },
       { label: "Field Research Story", href: "/#field-research" },
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" },
