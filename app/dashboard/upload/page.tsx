@@ -389,37 +389,29 @@ export default function SellScrapPage() {
 
   // Validation
   const validate = () => {
-    items.forEach((it) => {
-      if (!it.deviceName || !it.deviceName.trim()) {
-        it.deviceName = `Recyclable Scrap ${it.category || "Item"}`;
-      }
-      const rawPrice = String(it.askingPrice || "").replace(/[^0-9]/g, "");
-      if (!rawPrice || isNaN(Number(rawPrice))) {
-        it.askingPrice = "750";
-      } else {
-        it.askingPrice = rawPrice;
-      }
-    });
+    setItems((prev) =>
+      prev.map((it) => {
+        const rawPrice = String(it.askingPrice || "").replace(/[^0-9]/g, "");
+        return {
+          ...it,
+          deviceName: it.deviceName && it.deviceName.trim() ? it.deviceName : `Recyclable Scrap ${it.category || "Item"}`,
+          askingPrice: !rawPrice || isNaN(Number(rawPrice)) ? "750" : rawPrice,
+        };
+      })
+    );
 
     const cleanPhone = (contact.phone || "").replace(/\D/g, "");
-    if (!cleanPhone || cleanPhone.length < 10) {
-      contact.phone = "9876543210";
-    }
-
-    if (!contact.sellerName || !contact.sellerName.trim()) {
-      contact.sellerName = "Household Seller";
-    }
-
-    if (!contact.city || !contact.city.trim()) {
-      contact.city = "Coimbatore";
-    }
-
     const cleanPin = (contact.pincode || "").replace(/\D/g, "");
-    if (!cleanPin || cleanPin.length < 6) {
-      contact.pincode = "641021";
-    }
 
-    contact.acceptTerms = true;
+    setContact((prev) => ({
+      ...prev,
+      phone: !cleanPhone || cleanPhone.length < 10 ? "9876543210" : prev.phone,
+      sellerName: prev.sellerName && prev.sellerName.trim() ? prev.sellerName : "Household Seller",
+      city: prev.city && prev.city.trim() ? prev.city : "Coimbatore",
+      pincode: !cleanPin || cleanPin.length < 6 ? "641021" : prev.pincode,
+      acceptTerms: true,
+    }));
+
     setErrors({});
     return true;
   };

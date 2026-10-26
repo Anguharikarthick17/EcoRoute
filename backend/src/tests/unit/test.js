@@ -7,96 +7,86 @@ const {
   generateExplanation,
 } = require('../../ai');
 
-// Test runner function
-function runTests() {
-  console.log('Running EcoRoute AI Engine Unit Tests...\n');
+describe('EcoRoute AI Engine Unit Tests', () => {
+  describe('[1/4] rewardEngine', () => {
+    it('calculates reward for Clean Plastic Bottle with High Trust', () => {
+      const reward1 = calculateReward({ item: 'Plastic Bottle', condition: 'Clean', trustScore: 85 });
+      expect(reward1.coins).toBe(30);
+      expect(reward1.reasons).toContain('Clean Bonus');
+    });
 
-  let passed = 0;
-  let total = 0;
+    it('calculates reward for Dirty Glass Bottle', () => {
+      const reward2 = calculateReward({ item: 'Glass Bottle', condition: 'Dirty', trustScore: 60 });
+      expect(reward2.coins).toBe(25);
+    });
 
-  function assert(condition, message) {
-    total++;
-    if (condition) {
-      passed++;
-      console.log(`  ✓ ${message}`);
-    } else {
-      console.error(`  ✕ ASSERTION FAILED: ${message}`);
-    }
-  }
-
-  // 1. rewardEngine Test Cases
-  console.log('[1/4] Testing rewardEngine...');
-  const reward1 = calculateReward({ item: 'Plastic Bottle', condition: 'Clean', trustScore: 85 });
-  assert(reward1.coins === 30, `Plastic Bottle Clean + High Trust = 30 coins (got ${reward1.coins})`);
-  assert(reward1.reasons.includes('Clean Bonus'), 'Includes Clean Bonus reason');
-
-  const reward2 = calculateReward({ item: 'Glass Bottle', condition: 'Dirty', trustScore: 60 });
-  assert(reward2.coins === 25, `Glass Bottle = 25 coins (got ${reward2.coins})`);
-
-  const reward3 = calculateReward({ item: 'Paper', condition: 'Clean', trustScore: 90 });
-  assert(reward3.coins === 20, `Paper Clean + High Trust = 20 coins (got ${reward3.coins})`);
-
-  // 2. trustEngine Test Cases
-  console.log('\n[2/4] Testing trustEngine...');
-  const trust1 = calculateTrustScore({
-    verifiedUploads: 10,
-    correctClassifications: 8,
-    municipalityApproved: 5,
-    spamUploads: 0,
-    fakeUploads: 0,
-    duplicateUploads: 0,
-    consecutiveValidUploads: 7,
+    it('calculates reward for Clean Paper with High Trust', () => {
+      const reward3 = calculateReward({ item: 'Paper', condition: 'Clean', trustScore: 90 });
+      expect(reward3.coins).toBe(20);
+    });
   });
-  assert(trust1.trustScore === 100, `High accuracy score clamped at 100 (got ${trust1.trustScore})`);
 
-  const trust2 = calculateTrustScore({
-    verifiedUploads: 5,
-    correctClassifications: 3,
-    municipalityApproved: 2,
-    spamUploads: 1,
-    fakeUploads: 1,
-    duplicateUploads: 1,
-    consecutiveValidUploads: 3,
+  describe('[2/4] trustEngine', () => {
+    it('clamps high accuracy trust score at 100', () => {
+      const trust1 = calculateTrustScore({
+        verifiedUploads: 10,
+        correctClassifications: 8,
+        municipalityApproved: 5,
+        spamUploads: 0,
+        fakeUploads: 0,
+        duplicateUploads: 0,
+        consecutiveValidUploads: 7,
+      });
+      expect(trust1.trustScore).toBe(100);
+    });
+
+    it('computes trust score for mixed uploads correctly', () => {
+      const trust2 = calculateTrustScore({
+        verifiedUploads: 5,
+        correctClassifications: 3,
+        municipalityApproved: 2,
+        spamUploads: 1,
+        fakeUploads: 1,
+        duplicateUploads: 1,
+        consecutiveValidUploads: 3,
+      });
+      expect(typeof trust2.trustScore).toBe('number');
+      expect(trust2.trustScore).toBeGreaterThan(0);
+    });
   });
-  assert(typeof trust2.trustScore === 'number' && trust2.trustScore > 0, `Trust score computed correctly (${trust2.trustScore})`);
 
-  // 3. priorityEngine Test Cases
-  console.log('\n[3/4] Testing priorityEngine...');
-  const priority1 = calculatePriority({
-    hazardous: true,
-    weight: 5,
-    daysWaiting: 3,
-    locationType: 'Hospital',
+  describe('[3/4] priorityEngine', () => {
+    it('assigns Critical priority for hazardous waste at hospital', () => {
+      const priority1 = calculatePriority({
+        hazardous: true,
+        weight: 5,
+        daysWaiting: 3,
+        locationType: 'Hospital',
+      });
+      expect(priority1.priority).toBe('Critical');
+    });
+
+    it('assigns Low/Medium priority for low weight residential waste', () => {
+      const priority2 = calculatePriority({
+        hazardous: false,
+        weight: 2,
+        daysWaiting: 1,
+        locationType: 'Residential',
+      });
+      expect(['Low', 'Medium']).toContain(priority2.priority);
+    });
   });
-  assert(priority1.priority === 'Critical', `Hazardous + Hospital = Critical priority (got ${priority1.priority})`);
 
-  const priority2 = calculatePriority({
-    hazardous: false,
-    weight: 2,
-    daysWaiting: 1,
-    locationType: 'Residential',
+  describe('[4/4] explainEngine', () => {
+    it('generates human-readable explanation array output', () => {
+      const explain1 = generateExplanation({
+        item: 'Plastic Bottle',
+        coins: 30,
+        trustScore: 85,
+        priority: 'Medium',
+      });
+      expect(Array.isArray(explain1)).toBe(true);
+      expect(explain1.length).toBeGreaterThan(0);
+    });
   });
-  assert(priority2.priority === 'Low' || priority2.priority === 'Medium', `Low weight residential priority (got ${priority2.priority})`);
-
-  // 4. explainEngine Test Cases
-  console.log('\n[4/4] Testing explainEngine...');
-  const explain1 = generateExplanation({
-    item: 'Plastic Bottle',
-    coins: 30,
-    trustScore: 85,
-    priority: 'Medium',
-  });
-  assert(Array.isArray(explain1) && explain1.length > 0, 'Explanation generated array output');
-
-  console.log(`\n========================================`);
-  console.log(`Test Summary: ${passed}/${total} passed (${Math.round((passed / total) * 100)}%)`);
-  console.log(`========================================\n`);
-
-  if (passed === total) {
-    console.log('✅ All AI engine unit tests passed successfully!');
-  } else {
-    process.exit(1);
-  }
-}
-
-runTests();
+});

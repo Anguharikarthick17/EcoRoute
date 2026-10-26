@@ -1,28 +1,24 @@
-import { NextResponse } from "next/server";
 import { analyzeScrapImage } from "@/lib/ai";
+import { successResponse, errorResponse } from "@/lib/api-response";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return errorResponse(new Error("Invalid JSON body in request."), "Invalid JSON payload.", 400);
+    }
+
     const { imageDataUrl, fileName } = body;
 
-    if (!imageDataUrl) {
-      return NextResponse.json(
-        { success: false, message: "Missing image data." },
-        { status: 400 }
-      );
+    if (!imageDataUrl || typeof imageDataUrl !== "string") {
+      return errorResponse(new Error("Missing or invalid image data URL."), "Missing or invalid image data.", 400);
     }
 
     const result = await analyzeScrapImage(imageDataUrl, fileName);
 
-    return NextResponse.json({
-      success: true,
-      data: result,
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, message: error.message || "AI image scan failed." },
-      { status: 500 }
-    );
+    return successResponse(result, "Scrap image analyzed successfully.");
+  } catch (error: unknown) {
+    return errorResponse(error, "AI scrap visual analysis failed. Please try again with a clearer photo.", 500);
   }
 }
+

@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --experimental-strip-types --test tests/**/*.test.ts",
+    "test:coverage": "node --experimental-strip-types --test --experimental-test-coverage tests/**/*.test.ts",
+    "test:backend": "cd backend && npm test",
+    "test:all": "npm test && npm run test:backend"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
